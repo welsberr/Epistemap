@@ -2,7 +2,24 @@ from __future__ import annotations
 
 import pytest
 
-from epistemap import Edge, GraphBundle, Node, bridge_nodes, connected_components, cycle_nodes, diagnostics, neighborhood, topological_order
+from epistemap import (
+    Edge,
+    GraphBundle,
+    GraphShape,
+    Node,
+    ancestors,
+    bridge_nodes,
+    connected_components,
+    cycle_nodes,
+    descendants,
+    diagnostics,
+    graph_qa_report,
+    k_hop_subgraph,
+    neighborhood,
+    shortest_path,
+    topological_order,
+    validate_shape,
+)
 
 
 def _bundle() -> GraphBundle:
@@ -63,3 +80,40 @@ def test_diagnostics_summary() -> None:
     assert payload["summary"]["node_count"] == 4
     assert payload["summary"]["bridge_node_count"] == 2
 
+
+def test_closure_shortest_path_and_subgraph() -> None:
+    bundle = _bundle()
+    assert descendants(bundle, "concept::a", edge_types={"prerequisite"}) == [
+        "concept::b",
+        "concept::c",
+        "concept::d",
+    ]
+    assert ancestors(bundle, "concept::d", edge_types={"prerequisite"}) == [
+        "concept::a",
+        "concept::b",
+        "concept::c",
+    ]
+    assert shortest_path(bundle, "concept::a", "concept::d", edge_types={"prerequisite"}) == [
+        "concept::a",
+        "concept::b",
+        "concept::c",
+        "concept::d",
+    ]
+    subgraph = k_hop_subgraph(bundle, ["concept::b"], hops=1)
+    assert {node.id for node in subgraph.nodes} == {"concept::a", "concept::b", "concept::c"}
+
+
+def test_graph_qa_and_shape_validation() -> None:
+    bundle = _bundle()
+    bundle.edges.append(Edge(source="concept::a", target="concept::missing", type="prerequisite"))
+    report = graph_qa_report(bundle)
+    assert report["summary"]["missing_endpoint_count"] == 1
+    validation = validate_shape(
+        bundle,
+        GraphShape(
+            required_node_fields={"concept": {"title"}},
+            required_edge_fields={"prerequisite": {"justification"}},
+            acyclic_edge_types={"prerequisite"},
+        ),
+    )
+    assert validation["summary"]["error_count"] >= 1
