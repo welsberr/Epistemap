@@ -14,6 +14,14 @@ from .algorithms import (
     topological_order,
 )
 from .ids import node_id, slugify, typed_id
+from .exporters import (
+    to_cytoscape_json,
+    to_graphviz_dot,
+    to_jsonld,
+    write_cytoscape_json,
+    write_graphviz_dot,
+    write_jsonld,
+)
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .validation import GraphShape, validate_shape
 
@@ -37,7 +45,13 @@ __all__ = [
     "outgoing_edges",
     "shortest_path",
     "slugify",
+    "to_cytoscape_json",
+    "to_graphviz_dot",
+    "to_jsonld",
     "topological_order",
     "typed_id",
     "validate_shape",
+    "write_cytoscape_json",
+    "write_graphviz_dot",
+    "write_jsonld",
 ]
