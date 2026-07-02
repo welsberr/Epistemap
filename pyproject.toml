@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "epistemap"
+version = "0.1.0a0"
+description = "Provenance-aware knowledge graph bundles and traversal utilities."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Epistemap contributors" }
+]
+dependencies = [
+  "pydantic>=2,<3",
+]
+
+[project.optional-dependencies]
+networkx = ["networkx>=3"]
+dev = ["pytest>=8"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
