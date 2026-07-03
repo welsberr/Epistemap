@@ -17,6 +17,31 @@ is computed from:
 condition, or source-spine transformation improves calibrated source-grounded
 performance. It is not a provenance score, source-trust score, or truth oracle.
 
+## Claim-Level Evaluation Rows
+
+Epistemap exports a canonical row shape for experiments that compare ordinary
+reading, graph-assisted reading, retrieval assistance, source-spine
+transformations, reliability treatments, or other interventions. The required
+metric fields are:
+
+- `env`: environment label, conventionally `C` for clean/reference and `K` for
+  target/shifted;
+- `y`: observed truth label, `0` or `1`;
+- `p`: learner or model probability/confidence for `y = 1`.
+
+The stable export header also includes identifiers and optional temporal fields:
+
+- `run_id`, `subject_id`, `condition`, `phase`;
+- `item_id`, `claim_id`, `answer`, `response`, `source_anchor`;
+- `recognized_at`, `contradiction_available_at`, `recognition_lag`;
+- `fair_play_rating`.
+
+Additional columns are allowed for experiment-specific metadata. Detective-story
+benchmarks can use the temporal fields to mark when a contradiction was
+available to the reader and when the participant or model recognized it.
+Scientific-corpus benchmarks can use the same fields for evidential discovery,
+publication, instrumentation, correction, or consensus-change dates.
+
 ## Reliability Sensitivity
 
 There is merit in asking how `delta_G` changes when a graph component is treated
@@ -80,4 +105,3 @@ The correct operational stance is exploratory:
 - use graph transformations for proposed theory change;
 - keep denialist or adversarial source signals explicit;
 - avoid converting any single score into an authority marker.
-

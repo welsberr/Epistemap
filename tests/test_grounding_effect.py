@@ -2,12 +2,17 @@ from __future__ import annotations
 
 from epistemap import (
     Edge,
+    G_ROW_FIELDS,
     GraphBundle,
     Node,
     delta_g,
+    g_evaluation_row,
     g_estimate,
+    g_rows_to_csv,
     graph_with_component_reliability,
+    normalize_g_evaluation_row,
     reliability_level_sensitivity,
+    write_g_rows_csv,
 )
 
 
@@ -45,6 +50,67 @@ def test_delta_g_reports_normalized_gain() -> None:
     assert effect["delta_G"] > 0
     assert effect["normalized_delta_G"] > 0
     assert effect["before"]["G"] < effect["after"]["G"]
+
+
+def test_g_evaluation_row_normalizes_and_preserves_temporal_fields() -> None:
+    row = g_evaluation_row(
+        y=True,
+        p=0.85,
+        env="K",
+        run_id="run-1",
+        subject_id="reader-7",
+        condition="kg-assisted",
+        item_id="story-3",
+        claim_id="claim::alibi",
+        recognized_at=42,
+        contradiction_available_at=37,
+        recognition_lag=5,
+        fair_play_rating="available_before_reveal",
+        metadata={"genre": "detective"},
+    )
+
+    assert row["y"] == 1
+    assert row["p"] == 0.85
+    assert row["recognition_lag"] == 5
+    assert row["fair_play_rating"] == "available_before_reveal"
+    assert row["genre"] == "detective"
+    assert g_estimate([{"y": 1, "p": 0.9, "env": "C"}, {"y": 0, "p": 0.1, "env": "C"}, row])["n"]["target"] == 1
+
+
+def test_normalize_g_evaluation_row_accepts_mapping_rows() -> None:
+    row = normalize_g_evaluation_row(
+        {"y": 0, "p": "0.2", "env": "K", "claim_id": "claim::x", "corpus": "bench"}
+    )
+
+    assert row["y"] == 0
+    assert row["p"] == 0.2
+    assert row["claim_id"] == "claim::x"
+    assert row["corpus"] == "bench"
+
+
+def test_g_rows_to_csv_uses_stable_header_with_extra_fields() -> None:
+    rows = [
+        g_evaluation_row(y=1, p=0.9, env="C", claim_id="claim::true", metadata={"corpus": "bench"}),
+        g_evaluation_row(y=0, p=0.1, env="K", claim_id="claim::false", metadata={"corpus": "bench"}),
+    ]
+
+    csv_text = g_rows_to_csv(rows)
+
+    assert csv_text.splitlines()[0].split(",")[: len(G_ROW_FIELDS)] == list(G_ROW_FIELDS)
+    assert "corpus" in csv_text.splitlines()[0]
+    assert "claim::true" in csv_text
+
+
+def test_write_g_rows_csv_writes_to_path(tmp_path) -> None:
+    destination = tmp_path / "g-rows.csv"
+
+    write_g_rows_csv(
+        [g_evaluation_row(y=1, p=0.9, env="K", metadata={"source": "story, chapter 4"})],
+        destination,
+    )
+
+    assert destination.read_text(encoding="utf-8").startswith("run_id,subject_id,condition")
+    assert '"story, chapter 4"' in destination.read_text(encoding="utf-8")
 
 
 def test_reliability_level_sensitivity_is_counterfactual_not_verdict() -> None:

@@ -1,9 +1,31 @@
 from __future__ import annotations
 
+import csv
 from copy import deepcopy
-from typing import Any, Iterable, Mapping, Sequence
+from io import StringIO
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Sequence, TextIO
 
 from .models import Edge, GraphBundle
+
+G_ROW_FIELDS = (
+    "run_id",
+    "subject_id",
+    "condition",
+    "phase",
+    "item_id",
+    "claim_id",
+    "env",
+    "y",
+    "p",
+    "answer",
+    "response",
+    "source_anchor",
+    "recognized_at",
+    "contradiction_available_at",
+    "recognition_lag",
+    "fair_play_rating",
+)
 
 
 def g_estimate(
@@ -52,6 +74,126 @@ def g_estimate(
         "n": {"clean": len(clean), "target": len(target)},
         "env_labels": {"clean": clean_env, "target": target_env},
     }
+
+
+def g_evaluation_row(
+    *,
+    y: int | bool,
+    p: float,
+    env: str,
+    run_id: str = "",
+    subject_id: str = "",
+    condition: str = "",
+    phase: str = "",
+    item_id: str = "",
+    claim_id: str = "",
+    answer: str = "",
+    response: str = "",
+    source_anchor: str = "",
+    recognized_at: Any = "",
+    contradiction_available_at: Any = "",
+    recognition_lag: float | int | str | None = None,
+    fair_play_rating: str = "",
+    metadata: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Create a canonical claim-level row for practical G evaluation exports."""
+
+    row: dict[str, Any] = {
+        "run_id": run_id,
+        "subject_id": subject_id,
+        "condition": condition,
+        "phase": phase,
+        "item_id": item_id,
+        "claim_id": claim_id,
+        "env": str(env),
+        "y": int(y),
+        "p": float(p),
+        "answer": answer,
+        "response": response,
+        "source_anchor": source_anchor,
+        "recognized_at": recognized_at,
+        "contradiction_available_at": contradiction_available_at,
+        "recognition_lag": "" if recognition_lag is None else recognition_lag,
+        "fair_play_rating": fair_play_rating,
+    }
+    if not row["env"]:
+        raise ValueError("G evaluation rows require a non-empty env label")
+    _coerce_row(row)
+    if metadata:
+        for key, value in metadata.items():
+            if key in row:
+                raise ValueError(f"metadata key collides with canonical G row field: {key}")
+            row[str(key)] = value
+    return row
+
+
+def normalize_g_evaluation_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    """Return a canonical G evaluation row from a mapping-like row."""
+
+    return g_evaluation_row(
+        y=int(row["y"]),
+        p=float(row["p"]),
+        env=str(row["env"]),
+        run_id=str(row.get("run_id", "")),
+        subject_id=str(row.get("subject_id", "")),
+        condition=str(row.get("condition", "")),
+        phase=str(row.get("phase", "")),
+        item_id=str(row.get("item_id", "")),
+        claim_id=str(row.get("claim_id", "")),
+        answer=str(row.get("answer", "")),
+        response=str(row.get("response", "")),
+        source_anchor=str(row.get("source_anchor", "")),
+        recognized_at=row.get("recognized_at", ""),
+        contradiction_available_at=row.get("contradiction_available_at", ""),
+        recognition_lag=row.get("recognition_lag", ""),
+        fair_play_rating=str(row.get("fair_play_rating", "")),
+        metadata={key: value for key, value in row.items() if key not in G_ROW_FIELDS},
+    )
+
+
+def g_rows_to_csv(rows: Iterable[Mapping[str, Any]], *, extra_fields: Sequence[str] = ()) -> str:
+    """Serialize G evaluation rows to CSV with a stable canonical header."""
+
+    materialized = [normalize_g_evaluation_row(row) for row in rows]
+    extra_field_set = {str(field) for field in extra_fields}
+    discovered = sorted(
+        {
+            str(key)
+            for row in materialized
+            for key in row
+            if key not in G_ROW_FIELDS and key not in extra_field_set
+        }
+    )
+    fieldnames = (
+        list(G_ROW_FIELDS)
+        + [str(field) for field in extra_fields if str(field) not in G_ROW_FIELDS]
+        + discovered
+    )
+    output = StringIO()
+    writer = csv.DictWriter(
+        output,
+        fieldnames=fieldnames,
+        extrasaction="ignore",
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerows(materialized)
+    return output.getvalue()
+
+
+def write_g_rows_csv(
+    rows: Iterable[Mapping[str, Any]],
+    destination: str | Path | TextIO,
+    *,
+    extra_fields: Sequence[str] = (),
+) -> None:
+    """Write canonical G evaluation rows to a CSV path or text file object."""
+
+    text = g_rows_to_csv(rows, extra_fields=extra_fields)
+    if hasattr(destination, "write"):
+        destination.write(text)  # type: ignore[union-attr]
+        return
+    Path(destination).write_text(text, encoding="utf-8")
 
 
 def delta_g(

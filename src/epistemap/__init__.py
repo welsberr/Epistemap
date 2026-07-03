@@ -25,10 +25,15 @@ from .exporters import (
 from .epistemic import epistemic_report, epistemic_summary
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .grounding_effect import (
+    G_ROW_FIELDS,
     delta_g,
+    g_evaluation_row,
     g_estimate,
+    g_rows_to_csv,
     graph_with_component_reliability,
+    normalize_g_evaluation_row,
     reliability_level_sensitivity,
+    write_g_rows_csv,
 )
 from .temporal import (
     availability_lag,
@@ -54,7 +59,10 @@ __all__ = [
     "epistemic_summary",
     "fair_play_diagnostic",
     "first_contradiction_time",
+    "G_ROW_FIELDS",
+    "g_evaluation_row",
     "g_estimate",
+    "g_rows_to_csv",
     "graph_at",
     "graph_with_component_reliability",
     "GraphBundle",
@@ -72,6 +80,7 @@ __all__ = [
     "k_hop_subgraph",
     "neighborhood",
     "node_id",
+    "normalize_g_evaluation_row",
     "outgoing_edges",
     "recognition_window",
     "reliability_level_sensitivity",
@@ -87,6 +96,7 @@ __all__ = [
     "typed_id",
     "validate_shape",
     "write_cytoscape_json",
+    "write_g_rows_csv",
     "write_graphviz_dot",
     "write_jsonld",
 ]
