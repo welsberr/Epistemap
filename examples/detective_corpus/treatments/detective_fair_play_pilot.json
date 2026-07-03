@@ -1,0 +1,60 @@
+{
+  "corpus_sidecar_manifest": "examples/detective_corpus/sidecars/detective_corpus_sidecars.json",
+  "created_by": "codex",
+  "evaluation_target": "detective_contradiction_recognition",
+  "experiment_id": "detective-fair-play-pilot-001",
+  "fair_play_policy": {
+    "admit_ratings": [
+      "fair"
+    ],
+    "control_ratings": [
+      "unfair"
+    ],
+    "description": "Use fair items for primary recognition comparisons and withheld-evidence items as controls.",
+    "name": "admit_fair_play_keep_controls_separate"
+  },
+  "manifest_kind": "epistemap_detective_treatment",
+  "name": "Detective fair-play pilot",
+  "phases": [
+    "pre-reveal",
+    "post-reveal"
+  ],
+  "row_file": "g_rows.csv",
+  "schema_version": "0.1",
+  "scoring_policy": {
+    "description": "Collect one canonical G row per subject, condition, phase, story, and target claim.",
+    "name": "canonical_g_rows"
+  },
+  "temporal_policy": {
+    "description": "Use annotation timesteps for contradiction availability, reveal point, and recognition lag.",
+    "name": "narrative_timestep_recognition_lag"
+  },
+  "treatments": [
+    {
+      "condition": "plain-reading",
+      "description": "Reader sees the story text without Epistemap graph sidecars.",
+      "exposed_artifacts": [
+        "source_text"
+      ],
+      "hidden_artifacts": [
+        "epistemap_graph",
+        "fair_play_diagnostic",
+        "answer_key"
+      ],
+      "metadata": {}
+    },
+    {
+      "condition": "graph-assisted",
+      "description": "Reader sees the story text plus Epistemap graph context without the answer key.",
+      "exposed_artifacts": [
+        "source_text",
+        "epistemap_graph"
+      ],
+      "hidden_artifacts": [
+        "fair_play_diagnostic",
+        "answer_key"
+      ],
+      "metadata": {}
+    }
+  ]
+}

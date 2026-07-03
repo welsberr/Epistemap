@@ -49,6 +49,12 @@ CLI command to generate stable per-story sidecars:
 - `fair_play_diagnostic.json`
 - `detective_corpus_sidecars.json`
 
+Use `detective_treatment_manifest()` or the `epistemap detective-treatment`
+CLI command to declare planned experimental conditions before rows are
+collected. The default treatment manifest compares `plain-reading` and
+`graph-assisted` conditions while keeping fair-play diagnostics and answer keys
+hidden from subjects.
+
 The intended first pilot is 3-5 public-domain stories with human-reviewed
 annotations. Exclude or separately classify stories where the decisive evidence
 is introduced only at the reveal or is available only to the detective.

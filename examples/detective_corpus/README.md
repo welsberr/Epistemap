@@ -22,6 +22,10 @@ Generated sidecars live under `sidecars/`. Each sidecar directory contains an
 The top-level `sidecars/detective_corpus_sidecars.json` manifest summarizes the
 generated sidecars and their fair-play diagnostic ratings.
 
+Treatment manifests live under `treatments/`. The example pilot manifest
+compares `plain-reading` and `graph-assisted` conditions and keeps diagnostics
+and answer keys hidden from subjects.
+
 These fixtures are not final literary scholarship. The intended next step is
 human review against the source texts, followed by stable graph and assessment
 sidecars for each admitted story.

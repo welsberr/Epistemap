@@ -10,6 +10,7 @@ from .grounding_effect import (
     write_g_experiment_summary_markdown,
     write_g_summary_comparison_markdown,
 )
+from .treatment_manifest import detective_treatment_manifest, write_detective_treatment_manifest
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -48,6 +49,17 @@ def build_parser() -> argparse.ArgumentParser:
     detective.add_argument("annotations", nargs="+", help="Detective annotation JSON files.")
     detective.add_argument("--out-dir", required=True, help="Directory for generated sidecars.")
 
+    treatment = subparsers.add_parser(
+        "detective-treatment",
+        help="Write a default detective corpus treatment manifest.",
+    )
+    treatment.add_argument("--experiment-id", required=True)
+    treatment.add_argument("--corpus-sidecars", required=True, help="Detective corpus sidecar manifest JSON.")
+    treatment.add_argument("--out", required=True, help="Output treatment manifest JSON path.")
+    treatment.add_argument("--row-file", default="g_rows.csv")
+    treatment.add_argument("--name", default="")
+    treatment.add_argument("--created-by", default="")
+
     return parser
 
 
@@ -75,6 +87,15 @@ def main() -> None:
             write_g_summary_comparison_markdown(payload, args.out_md)
     elif args.command == "detective-sidecars":
         payload = write_detective_corpus_sidecars(args.annotations, args.out_dir)
+    elif args.command == "detective-treatment":
+        payload = detective_treatment_manifest(
+            experiment_id=args.experiment_id,
+            corpus_sidecar_manifest=args.corpus_sidecars,
+            row_file=args.row_file,
+            name=args.name,
+            created_by=args.created_by,
+        )
+        write_detective_treatment_manifest(payload, args.out)
     else:
         parser.print_help()
         return

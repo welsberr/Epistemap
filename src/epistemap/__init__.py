@@ -95,6 +95,12 @@ from .temporal import (
     tenability_window,
     timeline_events,
 )
+from .treatment_manifest import (
+    detective_treatment_manifest,
+    read_detective_treatment_manifest,
+    validate_detective_treatment_manifest,
+    write_detective_treatment_manifest,
+)
 from .validation import (
     AssessmentValidationPolicy,
     GraphShape,
@@ -151,6 +157,7 @@ __all__ = [
     "detective_annotation_graph_bundle",
     "detective_recognition_g_row",
     "detective_story_annotation",
+    "detective_treatment_manifest",
     "graph_qa_report",
     "incoming_edges",
     "k_hop_subgraph",
@@ -163,6 +170,7 @@ __all__ = [
     "read_g_experiment_manifest",
     "read_assessment_manifest",
     "read_detective_story_annotation",
+    "read_detective_treatment_manifest",
     "read_g_rows_csv",
     "reliability_level_sensitivity",
     "resolve_bayesian_prior_profile",
@@ -183,11 +191,13 @@ __all__ = [
     "validate_assessment_readiness",
     "validate_assessment_manifest",
     "validate_detective_story_annotation",
+    "validate_detective_treatment_manifest",
     "write_assessment_manifest",
     "write_assessment_validation_markdown",
     "write_detective_annotation_sidecars",
     "write_detective_corpus_sidecars",
     "write_detective_story_annotation",
+    "write_detective_treatment_manifest",
     "write_cytoscape_json",
     "write_bayesian_reliability_markdown",
     "write_bayesian_assessment_markdown",

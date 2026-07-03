@@ -242,3 +242,33 @@ def test_cli_detective_sidecars_writes_graphs_and_diagnostics(tmp_path, monkeypa
     assert (out_dir / "detective_corpus_sidecars.json").exists()
     assert (out_dir / "blue-carbuncle" / "epistemap_graph.json").exists()
     assert (out_dir / "purloined-letter-control" / "fair_play_diagnostic.json").exists()
+
+
+def test_cli_detective_treatment_writes_manifest(tmp_path, monkeypatch, capsys) -> None:
+    treatment_path = tmp_path / "detective_treatment.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "epistemap",
+            "detective-treatment",
+            "--experiment-id",
+            "detective-fair-play-001",
+            "--corpus-sidecars",
+            "examples/detective_corpus/sidecars/detective_corpus_sidecars.json",
+            "--out",
+            str(treatment_path),
+            "--name",
+            "Detective fair-play pilot",
+            "--created-by",
+            "pytest",
+        ],
+    )
+
+    main()
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["manifest_kind"] == "epistemap_detective_treatment"
+    assert payload["experiment_id"] == "detective-fair-play-001"
+    assert [item["condition"] for item in payload["treatments"]] == ["plain-reading", "graph-assisted"]
+    assert treatment_path.exists()

@@ -104,14 +104,14 @@ assessment artifacts, not decide claim truth or promotion status.
    - Compare temporal assessment with learner/model revision behavior.
 
 4. **Fair-play detective corpus**
-   - Status: candidate fixtures, temporal graph bridge, and sidecar generation
-     implemented.
+   - Status: candidate fixtures, temporal graph bridge, sidecar generation, and
+     treatment manifests implemented.
    - Use fair detective stories as controlled contradiction-recognition
      experiments.
    - Exclude or separately classify stories that withhold decisive evidence
      until the reveal.
-   - Next: human-review source anchors and define treatment manifests for
-     plain-reading versus graph-assisted runs.
+   - Next: human-review source anchors and create pilot G row collection
+     templates for plain-reading versus graph-assisted runs.
 
 5. **Notebook and mentor interventions**
    - Compare plain source reading, graph-neighborhood reading, Bayesian
