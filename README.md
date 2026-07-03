@@ -17,3 +17,9 @@ review status means, how a learner should be scored, or how claims should be
 promoted. It gives those systems a common graph representation and reusable
 operations.
 
+Epistemap also includes experimental helpers for analyzing practical `G`
+grounding-effectiveness outcomes from claim-level learner/model evaluations.
+These are intended for counterfactual graph-intervention and reliability
+sensitivity analysis, not as truth scores. See
+`docs/scientific-change-and-g.md` for the scientific-change framing and the
+distinction between evidence, source reliability, and `G`.

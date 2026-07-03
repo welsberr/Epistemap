@@ -24,12 +24,21 @@ from .exporters import (
 )
 from .epistemic import epistemic_report, epistemic_summary
 from .models import Edge, GraphBundle, Node, ProvenanceRef
+from .grounding_effect import (
+    delta_g,
+    g_estimate,
+    graph_with_component_reliability,
+    reliability_level_sensitivity,
+)
 from .validation import GraphShape, validate_shape
 
 __all__ = [
     "Edge",
+    "delta_g",
     "epistemic_report",
     "epistemic_summary",
+    "g_estimate",
+    "graph_with_component_reliability",
     "GraphBundle",
     "GraphShape",
     "Node",
@@ -46,6 +55,7 @@ __all__ = [
     "neighborhood",
     "node_id",
     "outgoing_edges",
+    "reliability_level_sensitivity",
     "shortest_path",
     "slugify",
     "to_cytoscape_json",
