@@ -20,6 +20,8 @@ assessment artifacts, not decide claim truth or promotion status.
 - Named Bayesian prior profiles for neutral, skeptical, supportive,
   source-conservative, and adversarial-aware assessment.
 - Bayesian Markdown reports.
+- Assessment-readiness validation reports for checking graph auditability before
+  treating assessment outputs as meaningful.
 - Temporal graph slices, tenability windows, contradiction timing, stale-claim
   detection, recognition windows, and fair-play diagnostics.
 - Canonical `G` evaluation rows, manifests, summaries, comparisons,
@@ -47,16 +49,36 @@ assessment artifacts, not decide claim truth or promotion status.
      support.
    - Emit deterministic JSON and compact Markdown.
 
-4. **Assessment manifests**
+4. **Assessment validation**
+   - Status: implemented.
+   - Add SHACL-inspired readiness checks for graph integrity, evidential
+     provenance, temporal availability metadata, confidence bounds, and
+     Bayesian policy metadata.
+   - Emit deterministic JSON and compact Markdown.
+
+5. **Assessment manifests**
    - Status: next.
    - Extend experiment metadata to record Bayesian prior profile, graph
      extraction policy, evidence weighting policy, temporal policy, and
      reliability treatment.
    - Keep the existing `G` row format stable.
 
-5. **CLI support**
+6. **CLI support**
    - Add graph-bundle input commands for Bayesian assessment reports once
      downstream graph export paths are stable enough for ordinary use.
+
+7. **Interoperability concepts from adjacent packages**
+   - RDFLib: optional RDF/JSON-LD/Turtle import/export with stable namespace
+     handling.
+   - pySHACL: formal shape validation for scholarly graph and assessment
+     artifacts.
+   - OWL-RL: conservative, provenance-marked rule entailment.
+   - NetworkX: adapters for broader graph algorithms without making NetworkX a
+     core representation.
+   - graspologic: graph statistics and anomaly/embedding experiments for
+     scholarly versus denialist corpora.
+   - pgmpy/PyMC/ArviZ: optional probabilistic dependency models and richer
+     Bayesian diagnostics.
 
 ## Medium-Term Experiments
 

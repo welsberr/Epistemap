@@ -34,6 +34,11 @@ Bayesian reliability estimates are documented in
 and prior-sensitivity checks alongside the existing heuristic epistemic
 reliability summaries.
 
+Assessment-readiness validation checks whether graph assessment artifacts are
+auditable before their outputs are treated as meaningful. The validator reports
+graph integrity, evidential provenance, temporal metadata, confidence bounds,
+and Bayesian policy metadata findings as deterministic JSON or Markdown.
+
 The current implementation sequence is tracked in `docs/roadmap.md`.
 
 The `epistemap` CLI can summarize and compare G artifacts:

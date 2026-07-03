@@ -3,11 +3,14 @@ from __future__ import annotations
 import pytest
 
 from epistemap import (
+    AssessmentValidationPolicy,
     Edge,
     GraphBundle,
     GraphShape,
     Node,
+    ProvenanceRef,
     ancestors,
+    assessment_validation_markdown,
     bridge_nodes,
     connected_components,
     cycle_nodes,
@@ -18,7 +21,9 @@ from epistemap import (
     neighborhood,
     shortest_path,
     topological_order,
+    validate_assessment_readiness,
     validate_shape,
+    write_assessment_validation_markdown,
 )
 
 
@@ -117,3 +122,86 @@ def test_graph_qa_and_shape_validation() -> None:
         ),
     )
     assert validation["summary"]["error_count"] >= 1
+
+
+def test_assessment_validation_passes_auditable_graph(tmp_path) -> None:
+    bundle = GraphBundle(
+        graph_id="auditable",
+        metadata={
+            "bayesian_assessment_report": {"summary": {"node_count": 1}},
+            "assessment_policy": {
+                "bayesian_prior_profile": "neutral",
+                "evidence_weighting_policy": "confidence_weighted_edges",
+                "graph_extraction_policy": "one_hop_claim_neighborhood",
+            },
+        },
+        nodes=[
+            Node(id="claim::a", type="claim", title="Auditable claim"),
+            Node(id="source::s", type="source", title="Reviewed source", metadata={"available_at": "2026-01-01"}),
+        ],
+        edges=[
+            Edge(
+                source="source::s",
+                target="claim::a",
+                type="supports",
+                confidence=0.9,
+                provenance=[ProvenanceRef(source_id="source::s", grounding_status="grounded")],
+                metadata={"available_at": "2026-01-01"},
+            )
+        ],
+    )
+
+    report = validate_assessment_readiness(bundle)
+    markdown = assessment_validation_markdown(report)
+    destination = tmp_path / "assessment-validation.md"
+    write_assessment_validation_markdown(report, destination)
+
+    assert report["report_kind"] == "epistemap_assessment_validation_report"
+    assert report["summary"]["status"] == "pass"
+    assert report["findings"] == []
+    assert "No validation findings" in markdown
+    assert destination.read_text(encoding="utf-8") == markdown
+
+
+def test_assessment_validation_surfaces_auditability_findings() -> None:
+    bundle = GraphBundle(
+        metadata={"bayesian_assessment_report": {"summary": {"node_count": 1}}},
+        nodes=[
+            Node(id="claim::a", type="claim", confidence=1.5),
+            Node(id="source::s", type="source", title="Source"),
+        ],
+        edges=[
+            Edge(source="source::s", target="claim::a", type="supports", confidence=1.2),
+            Edge(source="source::s", target="claim::missing", type="contradicts"),
+        ],
+    )
+
+    report = validate_assessment_readiness(bundle)
+    codes = {finding["code"] for finding in report["findings"]}
+
+    assert report["summary"]["status"] == "error"
+    assert "missing_graph_id" in codes
+    assert "missing_node_title" in codes
+    assert "invalid_node_confidence" in codes
+    assert "invalid_edge_confidence" in codes
+    assert "missing_edge_endpoint" in codes
+    assert "missing_evidence_provenance" in codes
+    assert "missing_bayesian_policy_metadata" in codes
+
+
+def test_assessment_validation_policy_can_require_grounding_status() -> None:
+    bundle = GraphBundle(
+        graph_id="grounding-policy",
+        nodes=[
+            Node(id="claim::a", type="claim", title="Claim"),
+            Node(id="source::s", type="source", title="Source"),
+        ],
+        edges=[Edge(source="source::s", target="claim::a", type="supports", evidence_ids=["source::s"])],
+    )
+
+    report = validate_assessment_readiness(
+        bundle,
+        AssessmentValidationPolicy(require_grounding_for_evidence=True),
+    )
+
+    assert "missing_evidence_grounding_status" in {finding["code"] for finding in report["findings"]}

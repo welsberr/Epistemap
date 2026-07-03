@@ -76,7 +76,14 @@ from .temporal import (
     tenability_window,
     timeline_events,
 )
-from .validation import GraphShape, validate_shape
+from .validation import (
+    AssessmentValidationPolicy,
+    GraphShape,
+    assessment_validation_markdown,
+    validate_assessment_readiness,
+    validate_shape,
+    write_assessment_validation_markdown,
+)
 
 __all__ = [
     "availability_lag",
@@ -112,6 +119,8 @@ __all__ = [
     "Node",
     "ProvenanceRef",
     "ancestors",
+    "AssessmentValidationPolicy",
+    "assessment_validation_markdown",
     "bridge_nodes",
     "connected_components",
     "cycle_nodes",
@@ -143,6 +152,8 @@ __all__ = [
     "topological_order",
     "typed_id",
     "validate_shape",
+    "validate_assessment_readiness",
+    "write_assessment_validation_markdown",
     "write_cytoscape_json",
     "write_bayesian_reliability_markdown",
     "write_bayesian_assessment_markdown",
