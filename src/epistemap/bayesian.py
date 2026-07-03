@@ -238,6 +238,8 @@ def classify_bayesian_reliability(
     effective_n = _float_or_none(evidence.get("effective_sample_size")) or 0.0
     support_weight = _float_or_none(evidence.get("success_weight")) or 0.0
     challenge_weight = _float_or_none(evidence.get("failure_weight")) or 0.0
+    support_edge_count = _float_or_none(evidence.get("support_edge_count")) or 0.0
+    challenge_edge_count = _float_or_none(evidence.get("challenge_edge_count")) or 0.0
     prior_range = _float_or_none(sensitivity.get("mean_range")) or 0.0
 
     flags: list[str] = []
@@ -247,7 +249,9 @@ def classify_bayesian_reliability(
         flags.append("wide_interval")
     if prior_range >= prior_sensitivity_threshold:
         flags.append("prior_sensitive")
-    if support_weight > 0 and challenge_weight > 0:
+    has_support = support_weight > 0 or support_edge_count > 0
+    has_challenge = challenge_weight > 0 or challenge_edge_count > 0
+    if has_support and has_challenge:
         flags.append("mixed_support_challenge")
 
     if mean is None:
@@ -256,13 +260,13 @@ def classify_bayesian_reliability(
         label = "thin_evidence"
     elif "prior_sensitive" in flags:
         label = "prior_sensitive"
-    elif contested_lower <= mean <= contested_upper and support_weight > 0 and challenge_weight > 0:
+    elif contested_lower <= mean <= contested_upper and has_support and has_challenge:
         label = "contested"
     elif mean >= support_threshold and not flags:
         label = "stable_support"
     elif mean >= weak_support_threshold:
         label = "fragile_support"
-    elif support_weight > 0 and challenge_weight > 0:
+    elif has_support and has_challenge:
         label = "contested"
     else:
         label = "thin_evidence"
@@ -276,6 +280,8 @@ def classify_bayesian_reliability(
             "effective_sample_size": effective_n,
             "support_weight": support_weight,
             "challenge_weight": challenge_weight,
+            "support_edge_count": support_edge_count,
+            "challenge_edge_count": challenge_edge_count,
             "prior_sensitivity_range": prior_range,
         },
         "thresholds": {

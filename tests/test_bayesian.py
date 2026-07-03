@@ -109,6 +109,8 @@ def test_classify_bayesian_reliability_labels_thin_and_prior_sensitive() -> None
 
 def test_classify_bayesian_reliability_labels_contested_or_fragile_support() -> None:
     contested = beta_binomial_posterior(success_weight=3.0, failure_weight=3.0)
+    contested["evidence"]["support_edge_count"] = 1
+    contested["evidence"]["challenge_edge_count"] = 1
     fragile = beta_binomial_posterior(success_weight=4.0, failure_weight=0.6)
 
     contested_classification = classify_bayesian_reliability(contested)
@@ -117,3 +119,14 @@ def test_classify_bayesian_reliability_labels_contested_or_fragile_support() -> 
     assert contested_classification["label"] == "contested"
     assert "mixed_support_challenge" in contested_classification["flags"]
     assert fragile_classification["label"] in {"fragile_support", "prior_sensitive", "thin_evidence"}
+
+
+def test_classify_bayesian_reliability_flags_zero_weight_challenges() -> None:
+    contested = beta_binomial_posterior(success_weight=3.0, failure_weight=0.0)
+    contested["evidence"]["support_edge_count"] = 1
+    contested["evidence"]["challenge_edge_count"] = 1
+
+    classification = classify_bayesian_reliability(contested)
+
+    assert "mixed_support_challenge" in classification["flags"]
+    assert classification["metrics"]["challenge_edge_count"] == 1
