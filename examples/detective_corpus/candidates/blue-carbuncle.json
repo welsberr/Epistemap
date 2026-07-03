@@ -1,0 +1,63 @@
+{
+  "annotation_kind": "epistemap_detective_story_annotation",
+  "author": "Arthur Conan Doyle",
+  "claims": [
+    {
+      "claim_id": "claim::blue-carbuncle::baker-stole-jewel",
+      "introduced_at": 1,
+      "metadata": {
+        "candidate_role": "false_suspicion"
+      },
+      "narrative_anchor": "opening inquiry after the recovered hat and goose",
+      "notes": "Working claim for contradiction-recognition testing; human review should confirm exact narrative anchors.",
+      "speaker": "police inference and initial case premise",
+      "text": "Henry Baker stole the blue carbuncle.",
+      "truth_status": "false"
+    },
+    {
+      "claim_id": "claim::blue-carbuncle::jewel-entered-goose-before-baker",
+      "introduced_at": 7,
+      "metadata": {
+        "candidate_role": "corrective_account"
+      },
+      "narrative_anchor": "goose dealer trail",
+      "notes": "This corrective claim is included to support graph linking, not as the primary recognition target.",
+      "speaker": "investigation result",
+      "text": "The jewel entered the goose through a chain of events separate from Henry Baker's ownership.",
+      "truth_status": "true"
+    }
+  ],
+  "decisive_evidence": [
+    {
+      "access_scope": "reader_available",
+      "available_at": 7,
+      "contradicts_claim_id": "claim::blue-carbuncle::baker-stole-jewel",
+      "evidence_id": "evidence::blue-carbuncle::goose-chain",
+      "metadata": {
+        "candidate_role": "contradiction"
+      },
+      "narrative_anchor": "Holmes traces the goose from Baker through the dealer chain",
+      "notes": "The chain separates Baker from the incriminating placement of the jewel.",
+      "text": "The goose-purchase chain separates Henry Baker from the jewel's placement in the bird."
+    }
+  ],
+  "fair_play_status": "fair_play",
+  "graph_file": "../sidecars/blue-carbuncle/epistemap_graph.json",
+  "manifest_file": "../sidecars/blue-carbuncle/assessment_manifest.json",
+  "metadata": {
+    "annotation_status": "candidate_human_review_needed",
+    "candidate_use": "pilot_fixture",
+    "source_collection": "The Adventures of Sherlock Holmes"
+  },
+  "narrative_unit": "scene",
+  "notes": "Candidate public-domain fair-play annotation for testing contradiction-recognition workflows.",
+  "public_domain": true,
+  "publication_year": 1892,
+  "reveal_point": 9,
+  "schema_version": "0.1",
+  "source_license": "Public domain",
+  "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+  "story_id": "story::blue-carbuncle",
+  "title": "The Adventure of the Blue Carbuncle",
+  "validation_file": "../sidecars/blue-carbuncle/assessment_validation.json"
+}

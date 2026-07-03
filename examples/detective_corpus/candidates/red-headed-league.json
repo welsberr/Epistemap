@@ -1,0 +1,63 @@
+{
+  "annotation_kind": "epistemap_detective_story_annotation",
+  "author": "Arthur Conan Doyle",
+  "claims": [
+    {
+      "claim_id": "claim::red-headed-league::legitimate-job",
+      "introduced_at": 1,
+      "metadata": {
+        "candidate_role": "false_surface_explanation"
+      },
+      "narrative_anchor": "Wilson's account of the advertised copying work",
+      "notes": "The work arrangement is the false surface premise that later evidence contradicts.",
+      "speaker": "advertisement and employer premise",
+      "text": "The Red-Headed League is a legitimate copying job.",
+      "truth_status": "false"
+    },
+    {
+      "claim_id": "claim::red-headed-league::bank-target",
+      "introduced_at": 6,
+      "metadata": {
+        "candidate_role": "corrective_account"
+      },
+      "narrative_anchor": "Holmes inspects the neighborhood and assistant's situation",
+      "notes": "Included to support later graph treatments of motive, opportunity, and setting.",
+      "speaker": "investigation result",
+      "text": "The league is a diversion enabling a bank burglary through nearby premises.",
+      "truth_status": "true"
+    }
+  ],
+  "decisive_evidence": [
+    {
+      "access_scope": "reader_available",
+      "available_at": 6,
+      "contradicts_claim_id": "claim::red-headed-league::legitimate-job",
+      "evidence_id": "evidence::red-headed-league::dissolution-assistant-bank",
+      "metadata": {
+        "candidate_role": "contradiction"
+      },
+      "narrative_anchor": "the league's abrupt dissolution and the inspection of Spaulding and the bank neighborhood",
+      "notes": "The candidate contradiction combines the artificial job's disappearance with spatial evidence around the bank.",
+      "text": "The sudden dissolution of the league, the assistant's behavior, and the nearby bank make the copying job a diversion rather than legitimate work."
+    }
+  ],
+  "fair_play_status": "fair_play",
+  "graph_file": "../sidecars/red-headed-league/epistemap_graph.json",
+  "manifest_file": "../sidecars/red-headed-league/assessment_manifest.json",
+  "metadata": {
+    "annotation_status": "candidate_human_review_needed",
+    "candidate_use": "pilot_fixture",
+    "source_collection": "The Adventures of Sherlock Holmes"
+  },
+  "narrative_unit": "scene",
+  "notes": "Candidate public-domain fair-play annotation for testing recognition of a false social/economic premise.",
+  "public_domain": true,
+  "publication_year": 1891,
+  "reveal_point": 8,
+  "schema_version": "0.1",
+  "source_license": "Public domain",
+  "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+  "story_id": "story::red-headed-league",
+  "title": "The Red-Headed League",
+  "validation_file": "../sidecars/red-headed-league/assessment_validation.json"
+}

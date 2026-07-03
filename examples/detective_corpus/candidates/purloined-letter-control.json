@@ -1,0 +1,63 @@
+{
+  "annotation_kind": "epistemap_detective_story_annotation",
+  "author": "Edgar Allan Poe",
+  "claims": [
+    {
+      "claim_id": "claim::purloined-letter::secret-compartment",
+      "introduced_at": 2,
+      "metadata": {
+        "candidate_role": "misleading_search_premise"
+      },
+      "narrative_anchor": "police description of exhaustive hidden-place searches",
+      "notes": "This is a useful control because the police premise is described before Dupin's decisive observation is narrated.",
+      "speaker": "police search premise",
+      "text": "The stolen letter must be hidden in a secret compartment or concealed recess.",
+      "truth_status": "misleading"
+    },
+    {
+      "claim_id": "claim::purloined-letter::plain-sight",
+      "introduced_at": 9,
+      "metadata": {
+        "candidate_role": "corrective_account"
+      },
+      "narrative_anchor": "Dupin's retrospective explanation",
+      "notes": "Corrective claim appears as part of the explanation rather than as reader-available decisive evidence.",
+      "speaker": "Dupin",
+      "text": "The letter is disguised and left in plain sight.",
+      "truth_status": "true"
+    }
+  ],
+  "decisive_evidence": [
+    {
+      "access_scope": "detective_only",
+      "available_at": 9,
+      "contradicts_claim_id": "claim::purloined-letter::secret-compartment",
+      "evidence_id": "evidence::purloined-letter::dupin-observation",
+      "metadata": {
+        "candidate_role": "withheld_control"
+      },
+      "narrative_anchor": "Dupin reports his prior visit and observation after the fact",
+      "notes": "The key observation is attributed retrospectively to Dupin, making this a control for withheld decisive evidence.",
+      "text": "Dupin personally observes the disguised letter in plain sight before reporting the solution."
+    }
+  ],
+  "fair_play_status": "withheld_decisive_evidence",
+  "graph_file": "../sidecars/purloined-letter-control/epistemap_graph.json",
+  "manifest_file": "../sidecars/purloined-letter-control/assessment_manifest.json",
+  "metadata": {
+    "annotation_status": "candidate_human_review_needed",
+    "candidate_use": "control_fixture",
+    "source_collection": "The Gift: A Christmas and New Year's Present for 1845"
+  },
+  "narrative_unit": "scene",
+  "notes": "Candidate control annotation for withheld decisive evidence; useful for distinguishing fair-play recognition from retrospective explanation.",
+  "public_domain": true,
+  "publication_year": 1844,
+  "reveal_point": 9,
+  "schema_version": "0.1",
+  "source_license": "Public domain",
+  "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+  "story_id": "story::purloined-letter-control",
+  "title": "The Purloined Letter",
+  "validation_file": "../sidecars/purloined-letter-control/assessment_validation.json"
+}

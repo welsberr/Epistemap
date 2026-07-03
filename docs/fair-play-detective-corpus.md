@@ -35,3 +35,10 @@ decisive evidence annotations.
 The intended first pilot is 3-5 public-domain stories with human-reviewed
 annotations. Exclude or separately classify stories where the decisive evidence
 is introduced only at the reveal or is available only to the detective.
+
+Candidate fixtures live under `examples/detective_corpus/candidates/`. These
+fixtures are provisional annotations for pipeline validation and experiment
+design; they are not gold labels. Each candidate includes source metadata,
+sidecar path placeholders, false or misleading claims, and decisive evidence
+entries. Treat warning-bearing controls, such as withheld-evidence stories, as
+negative or contrast cases rather than fair-play items.

@@ -1,0 +1,63 @@
+{
+  "annotation_kind": "epistemap_detective_story_annotation",
+  "author": "Arthur Conan Doyle",
+  "claims": [
+    {
+      "claim_id": "claim::speckled-band::natural-or-fright",
+      "introduced_at": 1,
+      "metadata": {
+        "candidate_role": "false_locked_room_premise"
+      },
+      "narrative_anchor": "Helen Stoner's account of Julia's death and the locked room",
+      "notes": "The premise captures natural, fright, or inexplicable locked-room explanations later contradicted by room evidence.",
+      "speaker": "household and public premise",
+      "text": "Julia Stoner died from fright or natural causes in a locked room.",
+      "truth_status": "false"
+    },
+    {
+      "claim_id": "claim::speckled-band::engineered-animal-attack",
+      "introduced_at": 6,
+      "metadata": {
+        "candidate_role": "corrective_account"
+      },
+      "narrative_anchor": "Holmes examines the ventilator, bell-rope, and fixed bed",
+      "notes": "Included for graph treatment of mechanism and opportunity.",
+      "speaker": "investigation result",
+      "text": "The room arrangement enables an engineered attack rather than a natural locked-room death.",
+      "truth_status": "true"
+    }
+  ],
+  "decisive_evidence": [
+    {
+      "access_scope": "reader_available",
+      "available_at": 6,
+      "contradicts_claim_id": "claim::speckled-band::natural-or-fright",
+      "evidence_id": "evidence::speckled-band::ventilator-bell-rope-bed",
+      "metadata": {
+        "candidate_role": "contradiction"
+      },
+      "narrative_anchor": "inspection of the ventilator, bell-rope, and fixed bed",
+      "notes": "The physical arrangement provides a mechanism inconsistent with a merely natural or fright-based explanation.",
+      "text": "The ventilator, dummy bell-rope, and fixed bed form a physical mechanism inconsistent with a natural locked-room death."
+    }
+  ],
+  "fair_play_status": "fair_play",
+  "graph_file": "../sidecars/speckled-band/epistemap_graph.json",
+  "manifest_file": "../sidecars/speckled-band/assessment_manifest.json",
+  "metadata": {
+    "annotation_status": "candidate_human_review_needed",
+    "candidate_use": "pilot_fixture",
+    "source_collection": "The Adventures of Sherlock Holmes"
+  },
+  "narrative_unit": "scene",
+  "notes": "Candidate public-domain fair-play annotation for testing recognition of a mechanism that overturns a locked-room premise.",
+  "public_domain": true,
+  "publication_year": 1892,
+  "reveal_point": 8,
+  "schema_version": "0.1",
+  "source_license": "Public domain",
+  "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+  "story_id": "story::speckled-band",
+  "title": "The Adventure of the Speckled Band",
+  "validation_file": "../sidecars/speckled-band/assessment_validation.json"
+}
