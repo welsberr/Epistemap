@@ -22,11 +22,14 @@ from .exporters import (
     write_graphviz_dot,
     write_jsonld,
 )
+from .epistemic import epistemic_report, epistemic_summary
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .validation import GraphShape, validate_shape
 
 __all__ = [
     "Edge",
+    "epistemic_report",
+    "epistemic_summary",
     "GraphBundle",
     "GraphShape",
     "Node",
