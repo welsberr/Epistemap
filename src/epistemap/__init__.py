@@ -13,6 +13,12 @@ from .algorithms import (
     shortest_path,
     topological_order,
 )
+from .assessment_manifest import (
+    assessment_manifest,
+    read_assessment_manifest,
+    validate_assessment_manifest,
+    write_assessment_manifest,
+)
 from .bayesian import (
     BAYESIAN_PRIOR_PROFILES,
     bayesian_evidence_update,
@@ -121,6 +127,7 @@ __all__ = [
     "ancestors",
     "AssessmentValidationPolicy",
     "assessment_validation_markdown",
+    "assessment_manifest",
     "bridge_nodes",
     "connected_components",
     "cycle_nodes",
@@ -135,6 +142,7 @@ __all__ = [
     "outgoing_edges",
     "recognition_window",
     "read_g_experiment_manifest",
+    "read_assessment_manifest",
     "read_g_rows_csv",
     "reliability_level_sensitivity",
     "resolve_bayesian_prior_profile",
@@ -153,6 +161,8 @@ __all__ = [
     "typed_id",
     "validate_shape",
     "validate_assessment_readiness",
+    "validate_assessment_manifest",
+    "write_assessment_manifest",
     "write_assessment_validation_markdown",
     "write_cytoscape_json",
     "write_bayesian_reliability_markdown",

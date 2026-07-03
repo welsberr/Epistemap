@@ -38,6 +38,9 @@ Assessment-readiness validation checks whether graph assessment artifacts are
 auditable before their outputs are treated as meaningful. The validator reports
 graph integrity, evidential provenance, temporal metadata, confidence bounds,
 and Bayesian policy metadata findings as deterministic JSON or Markdown.
+Assessment manifests record the policies and artifact paths needed to reproduce
+graph assessment conditions across GroundRecall, Didactopus, and experiment
+runners.
 
 The current implementation sequence is tracked in `docs/roadmap.md`.
 

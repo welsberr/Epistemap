@@ -22,6 +22,9 @@ assessment artifacts, not decide claim truth or promotion status.
 - Bayesian Markdown reports.
 - Assessment-readiness validation reports for checking graph auditability before
   treating assessment outputs as meaningful.
+- Assessment manifests that record graph extraction, Bayesian prior, evidence
+  weighting, temporal, reliability, and validation policies for reproducible
+  experiments.
 - Temporal graph slices, tenability windows, contradiction timing, stale-claim
   detection, recognition windows, and fair-play diagnostics.
 - Canonical `G` evaluation rows, manifests, summaries, comparisons,
@@ -57,7 +60,7 @@ assessment artifacts, not decide claim truth or promotion status.
    - Emit deterministic JSON and compact Markdown.
 
 5. **Assessment manifests**
-   - Status: next.
+   - Status: implemented.
    - Extend experiment metadata to record Bayesian prior profile, graph
      extraction policy, evidence weighting policy, temporal policy, and
      reliability treatment.
