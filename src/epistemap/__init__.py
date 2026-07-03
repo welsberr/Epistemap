@@ -16,7 +16,9 @@ from .algorithms import (
 from .bayesian import (
     bayesian_evidence_update,
     bayesian_prior_sensitivity,
+    bayesian_reliability_markdown,
     beta_binomial_posterior,
+    write_bayesian_reliability_markdown,
 )
 from .ids import node_id, slugify, typed_id
 from .exporters import (
@@ -71,6 +73,7 @@ __all__ = [
     "availability_lag",
     "bayesian_evidence_update",
     "bayesian_prior_sensitivity",
+    "bayesian_reliability_markdown",
     "beta_binomial_posterior",
     "Edge",
     "claim_status_at",
@@ -127,6 +130,7 @@ __all__ = [
     "typed_id",
     "validate_shape",
     "write_cytoscape_json",
+    "write_bayesian_reliability_markdown",
     "write_g_experiment_manifest",
     "write_g_experiment_summary_markdown",
     "write_g_rows_csv",

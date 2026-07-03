@@ -5,7 +5,9 @@ from epistemap import (
     Node,
     bayesian_evidence_update,
     bayesian_prior_sensitivity,
+    bayesian_reliability_markdown,
     beta_binomial_posterior,
+    write_bayesian_reliability_markdown,
 )
 
 
@@ -57,3 +59,24 @@ def test_bayesian_prior_sensitivity_reports_fragility_range() -> None:
         > sensitivity["estimates"]["skeptical"]["posterior"]["mean"]
     )
     assert "Prior sensitivity" in sensitivity["interpretation"]
+
+
+def test_bayesian_reliability_markdown_renders_posterior_and_sensitivity(tmp_path) -> None:
+    reliability = bayesian_evidence_update(
+        support_edges=[Edge(source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8)],
+        challenge_edges=[Edge(source="claim::challenge", target="claim::main", type="contradicts", confidence=0.2)],
+    )
+    reliability["prior_sensitivity"] = bayesian_prior_sensitivity(
+        support_edges=[Edge(source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8)],
+        challenge_edges=[Edge(source="claim::challenge", target="claim::main", type="contradicts", confidence=0.2)],
+    )
+    destination = tmp_path / "bayesian.md"
+
+    markdown = bayesian_reliability_markdown(reliability)
+    write_bayesian_reliability_markdown(reliability, destination)
+
+    assert "# Epistemap Bayesian Reliability" in markdown
+    assert "Posterior mean" in markdown
+    assert "Prior Sensitivity" in markdown
+    assert "| Support |" in markdown
+    assert destination.read_text(encoding="utf-8") == markdown

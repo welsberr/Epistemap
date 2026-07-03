@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import math
 from collections import Counter
-from typing import Any, Mapping, Sequence
+from pathlib import Path
+from typing import Any, Mapping, Sequence, TextIO
 
 from .models import Edge, Node
 
@@ -132,6 +133,85 @@ def bayesian_prior_sensitivity(
     }
 
 
+def bayesian_reliability_markdown(reliability: Mapping[str, Any]) -> str:
+    """Render a compact Markdown report for a Bayesian reliability block."""
+    posterior = reliability.get("posterior", {})
+    interval = posterior.get("credible_interval", {})
+    evidence = reliability.get("evidence", {})
+    prior = reliability.get("prior", {})
+    lines = [
+        "# Epistemap Bayesian Reliability",
+        "",
+        f"- Model: `{reliability.get('model', '')}`",
+        f"- Posterior mean: `{_fmt(posterior.get('mean'))}`",
+        (
+            "- Credible interval: "
+            f"`{_fmt(interval.get('lower'))}` to `{_fmt(interval.get('upper'))}` "
+            f"at `{_fmt(interval.get('level'))}`"
+        ),
+        f"- Effective sample size: `{_fmt(evidence.get('effective_sample_size'))}`",
+        f"- Stability: `{reliability.get('stability', '')}`",
+        (
+            "- Prior: "
+            f"alpha `{_fmt(prior.get('alpha'))}`, "
+            f"beta `{_fmt(prior.get('beta'))}`, "
+            f"mean `{_fmt(prior.get('mean'))}`"
+        ),
+        "",
+        "## Evidence",
+        "",
+        "| Signal | Count | Weight |",
+        "| --- | ---: | ---: |",
+        (
+            "| Support | "
+            f"{int(evidence.get('support_edge_count', 0) or 0)} | "
+            f"{_fmt(evidence.get('success_weight'))} |"
+        ),
+        (
+            "| Challenge | "
+            f"{int(evidence.get('challenge_edge_count', 0) or 0)} | "
+            f"{_fmt(evidence.get('failure_weight'))} |"
+        ),
+    ]
+    sensitivity = reliability.get("prior_sensitivity", {})
+    estimates = sensitivity.get("estimates", {}) if isinstance(sensitivity, Mapping) else {}
+    if estimates:
+        lines.extend(
+            [
+                "",
+                "## Prior Sensitivity",
+                "",
+                f"- Mean range: `{_fmt(sensitivity.get('mean_range'))}`",
+                "",
+                "| Prior | Posterior Mean | Stability |",
+                "| --- | ---: | --- |",
+            ]
+        )
+        for name, estimate in sorted(estimates.items()):
+            lines.append(
+                "| {name} | {mean} | `{stability}` |".format(
+                    name=name,
+                    mean=_fmt(estimate.get("posterior", {}).get("mean")),
+                    stability=estimate.get("stability", ""),
+                )
+            )
+    interpretation = str(reliability.get("interpretation", "")).strip()
+    if interpretation:
+        lines.extend(["", interpretation])
+    return "\n".join(lines) + "\n"
+
+
+def write_bayesian_reliability_markdown(reliability: Mapping[str, Any], destination: str | Path | TextIO) -> None:
+    """Write a Markdown report for a Bayesian reliability block."""
+    text = bayesian_reliability_markdown(reliability)
+    if hasattr(destination, "write"):
+        destination.write(text)
+        return
+    path = Path(destination)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
 def _edge_evidence_weight(edge: Edge, nodes_by_id: Mapping[str, Node]) -> float:
     confidence = (
         edge.confidence
@@ -249,3 +329,12 @@ def _normal_z_for_credibility(credibility: float) -> float:
 
 def _clamp(value: float) -> float:
     return max(0.0, min(1.0, value))
+
+
+def _fmt(value: Any) -> str:
+    if value in {"", None}:
+        return ""
+    try:
+        return f"{float(value):.6f}"
+    except (TypeError, ValueError):
+        return str(value)

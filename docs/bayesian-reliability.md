@@ -54,10 +54,14 @@ strong prior dependence rather than stable clarification.
 The Bayesian layer changes the next useful Epistemap features from generic
 confidence scoring toward auditable assessment workflows.
 
+Implemented:
+
+- compact Markdown rendering for `bayesian_reliability` blocks via
+  `bayesian_reliability_markdown()` and
+  `write_bayesian_reliability_markdown()`.
+
 Near-term:
 
-- add a compact Markdown renderer for `bayesian_reliability` blocks so query
-  bundles can be reviewed without inspecting nested JSON;
 - add threshold helpers that classify posterior estimates as `stable_support`,
   `fragile_support`, `contested`, `thin_evidence`, or `prior_sensitive`;
 - expose prior profiles by name, such as `neutral`, `skeptical`,
