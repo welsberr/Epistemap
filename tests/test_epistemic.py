@@ -46,9 +46,12 @@ def test_epistemic_summary_surfaces_support_challenge_and_grounding() -> None:
     assert summary["summary"]["challenge_count"] == 1
     assert "challenged" in summary["flags"]
     assert summary["source_role_summary"]["mechanism"] == 2
+    assert summary["reliability"]["band"] in {"moderate", "strong"}
+    assert "challenge_penalty" in summary["reliability"]["components"]
 
 
 def test_epistemic_report_counts_flags() -> None:
     report = epistemic_report(_bundle())
     assert report["summary"]["node_count"] == 3
     assert report["summary"]["flag_counts"]["challenged"] >= 1
+    assert report["summary"]["reliability_bands"]

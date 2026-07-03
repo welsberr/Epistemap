@@ -50,6 +50,14 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         grounding=grounding,
         source_roles=source_roles,
     )
+    reliability = reliability_assessment(
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        revision_edges=revision_edges,
+        relevant_nodes=relevant_nodes,
+        grounding=grounding,
+        source_roles=source_roles,
+    )
     return {
         "node_id": node_id,
         "node_type": target.type if target is not None else "",
@@ -65,6 +73,7 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         "grounding_status_summary": dict(sorted(grounding.items())),
         "source_role_summary": dict(sorted(source_roles.items())),
         "flags": flags,
+        "reliability": reliability,
         "support_edges": [_edge_ref(edge) for edge in support_edges[:12]],
         "challenge_edges": [_edge_ref(edge) for edge in challenge_edges[:12]],
         "revision_edges": [_edge_ref(edge) for edge in revision_edges[:12]],
@@ -80,15 +89,64 @@ def epistemic_report(bundle: GraphBundle, *, node_types: set[str] | None = None)
         if node.type in node_types
     ]
     flag_counts: Counter[str] = Counter()
+    reliability_bands: Counter[str] = Counter()
     for summary in summaries:
         flag_counts.update(summary["flags"])
+        reliability_bands.update([summary.get("reliability", {}).get("band", "unknown")])
     return {
         "summary": {
             "node_count": len(summaries),
             "flagged_node_count": sum(1 for item in summaries if item["flags"]),
             "flag_counts": dict(sorted(flag_counts.items())),
+            "reliability_bands": dict(sorted(reliability_bands.items())),
         },
         "nodes": summaries,
+    }
+
+
+def reliability_assessment(
+    *,
+    support_edges: list[Edge],
+    challenge_edges: list[Edge],
+    revision_edges: list[Edge],
+    relevant_nodes: list[Node],
+    grounding: Counter[str],
+    source_roles: Counter[str],
+) -> dict[str, Any]:
+    grounding_score = _grounding_score(grounding)
+    support_score = min(1.0, len(support_edges) / 3.0)
+    challenge_penalty = min(0.35, len(challenge_edges) * 0.12)
+    revision_bonus = min(0.15, len(revision_edges) * 0.05)
+    confidence_values = [node.confidence for node in relevant_nodes if node.confidence is not None]
+    confidence_score = sum(confidence_values) / len(confidence_values) if confidence_values else 0.5
+    diversity_score = min(1.0, len(source_roles) / 3.0) if source_roles else 0.0
+    score = (
+        0.30 * grounding_score
+        + 0.25 * support_score
+        + 0.20 * confidence_score
+        + 0.15 * diversity_score
+        + revision_bonus
+        - challenge_penalty
+    )
+    score = max(0.0, min(1.0, score))
+    return {
+        "score": round(score, 3),
+        "band": _score_band(score),
+        "components": {
+            "grounding": round(grounding_score, 3),
+            "support": round(support_score, 3),
+            "confidence": round(confidence_score, 3),
+            "source_role_diversity": round(diversity_score, 3),
+            "challenge_penalty": round(challenge_penalty, 3),
+            "revision_bonus": round(revision_bonus, 3),
+        },
+        "rationale": _reliability_rationale(
+            grounding=grounding,
+            support_edges=support_edges,
+            challenge_edges=challenge_edges,
+            revision_edges=revision_edges,
+            source_roles=source_roles,
+        ),
     }
 
 
@@ -148,6 +206,56 @@ def _epistemic_flags(
     if len(source_roles) == 1:
         flags.append("narrow_source_role")
     return flags
+
+
+def _grounding_score(grounding: Counter[str]) -> float:
+    if not grounding:
+        return 0.35
+    total = sum(grounding.values())
+    weighted = (
+        grounding.get("grounded", 0) * 1.0
+        + grounding.get("partially_grounded", 0) * 0.55
+        + grounding.get("ungrounded", 0) * 0.05
+    )
+    return weighted / total
+
+
+def _score_band(score: float) -> str:
+    if score >= 0.75:
+        return "strong"
+    if score >= 0.5:
+        return "moderate"
+    if score >= 0.3:
+        return "weak"
+    return "poor"
+
+
+def _reliability_rationale(
+    *,
+    grounding: Counter[str],
+    support_edges: list[Edge],
+    challenge_edges: list[Edge],
+    revision_edges: list[Edge],
+    source_roles: Counter[str],
+) -> list[str]:
+    rationale: list[str] = []
+    if support_edges:
+        rationale.append(f"{len(support_edges)} direct support edge(s)")
+    else:
+        rationale.append("no direct support edge")
+    if challenge_edges:
+        rationale.append(f"{len(challenge_edges)} challenge edge(s)")
+    if revision_edges:
+        rationale.append(f"{len(revision_edges)} revision/qualification edge(s)")
+    if grounding:
+        rationale.append("grounding=" + ",".join(f"{key}:{value}" for key, value in sorted(grounding.items())))
+    else:
+        rationale.append("no explicit grounding status")
+    if source_roles:
+        rationale.append("source_roles=" + ",".join(sorted(source_roles)))
+    else:
+        rationale.append("no source-role diversity signal")
+    return rationale
 
 
 def _edge_ref(edge: Edge) -> dict[str, Any]:
