@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from epistemap import (
     Edge,
     G_ROW_FIELDS,
@@ -11,6 +13,7 @@ from epistemap import (
     g_evaluation_row,
     g_estimate,
     g_experiment_summary,
+    g_experiment_summary_from_files,
     g_rows_to_csv,
     graph_with_component_reliability,
     normalize_g_evaluation_row,
@@ -18,6 +21,7 @@ from epistemap import (
     read_g_rows_csv,
     reliability_level_sensitivity,
     g_summary_comparison,
+    g_summary_comparison_from_files,
     write_g_experiment_manifest,
     write_g_rows_csv,
 )
@@ -190,6 +194,30 @@ def test_g_experiment_summary_groups_rows_by_condition() -> None:
     assert "not a source-truth" in summary["interpretation"]
 
 
+def test_g_experiment_summary_from_files_writes_summary(tmp_path) -> None:
+    rows_path = tmp_path / "g_rows.csv"
+    manifest_path = tmp_path / "g_manifest.json"
+    summary_path = tmp_path / "nested" / "g_summary.json"
+    rows = [
+        g_evaluation_row(y=1, p=0.9, env="C", condition="plain"),
+        g_evaluation_row(y=0, p=0.1, env="C", condition="plain"),
+        g_evaluation_row(y=1, p=0.8, env="K", condition="plain"),
+        g_evaluation_row(y=0, p=0.2, env="K", condition="plain"),
+    ]
+    manifest = g_experiment_manifest(
+        experiment_id="file-summary",
+        row_file="g_rows.csv",
+        evaluation_target="recognition",
+    )
+    write_g_rows_csv(rows, rows_path)
+    write_g_experiment_manifest(manifest, manifest_path)
+
+    summary = g_experiment_summary_from_files(rows_path, manifest_json=manifest_path, out_json=summary_path)
+
+    assert summary["manifest"]["experiment_id"] == "file-summary"
+    assert summary_path.exists()
+
+
 def test_g_summary_comparison_ranks_experiments_against_baseline() -> None:
     weak = g_experiment_summary(
         _rows(target_confidence=0.6),
@@ -208,6 +236,27 @@ def test_g_summary_comparison_ranks_experiments_against_baseline() -> None:
     assert comparison["summaries"][0]["rank"] == 1
     assert comparison["summaries"][0]["delta_from_baseline"] > 0
     assert "not a source-truth" in comparison["interpretation"]
+
+
+def test_g_summary_comparison_from_files_writes_comparison(tmp_path) -> None:
+    weak_path = tmp_path / "weak.json"
+    strong_path = tmp_path / "strong.json"
+    comparison_path = tmp_path / "comparison.json"
+    weak = g_experiment_summary(
+        _rows(target_confidence=0.6),
+        manifest={"experiment_id": "plain", "evaluation_target": "recognition"},
+    )
+    strong = g_experiment_summary(
+        _rows(target_confidence=0.9),
+        manifest={"experiment_id": "kg", "evaluation_target": "recognition"},
+    )
+    weak_path.write_text(json.dumps(weak), encoding="utf-8")
+    strong_path.write_text(json.dumps(strong), encoding="utf-8")
+
+    comparison = g_summary_comparison_from_files([weak_path, strong_path], baseline_id="plain", out_json=comparison_path)
+
+    assert comparison["summaries"][0]["experiment_id"] == "kg"
+    assert comparison_path.exists()
 
 
 def test_g_experiment_comparison_builds_summaries_from_rows() -> None:

@@ -59,6 +59,11 @@ comparisons are appropriate for ranking experimental treatments, hardware
 profiles, prompt variants, or graph interventions, provided the underlying row
 sets have compatible evaluation targets and environments.
 
+For generated artifacts, `g_experiment_summary_from_files()` reads a row CSV and
+optional manifest JSON, while `g_summary_comparison_from_files()` reads multiple
+summary JSON files. Both can write deterministic JSON outputs for downstream
+review or repository artifacts.
+
 ## Reliability Sensitivity
 
 There is merit in asking how `delta_G` changes when a graph component is treated

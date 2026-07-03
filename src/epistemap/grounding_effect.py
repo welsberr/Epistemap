@@ -311,6 +311,32 @@ def g_experiment_summary(
     }
 
 
+def g_experiment_summary_from_files(
+    rows_csv: str | Path,
+    *,
+    manifest_json: str | Path | None = None,
+    out_json: str | Path | None = None,
+    group_by: str = "condition",
+    target_env: str = "K",
+    clean_env: str = "C",
+    weights: tuple[float, float, float] = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0),
+) -> dict[str, Any]:
+    """Read G row and manifest files, then write or return an experiment summary."""
+
+    manifest = read_g_experiment_manifest(manifest_json) if manifest_json is not None else {}
+    summary = g_experiment_summary(
+        read_g_rows_csv(rows_csv),
+        manifest=manifest,
+        group_by=group_by,
+        target_env=target_env,
+        clean_env=clean_env,
+        weights=weights,
+    )
+    if out_json is not None:
+        _write_json(out_json, summary)
+    return summary
+
+
 def g_summary_comparison(
     summaries: Iterable[Mapping[str, Any]],
     *,
@@ -337,6 +363,21 @@ def g_summary_comparison(
             "not a source-truth or provenance ranking."
         ),
     }
+
+
+def g_summary_comparison_from_files(
+    summary_jsons: Iterable[str | Path],
+    *,
+    baseline_id: str | None = None,
+    out_json: str | Path | None = None,
+) -> dict[str, Any]:
+    """Read G summary JSON files, then write or return a comparison."""
+
+    summaries = [json.loads(Path(path).read_text(encoding="utf-8")) for path in summary_jsons]
+    comparison = g_summary_comparison(summaries, baseline_id=baseline_id)
+    if out_json is not None:
+        _write_json(out_json, comparison)
+    return comparison
 
 
 def g_experiment_comparison(
@@ -471,6 +512,12 @@ def _coerce_row(row: Mapping[str, Any]) -> dict[str, float]:
 
 def _blank_manifest_value(value: Any) -> bool:
     return value is None or value == "" or value == ()
+
+
+def _write_json(path: str | Path, payload: Mapping[str, Any]) -> None:
+    destination = Path(path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(json.dumps(dict(payload), indent=2), encoding="utf-8")
 
 
 def _summary_comparison_row(summary: Mapping[str, Any]) -> dict[str, Any]:
