@@ -22,7 +22,11 @@ def _bundle() -> GraphBundle:
                 title="Denialist counterclaim",
                 confidence=0.2,
                 provenance=[ProvenanceRef(grounding_status="ungrounded")],
-                metadata={"source_roles": ["argumentation"]},
+                metadata={
+                    "source_roles": ["argumentation"],
+                    "source_quality": "low",
+                    "source_stance": "manufactured_doubt",
+                },
             ),
             Node(
                 id="obs::paper",
@@ -46,8 +50,14 @@ def test_epistemic_summary_surfaces_support_challenge_and_grounding() -> None:
     assert summary["summary"]["challenge_count"] == 1
     assert "challenged" in summary["flags"]
     assert summary["source_role_summary"]["mechanism"] == 2
-    assert summary["reliability"]["band"] in {"moderate", "strong"}
+    assert summary["source_quality_summary"]["low"] == 1
+    assert summary["source_stance_summary"]["manufactured_doubt"] == 1
+    assert "low_trust_source_signal" in summary["flags"]
+    assert "adversarial_source_signal" in summary["flags"]
+    assert summary["reliability"]["band"] in {"weak", "moderate", "strong"}
     assert "challenge_penalty" in summary["reliability"]["components"]
+    assert summary["reliability"]["components"]["source_quality"] < 1
+    assert summary["reliability"]["components"]["adversarial_penalty"] > 0
 
 
 def test_epistemic_report_counts_flags() -> None:

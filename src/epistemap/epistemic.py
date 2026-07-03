@@ -8,6 +8,10 @@ from .models import Edge, GraphBundle, Node
 SUPPORT_EDGE_TYPES = {"supports", "supports_claim", "about_concept", "supports_concept", "teaches_concept"}
 CHALLENGE_EDGE_TYPES = {"contradicts", "challenges", "disputes"}
 REVISION_EDGE_TYPES = {"supersedes", "corrects", "retracts", "qualifies"}
+HIGH_TRUST_VALUES = {"high", "trusted", "peer_reviewed", "primary", "official", "expert_reviewed"}
+MIXED_TRUST_VALUES = {"medium", "mixed", "provisional", "secondary", "tertiary"}
+LOW_TRUST_VALUES = {"low", "rejected", "unreviewed", "advocacy", "misinformation", "denialist", "retracted"}
+ADVERSARIAL_STANCE_VALUES = {"adversarial", "denialist", "misinformation", "manufactured_doubt", "trust_eroding"}
 
 
 def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_threshold: float = 0.5) -> dict[str, Any]:
@@ -42,6 +46,8 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
     ]
     grounding = Counter(_grounding_values(relevant_nodes, relevant_edges))
     source_roles = Counter(_source_roles(relevant_nodes))
+    source_quality = Counter(_source_quality_values(relevant_nodes, relevant_edges))
+    source_stances = Counter(_source_stance_values(relevant_nodes, relevant_edges))
     flags = _epistemic_flags(
         support_edges=support_edges,
         challenge_edges=challenge_edges,
@@ -49,6 +55,8 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         low_confidence_nodes=low_confidence_nodes,
         grounding=grounding,
         source_roles=source_roles,
+        source_quality=source_quality,
+        source_stances=source_stances,
     )
     reliability = reliability_assessment(
         support_edges=support_edges,
@@ -57,6 +65,8 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         relevant_nodes=relevant_nodes,
         grounding=grounding,
         source_roles=source_roles,
+        source_quality=source_quality,
+        source_stances=source_stances,
     )
     return {
         "node_id": node_id,
@@ -72,6 +82,8 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         },
         "grounding_status_summary": dict(sorted(grounding.items())),
         "source_role_summary": dict(sorted(source_roles.items())),
+        "source_quality_summary": dict(sorted(source_quality.items())),
+        "source_stance_summary": dict(sorted(source_stances.items())),
         "flags": flags,
         "reliability": reliability,
         "support_edges": [_edge_ref(edge) for edge in support_edges[:12]],
@@ -112,7 +124,11 @@ def reliability_assessment(
     relevant_nodes: list[Node],
     grounding: Counter[str],
     source_roles: Counter[str],
+    source_quality: Counter[str] | None = None,
+    source_stances: Counter[str] | None = None,
 ) -> dict[str, Any]:
+    source_quality = source_quality or Counter()
+    source_stances = source_stances or Counter()
     grounding_score = _grounding_score(grounding)
     support_score = min(1.0, len(support_edges) / 3.0)
     challenge_penalty = min(0.35, len(challenge_edges) * 0.12)
@@ -120,13 +136,17 @@ def reliability_assessment(
     confidence_values = [node.confidence for node in relevant_nodes if node.confidence is not None]
     confidence_score = sum(confidence_values) / len(confidence_values) if confidence_values else 0.5
     diversity_score = min(1.0, len(source_roles) / 3.0) if source_roles else 0.0
+    source_quality_score = _source_quality_score(source_quality)
+    adversarial_penalty = _adversarial_penalty(source_stances)
     score = (
-        0.30 * grounding_score
+        0.25 * grounding_score
         + 0.25 * support_score
-        + 0.20 * confidence_score
-        + 0.15 * diversity_score
+        + 0.18 * confidence_score
+        + 0.12 * diversity_score
+        + 0.12 * source_quality_score
         + revision_bonus
         - challenge_penalty
+        - adversarial_penalty
     )
     score = max(0.0, min(1.0, score))
     return {
@@ -137,7 +157,9 @@ def reliability_assessment(
             "support": round(support_score, 3),
             "confidence": round(confidence_score, 3),
             "source_role_diversity": round(diversity_score, 3),
+            "source_quality": round(source_quality_score, 3),
             "challenge_penalty": round(challenge_penalty, 3),
+            "adversarial_penalty": round(adversarial_penalty, 3),
             "revision_bonus": round(revision_bonus, 3),
         },
         "rationale": _reliability_rationale(
@@ -146,6 +168,8 @@ def reliability_assessment(
             challenge_edges=challenge_edges,
             revision_edges=revision_edges,
             source_roles=source_roles,
+            source_quality=source_quality,
+            source_stances=source_stances,
         ),
     }
 
@@ -183,6 +207,49 @@ def _source_roles(nodes: list[Node]) -> list[str]:
     return roles
 
 
+def _source_quality_values(nodes: list[Node], edges: list[Edge]) -> list[str]:
+    values: list[str] = []
+    for node in nodes:
+        values.extend(_metadata_values(node.metadata, ("source_quality", "source_reliability", "trust_status")))
+        for item in node.provenance:
+            values.extend(_metadata_values(item.metadata, ("source_quality", "source_reliability", "trust_status")))
+    for edge in edges:
+        values.extend(_metadata_values(edge.metadata, ("source_quality", "source_reliability", "trust_status")))
+        for item in edge.provenance:
+            values.extend(_metadata_values(item.metadata, ("source_quality", "source_reliability", "trust_status")))
+    return values
+
+
+def _source_stance_values(nodes: list[Node], edges: list[Edge]) -> list[str]:
+    values: list[str] = []
+    for node in nodes:
+        values.extend(_metadata_values(node.metadata, ("source_stance", "stance", "adversarial_intent")))
+        if node.metadata.get("adversarial") is True:
+            values.append("adversarial")
+        if node.metadata.get("denialist") is True:
+            values.append("denialist")
+    for edge in edges:
+        values.extend(_metadata_values(edge.metadata, ("source_stance", "stance", "adversarial_intent")))
+        if edge.metadata.get("adversarial") is True:
+            values.append("adversarial")
+        if edge.metadata.get("denialist") is True:
+            values.append("denialist")
+    return values
+
+
+def _metadata_values(metadata: dict[str, Any], keys: tuple[str, ...]) -> list[str]:
+    values: list[str] = []
+    for key in keys:
+        raw = metadata.get(key)
+        if isinstance(raw, str):
+            value = raw.strip().lower()
+            if value:
+                values.append(value)
+        elif isinstance(raw, list):
+            values.extend(str(value).strip().lower() for value in raw if str(value).strip())
+    return values
+
+
 def _epistemic_flags(
     *,
     support_edges: list[Edge],
@@ -191,6 +258,8 @@ def _epistemic_flags(
     low_confidence_nodes: list[Node],
     grounding: Counter[str],
     source_roles: Counter[str],
+    source_quality: Counter[str],
+    source_stances: Counter[str],
 ) -> list[str]:
     flags: list[str] = []
     if not support_edges:
@@ -205,6 +274,10 @@ def _epistemic_flags(
         flags.append("weak_grounding")
     if len(source_roles) == 1:
         flags.append("narrow_source_role")
+    if any(value in LOW_TRUST_VALUES for value in source_quality):
+        flags.append("low_trust_source_signal")
+    if any(value in ADVERSARIAL_STANCE_VALUES for value in source_stances):
+        flags.append("adversarial_source_signal")
     return flags
 
 
@@ -230,6 +303,30 @@ def _score_band(score: float) -> str:
     return "poor"
 
 
+def _source_quality_score(source_quality: Counter[str]) -> float:
+    if not source_quality:
+        return 0.5
+    total = sum(source_quality.values())
+    weighted = 0.0
+    for value, count in source_quality.items():
+        if value in HIGH_TRUST_VALUES:
+            weighted += count * 1.0
+        elif value in MIXED_TRUST_VALUES:
+            weighted += count * 0.55
+        elif value in LOW_TRUST_VALUES:
+            weighted += count * 0.1
+        else:
+            weighted += count * 0.45
+    return weighted / total
+
+
+def _adversarial_penalty(source_stances: Counter[str]) -> float:
+    if not source_stances:
+        return 0.0
+    adversarial_count = sum(count for value, count in source_stances.items() if value in ADVERSARIAL_STANCE_VALUES)
+    return min(0.25, adversarial_count * 0.1)
+
+
 def _reliability_rationale(
     *,
     grounding: Counter[str],
@@ -237,6 +334,8 @@ def _reliability_rationale(
     challenge_edges: list[Edge],
     revision_edges: list[Edge],
     source_roles: Counter[str],
+    source_quality: Counter[str],
+    source_stances: Counter[str],
 ) -> list[str]:
     rationale: list[str] = []
     if support_edges:
@@ -255,6 +354,10 @@ def _reliability_rationale(
         rationale.append("source_roles=" + ",".join(sorted(source_roles)))
     else:
         rationale.append("no source-role diversity signal")
+    if source_quality:
+        rationale.append("source_quality=" + ",".join(f"{key}:{value}" for key, value in sorted(source_quality.items())))
+    if source_stances:
+        rationale.append("source_stances=" + ",".join(f"{key}:{value}" for key, value in sorted(source_stances.items())))
     return rationale
 
 
