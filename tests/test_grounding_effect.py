@@ -235,6 +235,7 @@ def test_g_summary_comparison_ranks_experiments_against_baseline() -> None:
     assert comparison["summaries"][0]["experiment_id"] == "kg"
     assert comparison["summaries"][0]["rank"] == 1
     assert comparison["summaries"][0]["delta_from_baseline"] > 0
+    assert comparison["compatibility"]["compatible"] is True
     assert "not a source-truth" in comparison["interpretation"]
 
 
@@ -288,6 +289,24 @@ def test_g_summary_comparison_preserves_metric_warnings() -> None:
     comparison = g_summary_comparison([summary])
 
     assert comparison["summaries"][0]["warning"] == "both clean and target environments are required"
+    assert "one or more summaries lack clean/reference rows" in comparison["warnings"]
+
+
+def test_g_summary_comparison_flags_mixed_evaluation_targets() -> None:
+    recognition = g_experiment_summary(
+        _rows(target_confidence=0.8),
+        manifest={"experiment_id": "recognition", "evaluation_target": "recognition"},
+    )
+    translation = g_experiment_summary(
+        _rows(target_confidence=0.9),
+        manifest={"experiment_id": "translation", "evaluation_target": "translation"},
+    )
+
+    comparison = g_summary_comparison([recognition, translation])
+
+    assert comparison["compatibility"]["compatible"] is False
+    assert comparison["compatibility"]["evaluation_targets"] == ["recognition", "translation"]
+    assert "mixed evaluation targets; compare G values only with caution" in comparison["warnings"]
 
 
 def test_reliability_level_sensitivity_is_counterfactual_not_verdict() -> None:

@@ -354,10 +354,13 @@ def g_summary_comparison(
     for rank, row in enumerate(rows, start=1):
         row["rank"] = rank
         row["delta_from_baseline"] = row["G"] - baseline_g
+    compatibility = _summary_comparison_compatibility(rows)
     return {
         "comparison_kind": "epistemap_g_summary_comparison",
         "baseline_id": baseline_id,
         "summaries": rows,
+        "compatibility": compatibility,
+        "warnings": compatibility["warnings"],
         "interpretation": (
             "Compares learner/model grounding-effectiveness summaries; "
             "not a source-truth or provenance ranking."
@@ -540,6 +543,26 @@ def _summary_comparison_row(summary: Mapping[str, Any]) -> dict[str, Any]:
     if "warning" in overall:
         row["warning"] = overall["warning"]
     return row
+
+
+def _summary_comparison_compatibility(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    targets = sorted({str(row.get("evaluation_target", "")) for row in rows if str(row.get("evaluation_target", ""))})
+    corpora = sorted({str(row.get("corpus", "")) for row in rows if str(row.get("corpus", ""))})
+    warnings: list[str] = []
+    if len(targets) > 1:
+        warnings.append("mixed evaluation targets; compare G values only with caution")
+    if len(corpora) > 1:
+        warnings.append("mixed corpora; comparison may reflect corpus differences as well as treatment effects")
+    if any(int(row.get("n", {}).get("clean", 0) or 0) == 0 for row in rows):
+        warnings.append("one or more summaries lack clean/reference rows")
+    if any(int(row.get("n", {}).get("target", 0) or 0) == 0 for row in rows):
+        warnings.append("one or more summaries lack target/shifted rows")
+    return {
+        "compatible": not warnings,
+        "evaluation_targets": targets,
+        "corpora": corpora,
+        "warnings": warnings,
+    }
 
 
 def _brier(rows: Sequence[Mapping[str, float]]) -> float:
