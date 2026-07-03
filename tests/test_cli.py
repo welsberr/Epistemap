@@ -1,0 +1,109 @@
+from __future__ import annotations
+
+import json
+import sys
+
+from epistemap.cli import main
+from epistemap.grounding_effect import (
+    g_evaluation_row,
+    g_experiment_manifest,
+    g_experiment_summary,
+    write_g_experiment_manifest,
+    write_g_rows_csv,
+)
+
+
+def test_cli_g_summary_writes_summary(tmp_path, monkeypatch, capsys) -> None:
+    rows_path = tmp_path / "g_rows.csv"
+    manifest_path = tmp_path / "g_manifest.json"
+    summary_path = tmp_path / "g_summary.json"
+    write_g_rows_csv(
+        [
+            g_evaluation_row(y=1, p=0.9, env="C", condition="plain"),
+            g_evaluation_row(y=0, p=0.1, env="C", condition="plain"),
+            g_evaluation_row(y=1, p=0.8, env="K", condition="plain"),
+            g_evaluation_row(y=0, p=0.2, env="K", condition="plain"),
+        ],
+        rows_path,
+    )
+    write_g_experiment_manifest(
+        g_experiment_manifest(
+            experiment_id="cli-summary",
+            row_file="g_rows.csv",
+            evaluation_target="recognition",
+        ),
+        manifest_path,
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "epistemap",
+            "g-summary",
+            str(rows_path),
+            "--manifest",
+            str(manifest_path),
+            "--out",
+            str(summary_path),
+        ],
+    )
+
+    main()
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["manifest"]["experiment_id"] == "cli-summary"
+    assert summary_path.exists()
+
+
+def test_cli_g_compare_writes_comparison(tmp_path, monkeypatch, capsys) -> None:
+    weak_path = tmp_path / "weak.json"
+    strong_path = tmp_path / "strong.json"
+    comparison_path = tmp_path / "comparison.json"
+    weak_path.write_text(
+        json.dumps(
+            g_experiment_summary(
+                [
+                    g_evaluation_row(y=1, p=0.9, env="C"),
+                    g_evaluation_row(y=0, p=0.1, env="C"),
+                    g_evaluation_row(y=1, p=0.6, env="K"),
+                    g_evaluation_row(y=0, p=0.4, env="K"),
+                ],
+                manifest={"experiment_id": "weak", "evaluation_target": "recognition"},
+            )
+        ),
+        encoding="utf-8",
+    )
+    strong_path.write_text(
+        json.dumps(
+            g_experiment_summary(
+                [
+                    g_evaluation_row(y=1, p=0.9, env="C"),
+                    g_evaluation_row(y=0, p=0.1, env="C"),
+                    g_evaluation_row(y=1, p=0.9, env="K"),
+                    g_evaluation_row(y=0, p=0.1, env="K"),
+                ],
+                manifest={"experiment_id": "strong", "evaluation_target": "recognition"},
+            )
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "epistemap",
+            "g-compare",
+            str(weak_path),
+            str(strong_path),
+            "--baseline-id",
+            "weak",
+            "--out",
+            str(comparison_path),
+        ],
+    )
+
+    main()
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["summaries"][0]["experiment_id"] == "strong"
+    assert comparison_path.exists()
