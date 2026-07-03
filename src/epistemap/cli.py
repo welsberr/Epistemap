@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
+from .detective_corpus import write_detective_corpus_sidecars
 from .grounding_effect import (
     g_experiment_summary_from_files,
     g_summary_comparison_from_files,
@@ -40,6 +41,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Exit with status 2 if compatibility diagnostics contain warnings.",
     )
 
+    detective = subparsers.add_parser(
+        "detective-sidecars",
+        help="Write temporal graph and fair-play diagnostic sidecars from detective annotations.",
+    )
+    detective.add_argument("annotations", nargs="+", help="Detective annotation JSON files.")
+    detective.add_argument("--out-dir", required=True, help="Directory for generated sidecars.")
+
     return parser
 
 
@@ -65,6 +73,8 @@ def main() -> None:
         )
         if args.out_md is not None:
             write_g_summary_comparison_markdown(payload, args.out_md)
+    elif args.command == "detective-sidecars":
+        payload = write_detective_corpus_sidecars(args.annotations, args.out_dir)
     else:
         parser.print_help()
         return

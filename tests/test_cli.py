@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 
 from epistemap.cli import main
 from epistemap.grounding_effect import (
@@ -210,3 +211,34 @@ def test_cli_g_compare_can_require_compatible_inputs(tmp_path, monkeypatch, caps
         raise AssertionError("expected incompatible comparison to exit with status 2")
     payload = json.loads(capsys.readouterr().out)
     assert "mixed evaluation targets; compare G values only with caution" in payload["warnings"]
+
+
+def test_cli_detective_sidecars_writes_graphs_and_diagnostics(tmp_path, monkeypatch, capsys) -> None:
+    fixture_dir = (
+        Path(__file__).resolve().parents[1]
+        / "examples"
+        / "detective_corpus"
+        / "candidates"
+    )
+    out_dir = tmp_path / "sidecars"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "epistemap",
+            "detective-sidecars",
+            str(fixture_dir / "blue-carbuncle.json"),
+            str(fixture_dir / "purloined-letter-control.json"),
+            "--out-dir",
+            str(out_dir),
+        ],
+    )
+
+    main()
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["sidecar_count"] == 2
+    assert payload["fair_play_rating_counts"] == {"fair": 1, "unfair": 1}
+    assert (out_dir / "detective_corpus_sidecars.json").exists()
+    assert (out_dir / "blue-carbuncle" / "epistemap_graph.json").exists()
+    assert (out_dir / "purloined-letter-control" / "fair_play_diagnostic.json").exists()

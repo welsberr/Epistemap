@@ -1,0 +1,281 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "story::speckled-band::detective-annotation-graph",
+  "title": "The Adventure of the Speckled Band",
+  "description": "Temporal graph derived from detective annotation story::speckled-band",
+  "nodes": [
+    {
+      "id": "story::speckled-band",
+      "type": "story",
+      "title": "The Adventure of the Speckled Band",
+      "description": "Candidate public-domain fair-play annotation for testing recognition of a mechanism that overturns a locked-room premise.",
+      "aliases": [],
+      "status": "fair_play",
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "publication_year": 1892,
+        "public_domain": true,
+        "source_license": "Public domain",
+        "narrative_unit": "scene",
+        "reveal_point": 8,
+        "annotation_status": "candidate_human_review_needed",
+        "candidate_use": "pilot_fixture",
+        "source_collection": "The Adventures of Sherlock Holmes"
+      }
+    },
+    {
+      "id": "claim::speckled-band::natural-or-fright",
+      "type": "claim",
+      "title": "Julia Stoner died from fright or natural causes in a locked room.",
+      "description": "The premise captures natural, fright, or inexplicable locked-room explanations later contradicted by room evidence.",
+      "aliases": [],
+      "status": "false",
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "household and public premise",
+        "truth_status": "false",
+        "narrative_anchor": "Helen Stoner's account of Julia's death and the locked room",
+        "introduced_at": 1,
+        "story_id": "story::speckled-band",
+        "candidate_role": "false_locked_room_premise"
+      }
+    },
+    {
+      "id": "claim::speckled-band::engineered-animal-attack",
+      "type": "claim",
+      "title": "The room arrangement enables an engineered attack rather than a natural locked-room death.",
+      "description": "Included for graph treatment of mechanism and opportunity.",
+      "aliases": [],
+      "status": "true",
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "investigation result",
+        "truth_status": "true",
+        "narrative_anchor": "Holmes examines the ventilator, bell-rope, and fixed bed",
+        "introduced_at": 6,
+        "story_id": "story::speckled-band",
+        "candidate_role": "corrective_account"
+      }
+    },
+    {
+      "id": "evidence::speckled-band::ventilator-bell-rope-bed",
+      "type": "evidence",
+      "title": "The ventilator, dummy bell-rope, and fixed bed form a physical mechanism inconsistent with a natural locked-room death.",
+      "description": "The physical arrangement provides a mechanism inconsistent with a merely natural or fright-based explanation.",
+      "aliases": [],
+      "status": "reader_available",
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 6,
+        "narrative_anchor": "inspection of the ventilator, bell-rope, and fixed bed",
+        "access_scope": "reader_available",
+        "story_id": "story::speckled-band",
+        "candidate_role": "contradiction"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "story::speckled-band",
+      "target": "claim::speckled-band::natural-or-fright",
+      "type": "contains_claim",
+      "id": "edge::story::speckled-band::contains::claim::speckled-band::natural-or-fright",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::speckled-band",
+        "introduced_at": 1
+      }
+    },
+    {
+      "source": "story::speckled-band",
+      "target": "claim::speckled-band::engineered-animal-attack",
+      "type": "contains_claim",
+      "id": "edge::story::speckled-band::contains::claim::speckled-band::engineered-animal-attack",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::speckled-band",
+        "introduced_at": 6
+      }
+    },
+    {
+      "source": "story::speckled-band",
+      "target": "evidence::speckled-band::ventilator-bell-rope-bed",
+      "type": "contains_evidence",
+      "id": "edge::story::speckled-band::contains::evidence::speckled-band::ventilator-bell-rope-bed",
+      "title": "Story contains decisive evidence",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::speckled-band",
+        "available_at": 6
+      }
+    },
+    {
+      "source": "evidence::speckled-band::ventilator-bell-rope-bed",
+      "target": "claim::speckled-band::natural-or-fright",
+      "type": "contradicts",
+      "id": "edge::evidence::speckled-band::ventilator-bell-rope-bed::contradicts::claim::speckled-band::natural-or-fright",
+      "title": "Evidence contradicts claim",
+      "justification": "The ventilator, dummy bell-rope, and fixed bed form a physical mechanism inconsistent with a natural locked-room death.",
+      "status": "",
+      "evidence_ids": [
+        "evidence::speckled-band::ventilator-bell-rope-bed"
+      ],
+      "provenance": [
+        {
+          "source_id": "story::speckled-band",
+          "artifact_id": "The Adventure of the Speckled Band",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 6,
+        "narrative_anchor": "inspection of the ventilator, bell-rope, and fixed bed",
+        "access_scope": "reader_available",
+        "story_id": "story::speckled-band"
+      }
+    }
+  ],
+  "metadata": {
+    "annotation_kind": "epistemap_detective_story_annotation",
+    "schema_version": "0.1",
+    "story_id": "story::speckled-band",
+    "fair_play_status": "fair_play",
+    "reveal_point": 8,
+    "narrative_unit": "scene",
+    "summary": {
+      "claim_count": 2,
+      "decisive_evidence_count": 1
+    }
+  },
+  "summary": {
+    "node_count": 4,
+    "edge_count": 4,
+    "claim_count": 2,
+    "decisive_evidence_count": 1
+  }
+}

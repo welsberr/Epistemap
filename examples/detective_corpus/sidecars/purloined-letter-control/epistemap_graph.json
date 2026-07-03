@@ -1,0 +1,281 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "story::purloined-letter-control::detective-annotation-graph",
+  "title": "The Purloined Letter",
+  "description": "Temporal graph derived from detective annotation story::purloined-letter-control",
+  "nodes": [
+    {
+      "id": "story::purloined-letter-control",
+      "type": "story",
+      "title": "The Purloined Letter",
+      "description": "Candidate control annotation for withheld decisive evidence; useful for distinguishing fair-play recognition from retrospective explanation.",
+      "aliases": [],
+      "status": "withheld_decisive_evidence",
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "publication_year": 1844,
+        "public_domain": true,
+        "source_license": "Public domain",
+        "narrative_unit": "scene",
+        "reveal_point": 9,
+        "annotation_status": "candidate_human_review_needed",
+        "candidate_use": "control_fixture",
+        "source_collection": "The Gift: A Christmas and New Year's Present for 1845"
+      }
+    },
+    {
+      "id": "claim::purloined-letter::secret-compartment",
+      "type": "claim",
+      "title": "The stolen letter must be hidden in a secret compartment or concealed recess.",
+      "description": "This is a useful control because the police premise is described before Dupin's decisive observation is narrated.",
+      "aliases": [],
+      "status": "misleading",
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "police search premise",
+        "truth_status": "misleading",
+        "narrative_anchor": "police description of exhaustive hidden-place searches",
+        "introduced_at": 2,
+        "story_id": "story::purloined-letter-control",
+        "candidate_role": "misleading_search_premise"
+      }
+    },
+    {
+      "id": "claim::purloined-letter::plain-sight",
+      "type": "claim",
+      "title": "The letter is disguised and left in plain sight.",
+      "description": "Corrective claim appears as part of the explanation rather than as reader-available decisive evidence.",
+      "aliases": [],
+      "status": "true",
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "Dupin",
+        "truth_status": "true",
+        "narrative_anchor": "Dupin's retrospective explanation",
+        "introduced_at": 9,
+        "story_id": "story::purloined-letter-control",
+        "candidate_role": "corrective_account"
+      }
+    },
+    {
+      "id": "evidence::purloined-letter::dupin-observation",
+      "type": "evidence",
+      "title": "Dupin personally observes the disguised letter in plain sight before reporting the solution.",
+      "description": "The key observation is attributed retrospectively to Dupin, making this a control for withheld decisive evidence.",
+      "aliases": [],
+      "status": "detective_only",
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 9,
+        "narrative_anchor": "Dupin reports his prior visit and observation after the fact",
+        "access_scope": "detective_only",
+        "story_id": "story::purloined-letter-control",
+        "candidate_role": "withheld_control"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "story::purloined-letter-control",
+      "target": "claim::purloined-letter::secret-compartment",
+      "type": "contains_claim",
+      "id": "edge::story::purloined-letter-control::contains::claim::purloined-letter::secret-compartment",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::purloined-letter-control",
+        "introduced_at": 2
+      }
+    },
+    {
+      "source": "story::purloined-letter-control",
+      "target": "claim::purloined-letter::plain-sight",
+      "type": "contains_claim",
+      "id": "edge::story::purloined-letter-control::contains::claim::purloined-letter::plain-sight",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::purloined-letter-control",
+        "introduced_at": 9
+      }
+    },
+    {
+      "source": "story::purloined-letter-control",
+      "target": "evidence::purloined-letter::dupin-observation",
+      "type": "contains_evidence",
+      "id": "edge::story::purloined-letter-control::contains::evidence::purloined-letter::dupin-observation",
+      "title": "Story contains decisive evidence",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::purloined-letter-control",
+        "available_at": 9
+      }
+    },
+    {
+      "source": "evidence::purloined-letter::dupin-observation",
+      "target": "claim::purloined-letter::secret-compartment",
+      "type": "contradicts",
+      "id": "edge::evidence::purloined-letter::dupin-observation::contradicts::claim::purloined-letter::secret-compartment",
+      "title": "Evidence contradicts claim",
+      "justification": "Dupin personally observes the disguised letter in plain sight before reporting the solution.",
+      "status": "",
+      "evidence_ids": [
+        "evidence::purloined-letter::dupin-observation"
+      ],
+      "provenance": [
+        {
+          "source_id": "story::purloined-letter-control",
+          "artifact_id": "The Purloined Letter",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Purloined_Letter",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Edgar Allan Poe",
+            "publication_year": 1844,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 9,
+        "narrative_anchor": "Dupin reports his prior visit and observation after the fact",
+        "access_scope": "detective_only",
+        "story_id": "story::purloined-letter-control"
+      }
+    }
+  ],
+  "metadata": {
+    "annotation_kind": "epistemap_detective_story_annotation",
+    "schema_version": "0.1",
+    "story_id": "story::purloined-letter-control",
+    "fair_play_status": "withheld_decisive_evidence",
+    "reveal_point": 9,
+    "narrative_unit": "scene",
+    "summary": {
+      "claim_count": 2,
+      "decisive_evidence_count": 1
+    }
+  },
+  "summary": {
+    "node_count": 4,
+    "edge_count": 4,
+    "claim_count": 2,
+    "decisive_evidence_count": 1
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "story::blue-carbuncle::detective-annotation-graph",
+  "title": "The Adventure of the Blue Carbuncle",
+  "description": "Temporal graph derived from detective annotation story::blue-carbuncle",
+  "nodes": [
+    {
+      "id": "story::blue-carbuncle",
+      "type": "story",
+      "title": "The Adventure of the Blue Carbuncle",
+      "description": "Candidate public-domain fair-play annotation for testing contradiction-recognition workflows.",
+      "aliases": [],
+      "status": "fair_play",
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "publication_year": 1892,
+        "public_domain": true,
+        "source_license": "Public domain",
+        "narrative_unit": "scene",
+        "reveal_point": 9,
+        "annotation_status": "candidate_human_review_needed",
+        "candidate_use": "pilot_fixture",
+        "source_collection": "The Adventures of Sherlock Holmes"
+      }
+    },
+    {
+      "id": "claim::blue-carbuncle::baker-stole-jewel",
+      "type": "claim",
+      "title": "Henry Baker stole the blue carbuncle.",
+      "description": "Working claim for contradiction-recognition testing; human review should confirm exact narrative anchors.",
+      "aliases": [],
+      "status": "false",
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "police inference and initial case premise",
+        "truth_status": "false",
+        "narrative_anchor": "opening inquiry after the recovered hat and goose",
+        "introduced_at": 1,
+        "story_id": "story::blue-carbuncle",
+        "candidate_role": "false_suspicion"
+      }
+    },
+    {
+      "id": "claim::blue-carbuncle::jewel-entered-goose-before-baker",
+      "type": "claim",
+      "title": "The jewel entered the goose through a chain of events separate from Henry Baker's ownership.",
+      "description": "This corrective claim is included to support graph linking, not as the primary recognition target.",
+      "aliases": [],
+      "status": "true",
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "investigation result",
+        "truth_status": "true",
+        "narrative_anchor": "goose dealer trail",
+        "introduced_at": 7,
+        "story_id": "story::blue-carbuncle",
+        "candidate_role": "corrective_account"
+      }
+    },
+    {
+      "id": "evidence::blue-carbuncle::goose-chain",
+      "type": "evidence",
+      "title": "The goose-purchase chain separates Henry Baker from the jewel's placement in the bird.",
+      "description": "The chain separates Baker from the incriminating placement of the jewel.",
+      "aliases": [],
+      "status": "reader_available",
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 7,
+        "narrative_anchor": "Holmes traces the goose from Baker through the dealer chain",
+        "access_scope": "reader_available",
+        "story_id": "story::blue-carbuncle",
+        "candidate_role": "contradiction"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "story::blue-carbuncle",
+      "target": "claim::blue-carbuncle::baker-stole-jewel",
+      "type": "contains_claim",
+      "id": "edge::story::blue-carbuncle::contains::claim::blue-carbuncle::baker-stole-jewel",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::blue-carbuncle",
+        "introduced_at": 1
+      }
+    },
+    {
+      "source": "story::blue-carbuncle",
+      "target": "claim::blue-carbuncle::jewel-entered-goose-before-baker",
+      "type": "contains_claim",
+      "id": "edge::story::blue-carbuncle::contains::claim::blue-carbuncle::jewel-entered-goose-before-baker",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::blue-carbuncle",
+        "introduced_at": 7
+      }
+    },
+    {
+      "source": "story::blue-carbuncle",
+      "target": "evidence::blue-carbuncle::goose-chain",
+      "type": "contains_evidence",
+      "id": "edge::story::blue-carbuncle::contains::evidence::blue-carbuncle::goose-chain",
+      "title": "Story contains decisive evidence",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::blue-carbuncle",
+        "available_at": 7
+      }
+    },
+    {
+      "source": "evidence::blue-carbuncle::goose-chain",
+      "target": "claim::blue-carbuncle::baker-stole-jewel",
+      "type": "contradicts",
+      "id": "edge::evidence::blue-carbuncle::goose-chain::contradicts::claim::blue-carbuncle::baker-stole-jewel",
+      "title": "Evidence contradicts claim",
+      "justification": "The goose-purchase chain separates Henry Baker from the jewel's placement in the bird.",
+      "status": "",
+      "evidence_ids": [
+        "evidence::blue-carbuncle::goose-chain"
+      ],
+      "provenance": [
+        {
+          "source_id": "story::blue-carbuncle",
+          "artifact_id": "The Adventure of the Blue Carbuncle",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1892,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 7,
+        "narrative_anchor": "Holmes traces the goose from Baker through the dealer chain",
+        "access_scope": "reader_available",
+        "story_id": "story::blue-carbuncle"
+      }
+    }
+  ],
+  "metadata": {
+    "annotation_kind": "epistemap_detective_story_annotation",
+    "schema_version": "0.1",
+    "story_id": "story::blue-carbuncle",
+    "fair_play_status": "fair_play",
+    "reveal_point": 9,
+    "narrative_unit": "scene",
+    "summary": {
+      "claim_count": 2,
+      "decisive_evidence_count": 1
+    }
+  },
+  "summary": {
+    "node_count": 4,
+    "edge_count": 4,
+    "claim_count": 2,
+    "decisive_evidence_count": 1
+  }
+}

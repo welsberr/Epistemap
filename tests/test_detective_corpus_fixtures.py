@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from epistemap import (
@@ -7,8 +8,10 @@ from epistemap import (
     detective_annotation_graph_bundle,
     detective_corpus_summary,
     detective_recognition_g_row,
+    load_graph_bundle,
     read_detective_story_annotation,
     validate_detective_story_annotation,
+    write_detective_corpus_sidecars,
 )
 
 
@@ -102,3 +105,21 @@ def test_detective_candidate_fixture_graphs_preserve_public_source_provenance() 
     assert story_node.provenance[0].source_url == annotation["source_url"]
     assert graph.metadata["fair_play_status"] == annotation["fair_play_status"]
     assert graph.metadata["summary"]["claim_count"] == len(annotation["claims"])
+
+
+def test_detective_candidate_fixtures_write_reproducible_sidecars(tmp_path) -> None:
+    manifest = write_detective_corpus_sidecars(sorted(FIXTURE_DIR.glob("*.json")), tmp_path)
+
+    assert manifest["sidecar_manifest_kind"] == "epistemap_detective_corpus_sidecars"
+    assert manifest["sidecar_count"] >= 4
+    assert manifest["fair_play_rating_counts"]["fair"] >= 3
+    assert manifest["fair_play_rating_counts"]["unfair"] >= 1
+    manifest_path = tmp_path / "detective_corpus_sidecars.json"
+    assert manifest_path.exists()
+
+    first = manifest["sidecars"][0]
+    graph = load_graph_bundle(first["graph_file"])
+    diagnostic = json.loads(Path(first["fair_play_diagnostic_file"]).read_text(encoding="utf-8"))
+
+    assert graph.metadata["story_id"] == first["story_id"]
+    assert diagnostic["rating"] == first["fair_play_rating"]

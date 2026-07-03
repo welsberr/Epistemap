@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, TextIO
 
 from .grounding_effect import g_evaluation_row
+from .io import write_graph_bundle
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .temporal import fair_play_diagnostic
 
@@ -431,6 +432,62 @@ def detective_annotation_fair_play_diagnostic(annotation: Mapping[str, Any]) -> 
     return report
 
 
+def write_detective_annotation_sidecars(
+    annotation: Mapping[str, Any],
+    out_dir: str | Path,
+    *,
+    slug: str | None = None,
+) -> dict[str, Any]:
+    """Write graph and diagnostic sidecars for a detective annotation."""
+
+    story_slug = slug or _story_slug(annotation)
+    target_dir = Path(out_dir) / story_slug
+    graph_path = target_dir / "epistemap_graph.json"
+    diagnostic_path = target_dir / "fair_play_diagnostic.json"
+
+    graph = detective_annotation_graph_bundle(annotation)
+    diagnostic = detective_annotation_fair_play_diagnostic(annotation)
+    write_graph_bundle(graph, graph_path)
+    _write_json(diagnostic, diagnostic_path)
+    return {
+        "story_id": annotation.get("story_id", ""),
+        "title": annotation.get("title", ""),
+        "fair_play_status": annotation.get("fair_play_status", ""),
+        "graph_file": str(graph_path),
+        "fair_play_diagnostic_file": str(diagnostic_path),
+        "fair_play_rating": diagnostic.get("rating", ""),
+    }
+
+
+def write_detective_corpus_sidecars(
+    annotation_sources: Iterable[str | Path],
+    out_dir: str | Path,
+) -> dict[str, Any]:
+    """Write graph and diagnostic sidecars for annotation JSON files."""
+
+    rows = [
+        write_detective_annotation_sidecars(read_detective_story_annotation(source), out_dir)
+        for source in annotation_sources
+    ]
+    fair_play_counts: dict[str, int] = {}
+    rating_counts: dict[str, int] = {}
+    for row in rows:
+        fair_play = str(row.get("fair_play_status", ""))
+        rating = str(row.get("fair_play_rating", ""))
+        fair_play_counts[fair_play] = fair_play_counts.get(fair_play, 0) + 1
+        rating_counts[rating] = rating_counts.get(rating, 0) + 1
+    manifest = {
+        "sidecar_manifest_kind": "epistemap_detective_corpus_sidecars",
+        "sidecar_count": len(rows),
+        "out_dir": str(out_dir),
+        "fair_play_status_counts": dict(sorted(fair_play_counts.items())),
+        "fair_play_rating_counts": dict(sorted(rating_counts.items())),
+        "sidecars": rows,
+    }
+    _write_json(manifest, Path(out_dir) / "detective_corpus_sidecars.json")
+    return manifest
+
+
 def _normalize_claim(claim: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "claim_id": str(claim.get("claim_id", "")),
@@ -473,6 +530,20 @@ def _annotation_provenance(annotation: Mapping[str, Any]) -> list[ProvenanceRef]
             },
         )
     ]
+
+
+def _story_slug(annotation: Mapping[str, Any]) -> str:
+    story_id = str(annotation.get("story_id", "")).strip()
+    title = str(annotation.get("title", "")).strip()
+    basis = story_id.rsplit("::", 1)[-1] if story_id else title
+    slug = "".join(character.lower() if character.isalnum() else "-" for character in basis)
+    return "-".join(part for part in slug.split("-") if part) or "story"
+
+
+def _write_json(payload: Mapping[str, Any], destination: str | Path) -> None:
+    target = Path(destination)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(dict(payload), indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def _claim_by_id(annotation: Mapping[str, Any], claim_id: str) -> dict[str, Any]:

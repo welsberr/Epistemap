@@ -1,0 +1,281 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "story::red-headed-league::detective-annotation-graph",
+  "title": "The Red-Headed League",
+  "description": "Temporal graph derived from detective annotation story::red-headed-league",
+  "nodes": [
+    {
+      "id": "story::red-headed-league",
+      "type": "story",
+      "title": "The Red-Headed League",
+      "description": "Candidate public-domain fair-play annotation for testing recognition of a false social/economic premise.",
+      "aliases": [],
+      "status": "fair_play",
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "publication_year": 1891,
+        "public_domain": true,
+        "source_license": "Public domain",
+        "narrative_unit": "scene",
+        "reveal_point": 8,
+        "annotation_status": "candidate_human_review_needed",
+        "candidate_use": "pilot_fixture",
+        "source_collection": "The Adventures of Sherlock Holmes"
+      }
+    },
+    {
+      "id": "claim::red-headed-league::legitimate-job",
+      "type": "claim",
+      "title": "The Red-Headed League is a legitimate copying job.",
+      "description": "The work arrangement is the false surface premise that later evidence contradicts.",
+      "aliases": [],
+      "status": "false",
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "advertisement and employer premise",
+        "truth_status": "false",
+        "narrative_anchor": "Wilson's account of the advertised copying work",
+        "introduced_at": 1,
+        "story_id": "story::red-headed-league",
+        "candidate_role": "false_surface_explanation"
+      }
+    },
+    {
+      "id": "claim::red-headed-league::bank-target",
+      "type": "claim",
+      "title": "The league is a diversion enabling a bank burglary through nearby premises.",
+      "description": "Included to support later graph treatments of motive, opportunity, and setting.",
+      "aliases": [],
+      "status": "true",
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "speaker": "investigation result",
+        "truth_status": "true",
+        "narrative_anchor": "Holmes inspects the neighborhood and assistant's situation",
+        "introduced_at": 6,
+        "story_id": "story::red-headed-league",
+        "candidate_role": "corrective_account"
+      }
+    },
+    {
+      "id": "evidence::red-headed-league::dissolution-assistant-bank",
+      "type": "evidence",
+      "title": "The sudden dissolution of the league, the assistant's behavior, and the nearby bank make the copying job a diversion rather than legitimate work.",
+      "description": "The candidate contradiction combines the artificial job's disappearance with spatial evidence around the bank.",
+      "aliases": [],
+      "status": "reader_available",
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 6,
+        "narrative_anchor": "the league's abrupt dissolution and the inspection of Spaulding and the bank neighborhood",
+        "access_scope": "reader_available",
+        "story_id": "story::red-headed-league",
+        "candidate_role": "contradiction"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "story::red-headed-league",
+      "target": "claim::red-headed-league::legitimate-job",
+      "type": "contains_claim",
+      "id": "edge::story::red-headed-league::contains::claim::red-headed-league::legitimate-job",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::red-headed-league",
+        "introduced_at": 1
+      }
+    },
+    {
+      "source": "story::red-headed-league",
+      "target": "claim::red-headed-league::bank-target",
+      "type": "contains_claim",
+      "id": "edge::story::red-headed-league::contains::claim::red-headed-league::bank-target",
+      "title": "Story contains claim",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::red-headed-league",
+        "introduced_at": 6
+      }
+    },
+    {
+      "source": "story::red-headed-league",
+      "target": "evidence::red-headed-league::dissolution-assistant-bank",
+      "type": "contains_evidence",
+      "id": "edge::story::red-headed-league::contains::evidence::red-headed-league::dissolution-assistant-bank",
+      "title": "Story contains decisive evidence",
+      "justification": "",
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "story_id": "story::red-headed-league",
+        "available_at": 6
+      }
+    },
+    {
+      "source": "evidence::red-headed-league::dissolution-assistant-bank",
+      "target": "claim::red-headed-league::legitimate-job",
+      "type": "contradicts",
+      "id": "edge::evidence::red-headed-league::dissolution-assistant-bank::contradicts::claim::red-headed-league::legitimate-job",
+      "title": "Evidence contradicts claim",
+      "justification": "The sudden dissolution of the league, the assistant's behavior, and the nearby bank make the copying job a diversion rather than legitimate work.",
+      "status": "",
+      "evidence_ids": [
+        "evidence::red-headed-league::dissolution-assistant-bank"
+      ],
+      "provenance": [
+        {
+          "source_id": "story::red-headed-league",
+          "artifact_id": "The Red-Headed League",
+          "origin_path": "",
+          "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+          "support_kind": "detective_story_annotation",
+          "grounding_status": "candidate_human_review_needed",
+          "metadata": {
+            "author": "Arthur Conan Doyle",
+            "publication_year": 1891,
+            "source_license": "Public domain",
+            "public_domain": true
+          }
+        }
+      ],
+      "metadata": {
+        "available_at": 6,
+        "narrative_anchor": "the league's abrupt dissolution and the inspection of Spaulding and the bank neighborhood",
+        "access_scope": "reader_available",
+        "story_id": "story::red-headed-league"
+      }
+    }
+  ],
+  "metadata": {
+    "annotation_kind": "epistemap_detective_story_annotation",
+    "schema_version": "0.1",
+    "story_id": "story::red-headed-league",
+    "fair_play_status": "fair_play",
+    "reveal_point": 8,
+    "narrative_unit": "scene",
+    "summary": {
+      "claim_count": 2,
+      "decisive_evidence_count": 1
+    }
+  },
+  "summary": {
+    "node_count": 4,
+    "edge_count": 4,
+    "claim_count": 2,
+    "decisive_evidence_count": 1
+  }
+}

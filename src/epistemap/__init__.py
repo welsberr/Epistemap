@@ -37,9 +37,12 @@ from .detective_corpus import (
     detective_story_annotation,
     read_detective_story_annotation,
     validate_detective_story_annotation,
+    write_detective_annotation_sidecars,
+    write_detective_corpus_sidecars,
     write_detective_story_annotation,
 )
 from .ids import node_id, slugify, typed_id
+from .io import load_graph_bundle, write_graph_bundle
 from .exporters import (
     to_cytoscape_json,
     to_graphviz_dot,
@@ -151,6 +154,7 @@ __all__ = [
     "graph_qa_report",
     "incoming_edges",
     "k_hop_subgraph",
+    "load_graph_bundle",
     "neighborhood",
     "node_id",
     "normalize_g_evaluation_row",
@@ -181,6 +185,8 @@ __all__ = [
     "validate_detective_story_annotation",
     "write_assessment_manifest",
     "write_assessment_validation_markdown",
+    "write_detective_annotation_sidecars",
+    "write_detective_corpus_sidecars",
     "write_detective_story_annotation",
     "write_cytoscape_json",
     "write_bayesian_reliability_markdown",
@@ -189,6 +195,7 @@ __all__ = [
     "write_g_experiment_summary_markdown",
     "write_g_rows_csv",
     "write_g_summary_comparison_markdown",
+    "write_graph_bundle",
     "write_graphviz_dot",
     "write_jsonld",
 ]

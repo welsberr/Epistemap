@@ -1,0 +1,35 @@
+{
+  "annotation": {
+    "fair_play_status": "fair_play",
+    "graph_id": "story::blue-carbuncle::detective-annotation-graph",
+    "story_id": "story::blue-carbuncle",
+    "title": "The Adventure of the Blue Carbuncle"
+  },
+  "claims": [
+    {
+      "claim_id": "claim::blue-carbuncle::baker-stole-jewel",
+      "decisive_evidence_count": 1,
+      "failures": [],
+      "first_decisive_evidence": {
+        "edge": {
+          "id": "edge::evidence::blue-carbuncle::goose-chain::contradicts::claim::blue-carbuncle::baker-stole-jewel",
+          "source": "evidence::blue-carbuncle::goose-chain",
+          "target": "claim::blue-carbuncle::baker-stole-jewel",
+          "title": "Evidence contradicts claim",
+          "type": "contradicts"
+        },
+        "time": "7"
+      },
+      "rating": "fair",
+      "reveal_at": "9"
+    }
+  ],
+  "rating": "fair",
+  "summary": {
+    "claim_count": 1,
+    "failure_counts": {},
+    "fair_count": 1,
+    "partial_count": 0,
+    "unfair_count": 0
+  }
+}

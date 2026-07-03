@@ -1,0 +1,35 @@
+{
+  "annotation": {
+    "fair_play_status": "fair_play",
+    "graph_id": "story::red-headed-league::detective-annotation-graph",
+    "story_id": "story::red-headed-league",
+    "title": "The Red-Headed League"
+  },
+  "claims": [
+    {
+      "claim_id": "claim::red-headed-league::legitimate-job",
+      "decisive_evidence_count": 1,
+      "failures": [],
+      "first_decisive_evidence": {
+        "edge": {
+          "id": "edge::evidence::red-headed-league::dissolution-assistant-bank::contradicts::claim::red-headed-league::legitimate-job",
+          "source": "evidence::red-headed-league::dissolution-assistant-bank",
+          "target": "claim::red-headed-league::legitimate-job",
+          "title": "Evidence contradicts claim",
+          "type": "contradicts"
+        },
+        "time": "6"
+      },
+      "rating": "fair",
+      "reveal_at": "8"
+    }
+  ],
+  "rating": "fair",
+  "summary": {
+    "claim_count": 1,
+    "failure_counts": {},
+    "fair_count": 1,
+    "partial_count": 0,
+    "unfair_count": 0
+  }
+}

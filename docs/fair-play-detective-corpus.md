@@ -42,6 +42,13 @@ fair-play diagnostic over false, misleading, or contradicted claims from an
 annotation. This connects the detective schema to the same graph timing checks
 used for scholarly temporal tenability.
 
+Use `write_detective_corpus_sidecars()` or the `epistemap detective-sidecars`
+CLI command to generate stable per-story sidecars:
+
+- `epistemap_graph.json`
+- `fair_play_diagnostic.json`
+- `detective_corpus_sidecars.json`
+
 The intended first pilot is 3-5 public-domain stories with human-reviewed
 annotations. Exclude or separately classify stories where the decisive evidence
 is introduced only at the reveal or is available only to the detective.

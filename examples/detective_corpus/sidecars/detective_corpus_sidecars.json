@@ -1,0 +1,47 @@
+{
+  "fair_play_rating_counts": {
+    "fair": 3,
+    "unfair": 1
+  },
+  "fair_play_status_counts": {
+    "fair_play": 3,
+    "withheld_decisive_evidence": 1
+  },
+  "out_dir": "examples/detective_corpus/sidecars",
+  "sidecar_count": 4,
+  "sidecar_manifest_kind": "epistemap_detective_corpus_sidecars",
+  "sidecars": [
+    {
+      "fair_play_diagnostic_file": "examples/detective_corpus/sidecars/blue-carbuncle/fair_play_diagnostic.json",
+      "fair_play_rating": "fair",
+      "fair_play_status": "fair_play",
+      "graph_file": "examples/detective_corpus/sidecars/blue-carbuncle/epistemap_graph.json",
+      "story_id": "story::blue-carbuncle",
+      "title": "The Adventure of the Blue Carbuncle"
+    },
+    {
+      "fair_play_diagnostic_file": "examples/detective_corpus/sidecars/purloined-letter-control/fair_play_diagnostic.json",
+      "fair_play_rating": "unfair",
+      "fair_play_status": "withheld_decisive_evidence",
+      "graph_file": "examples/detective_corpus/sidecars/purloined-letter-control/epistemap_graph.json",
+      "story_id": "story::purloined-letter-control",
+      "title": "The Purloined Letter"
+    },
+    {
+      "fair_play_diagnostic_file": "examples/detective_corpus/sidecars/red-headed-league/fair_play_diagnostic.json",
+      "fair_play_rating": "fair",
+      "fair_play_status": "fair_play",
+      "graph_file": "examples/detective_corpus/sidecars/red-headed-league/epistemap_graph.json",
+      "story_id": "story::red-headed-league",
+      "title": "The Red-Headed League"
+    },
+    {
+      "fair_play_diagnostic_file": "examples/detective_corpus/sidecars/speckled-band/fair_play_diagnostic.json",
+      "fair_play_rating": "fair",
+      "fair_play_status": "fair_play",
+      "graph_file": "examples/detective_corpus/sidecars/speckled-band/epistemap_graph.json",
+      "story_id": "story::speckled-band",
+      "title": "The Adventure of the Speckled Band"
+    }
+  ]
+}
