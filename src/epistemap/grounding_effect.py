@@ -386,6 +386,59 @@ def g_summary_comparison_from_files(
     return comparison
 
 
+def g_summary_comparison_markdown(comparison: Mapping[str, Any]) -> str:
+    """Render a G summary comparison as a compact Markdown report."""
+
+    lines = [
+        "# Epistemap G Comparison",
+        "",
+        f"- Baseline: `{comparison.get('baseline_id', '')}`",
+        f"- Compatible: `{comparison.get('compatibility', {}).get('compatible', False)}`",
+    ]
+    warnings = [str(warning) for warning in comparison.get("warnings", [])]
+    if warnings:
+        lines.extend(["", "## Warnings"])
+        lines.extend(f"- {warning}" for warning in warnings)
+    lines.extend(
+        [
+            "",
+            "## Rankings",
+            "",
+            "| Rank | Experiment | G | Delta | Rows | Warnings |",
+            "| --- | --- | ---: | ---: | ---: | --- |",
+        ]
+    )
+    for row in comparison.get("summaries", []):
+        row_warnings = []
+        if row.get("warning"):
+            row_warnings.append(str(row["warning"]))
+        row_warnings.extend(str(warning) for warning in row.get("summary_warnings", []))
+        lines.append(
+            "| {rank} | `{experiment}` | {g:.6f} | {delta:.6f} | {rows} | {warnings} |".format(
+                rank=row.get("rank", ""),
+                experiment=row.get("experiment_id", ""),
+                g=float(row.get("G", 0.0)),
+                delta=float(row.get("delta_from_baseline", 0.0)),
+                rows=int(row.get("row_count", 0) or 0),
+                warnings="<br>".join(row_warnings),
+            )
+        )
+    lines.extend(["", comparison.get("interpretation", "")])
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_g_summary_comparison_markdown(comparison: Mapping[str, Any], destination: str | Path | TextIO) -> None:
+    """Write a Markdown report for a G summary comparison."""
+
+    text = g_summary_comparison_markdown(comparison)
+    if hasattr(destination, "write"):
+        destination.write(text)  # type: ignore[union-attr]
+        return
+    path = Path(destination)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
 def g_experiment_comparison(
     experiments: Iterable[Mapping[str, Any]],
     *,

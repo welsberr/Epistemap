@@ -22,8 +22,10 @@ from epistemap import (
     reliability_level_sensitivity,
     g_summary_comparison,
     g_summary_comparison_from_files,
+    g_summary_comparison_markdown,
     write_g_experiment_manifest,
     write_g_rows_csv,
+    write_g_summary_comparison_markdown,
 )
 
 
@@ -281,6 +283,31 @@ def test_g_summary_comparison_from_files_writes_comparison(tmp_path) -> None:
 
     assert comparison["summaries"][0]["experiment_id"] == "kg"
     assert comparison_path.exists()
+
+
+def test_g_summary_comparison_markdown_renders_rankings_and_warnings(tmp_path) -> None:
+    comparison = g_summary_comparison(
+        [
+            g_experiment_summary(
+                _rows(target_confidence=0.6),
+                manifest={"experiment_id": "plain", "evaluation_target": "recognition"},
+            ),
+            g_experiment_summary(
+                _rows(target_confidence=0.9),
+                manifest={"experiment_id": "kg", "evaluation_target": "recognition", "row_count": 99},
+            ),
+        ],
+        baseline_id="plain",
+    )
+    destination = tmp_path / "comparison.md"
+
+    markdown = g_summary_comparison_markdown(comparison)
+    write_g_summary_comparison_markdown(comparison, destination)
+
+    assert "# Epistemap G Comparison" in markdown
+    assert "| 1 | `kg` |" in markdown
+    assert "manifest row_count does not match actual row count" in markdown
+    assert destination.read_text(encoding="utf-8") == markdown
 
 
 def test_g_experiment_comparison_builds_summaries_from_rows() -> None:

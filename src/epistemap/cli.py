@@ -3,7 +3,11 @@ from __future__ import annotations
 import argparse
 import json
 
-from .grounding_effect import g_experiment_summary_from_files, g_summary_comparison_from_files
+from .grounding_effect import (
+    g_experiment_summary_from_files,
+    g_summary_comparison_from_files,
+    write_g_summary_comparison_markdown,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -27,6 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("summaries", nargs="+")
     compare.add_argument("--baseline-id", default=None)
     compare.add_argument("--out", default=None, help="Optional output comparison JSON path.")
+    compare.add_argument("--out-md", default=None, help="Optional output Markdown report path.")
     compare.add_argument(
         "--require-compatible",
         action="store_true",
@@ -54,6 +59,8 @@ def main() -> None:
             baseline_id=args.baseline_id,
             out_json=args.out,
         )
+        if args.out_md is not None:
+            write_g_summary_comparison_markdown(payload, args.out_md)
     else:
         parser.print_help()
         return

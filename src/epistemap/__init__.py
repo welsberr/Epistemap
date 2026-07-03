@@ -41,8 +41,10 @@ from .grounding_effect import (
     reliability_level_sensitivity,
     g_summary_comparison,
     g_summary_comparison_from_files,
+    g_summary_comparison_markdown,
     write_g_experiment_manifest,
     write_g_rows_csv,
+    write_g_summary_comparison_markdown,
 )
 from .temporal import (
     availability_lag,
@@ -104,6 +106,7 @@ __all__ = [
     "stale_claims_after",
     "g_summary_comparison",
     "g_summary_comparison_from_files",
+    "g_summary_comparison_markdown",
     "tenability_window",
     "timeline_events",
     "to_cytoscape_json",
@@ -115,6 +118,7 @@ __all__ = [
     "write_cytoscape_json",
     "write_g_experiment_manifest",
     "write_g_rows_csv",
+    "write_g_summary_comparison_markdown",
     "write_graphviz_dot",
     "write_jsonld",
 ]

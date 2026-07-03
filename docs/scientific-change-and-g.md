@@ -67,7 +67,8 @@ rows. They also surface manifest consistency warnings from the input summaries.
 For generated artifacts, `g_experiment_summary_from_files()` reads a row CSV and
 optional manifest JSON, while `g_summary_comparison_from_files()` reads multiple
 summary JSON files. Both can write deterministic JSON outputs for downstream
-review or repository artifacts.
+review or repository artifacts. `g_summary_comparison_markdown()` renders the
+same comparison as a compact Markdown review report.
 
 ## Reliability Sensitivity
 

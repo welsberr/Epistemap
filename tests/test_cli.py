@@ -101,6 +101,7 @@ def test_cli_g_compare_writes_comparison(tmp_path, monkeypatch, capsys) -> None:
     weak_path = tmp_path / "weak.json"
     strong_path = tmp_path / "strong.json"
     comparison_path = tmp_path / "comparison.json"
+    markdown_path = tmp_path / "comparison.md"
     weak_path.write_text(
         json.dumps(
             g_experiment_summary(
@@ -141,6 +142,8 @@ def test_cli_g_compare_writes_comparison(tmp_path, monkeypatch, capsys) -> None:
             "weak",
             "--out",
             str(comparison_path),
+            "--out-md",
+            str(markdown_path),
         ],
     )
 
@@ -149,6 +152,7 @@ def test_cli_g_compare_writes_comparison(tmp_path, monkeypatch, capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["summaries"][0]["experiment_id"] == "strong"
     assert comparison_path.exists()
+    assert "# Epistemap G Comparison" in markdown_path.read_text(encoding="utf-8")
 
 
 def test_cli_g_compare_can_require_compatible_inputs(tmp_path, monkeypatch, capsys) -> None:
