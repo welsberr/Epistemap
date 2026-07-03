@@ -570,6 +570,9 @@ def _summary_comparison_row(summary: Mapping[str, Any]) -> dict[str, Any]:
     }
     if "warning" in overall:
         row["warning"] = overall["warning"]
+    summary_warnings = [str(warning) for warning in summary.get("warnings", [])]
+    if summary_warnings:
+        row["summary_warnings"] = summary_warnings
     return row
 
 
@@ -585,6 +588,8 @@ def _summary_comparison_compatibility(rows: Sequence[Mapping[str, Any]]) -> dict
         warnings.append("one or more summaries lack clean/reference rows")
     if any(int(row.get("n", {}).get("target", 0) or 0) == 0 for row in rows):
         warnings.append("one or more summaries lack target/shifted rows")
+    if any(row.get("summary_warnings") for row in rows):
+        warnings.append("one or more summaries have manifest consistency warnings")
     return {
         "compatible": not warnings,
         "evaluation_targets": targets,

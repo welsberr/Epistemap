@@ -332,6 +332,24 @@ def test_g_summary_comparison_flags_mixed_evaluation_targets() -> None:
     assert "mixed evaluation targets; compare G values only with caution" in comparison["warnings"]
 
 
+def test_g_summary_comparison_flags_summary_consistency_warnings() -> None:
+    inconsistent = g_experiment_summary(
+        _rows(target_confidence=0.8),
+        manifest={"experiment_id": "inconsistent", "evaluation_target": "recognition", "row_count": 99},
+    )
+    clean = g_experiment_summary(
+        _rows(target_confidence=0.9),
+        manifest={"experiment_id": "clean", "evaluation_target": "recognition", "row_count": 4},
+    )
+
+    comparison = g_summary_comparison([inconsistent, clean])
+
+    assert comparison["compatibility"]["compatible"] is False
+    assert "one or more summaries have manifest consistency warnings" in comparison["warnings"]
+    inconsistent_row = next(row for row in comparison["summaries"] if row["experiment_id"] == "inconsistent")
+    assert "manifest row_count does not match actual row count" in inconsistent_row["summary_warnings"]
+
+
 def test_reliability_level_sensitivity_is_counterfactual_not_verdict() -> None:
     sensitivity = reliability_level_sensitivity(
         {

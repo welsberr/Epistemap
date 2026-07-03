@@ -62,7 +62,7 @@ profiles, prompt variants, or graph interventions, provided the underlying row
 sets have compatible evaluation targets and environments.
 Comparison outputs include compatibility diagnostics that warn about mixed
 evaluation targets, mixed corpora, or missing clean/reference or target/shifted
-rows.
+rows. They also surface manifest consistency warnings from the input summaries.
 
 For generated artifacts, `g_experiment_summary_from_files()` reads a row CSV and
 optional manifest JSON, while `g_summary_comparison_from_files()` reads multiple
