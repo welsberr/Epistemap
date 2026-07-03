@@ -23,3 +23,8 @@ These are intended for counterfactual graph-intervention and reliability
 sensitivity analysis, not as truth scores. See
 `docs/scientific-change-and-g.md` for the scientific-change framing and the
 distinction between evidence, source reliability, and `G`.
+
+Temporal epistemic graph operations are documented in
+`docs/temporal-epistemic-graphs.md`. These support graph slices, tenability
+windows, contradiction timing, and stale-claim detection for both scholarly
+timelines and fair-play detective-story experiments.

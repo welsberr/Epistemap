@@ -30,14 +30,29 @@ from .grounding_effect import (
     graph_with_component_reliability,
     reliability_level_sensitivity,
 )
+from .temporal import (
+    availability_lag,
+    claim_status_at,
+    evidence_available_at,
+    first_contradiction_time,
+    graph_at,
+    stale_claims_after,
+    tenability_window,
+    timeline_events,
+)
 from .validation import GraphShape, validate_shape
 
 __all__ = [
+    "availability_lag",
     "Edge",
+    "claim_status_at",
     "delta_g",
+    "evidence_available_at",
     "epistemic_report",
     "epistemic_summary",
+    "first_contradiction_time",
     "g_estimate",
+    "graph_at",
     "graph_with_component_reliability",
     "GraphBundle",
     "GraphShape",
@@ -58,6 +73,9 @@ __all__ = [
     "reliability_level_sensitivity",
     "shortest_path",
     "slugify",
+    "stale_claims_after",
+    "tenability_window",
+    "timeline_events",
     "to_cytoscape_json",
     "to_graphviz_dot",
     "to_jsonld",
