@@ -12,6 +12,34 @@ MIXED_TRUST_VALUES = {"medium", "mixed", "provisional", "secondary", "tertiary"}
 LOW_TRUST_VALUES = {"low", "rejected", "unreviewed", "advocacy", "misinformation", "denialist", "retracted"}
 ADVERSARIAL_STANCE_VALUES = {"adversarial", "denialist", "misinformation", "manufactured_doubt", "trust_eroding"}
 
+BAYESIAN_PRIOR_PROFILES: dict[str, dict[str, Any]] = {
+    "neutral": {
+        "alpha": 1.0,
+        "beta": 1.0,
+        "description": "Uniform prior; treats support and challenge as initially balanced.",
+    },
+    "skeptical": {
+        "alpha": 1.0,
+        "beta": 2.0,
+        "description": "Mildly skeptical prior; asks new support to overcome initial caution.",
+    },
+    "supportive": {
+        "alpha": 2.0,
+        "beta": 1.0,
+        "description": "Mildly supportive prior for already-vetted graph neighborhoods.",
+    },
+    "source_conservative": {
+        "alpha": 1.0,
+        "beta": 3.0,
+        "description": "Conservative prior for mixed or weak source-quality metadata.",
+    },
+    "adversarial_aware": {
+        "alpha": 1.0,
+        "beta": 4.0,
+        "description": "Stronger skeptical prior for adversarial or manufactured-doubt settings.",
+    },
+}
+
 
 def beta_binomial_posterior(
     *,
@@ -64,6 +92,34 @@ def beta_binomial_posterior(
     }
 
 
+def resolve_bayesian_prior_profile(profile: str | Mapping[str, Any] | tuple[float, float]) -> dict[str, Any]:
+    """Resolve a named or explicit Bayesian prior profile."""
+    if isinstance(profile, str):
+        normalized = profile.strip().lower().replace("-", "_")
+        if normalized not in BAYESIAN_PRIOR_PROFILES:
+            known = ", ".join(sorted(BAYESIAN_PRIOR_PROFILES))
+            raise KeyError(f"Unknown Bayesian prior profile {profile!r}; known profiles: {known}")
+        resolved = dict(BAYESIAN_PRIOR_PROFILES[normalized])
+        resolved["name"] = normalized
+        return resolved
+    if isinstance(profile, Mapping):
+        alpha = float(profile["alpha"])
+        beta = float(profile["beta"])
+        return {
+            "name": str(profile.get("name", "custom")),
+            "alpha": alpha,
+            "beta": beta,
+            "description": str(profile.get("description", "Custom explicit Bayesian prior profile.")),
+        }
+    alpha, beta = profile
+    return {
+        "name": "custom",
+        "alpha": float(alpha),
+        "beta": float(beta),
+        "description": "Custom explicit Bayesian prior profile.",
+    }
+
+
 def bayesian_evidence_update(
     *,
     support_edges: Sequence[Edge],
@@ -71,10 +127,16 @@ def bayesian_evidence_update(
     nodes_by_id: Mapping[str, Node] | None = None,
     prior_alpha: float = 1.0,
     prior_beta: float = 1.0,
+    prior_profile: str | Mapping[str, Any] | tuple[float, float] | None = None,
     credibility: float = 0.95,
 ) -> dict[str, Any]:
     """Estimate posterior claim support from support and challenge edges."""
     nodes_by_id = nodes_by_id or {}
+    profile: dict[str, Any] | None = None
+    if prior_profile is not None:
+        profile = resolve_bayesian_prior_profile(prior_profile)
+        prior_alpha = float(profile["alpha"])
+        prior_beta = float(profile["beta"])
     support_weights = [_edge_evidence_weight(edge, nodes_by_id) for edge in support_edges]
     challenge_weights = [_edge_evidence_weight(edge, nodes_by_id) for edge in challenge_edges]
     posterior = beta_binomial_posterior(
@@ -89,6 +151,9 @@ def bayesian_evidence_update(
     posterior["evidence"]["support_weights"] = [round(weight, 6) for weight in support_weights]
     posterior["evidence"]["challenge_weights"] = [round(weight, 6) for weight in challenge_weights]
     posterior["stability"] = _posterior_stability(posterior)
+    if profile is not None:
+        posterior["prior"]["profile"] = profile["name"]
+        posterior["prior"]["description"] = profile["description"]
     return posterior
 
 
@@ -97,32 +162,31 @@ def bayesian_prior_sensitivity(
     support_edges: Sequence[Edge],
     challenge_edges: Sequence[Edge],
     nodes_by_id: Mapping[str, Node] | None = None,
-    priors: Mapping[str, tuple[float, float]] | None = None,
+    priors: Mapping[str, tuple[float, float] | Mapping[str, Any] | str] | Sequence[str] | None = None,
     credibility: float = 0.95,
 ) -> dict[str, Any]:
     """Run the same evidence through named priors to expose prior sensitivity."""
-    priors = priors or {
-        "skeptical": (1.0, 2.0),
-        "neutral": (1.0, 1.0),
-        "supportive": (2.0, 1.0),
-    }
+    resolved_priors = _resolve_prior_sensitivity_profiles(priors)
     estimates = {
         name: bayesian_evidence_update(
             support_edges=support_edges,
             challenge_edges=challenge_edges,
             nodes_by_id=nodes_by_id,
-            prior_alpha=alpha,
-            prior_beta=beta,
+            prior_profile=profile,
             credibility=credibility,
         )
-        for name, (alpha, beta) in priors.items()
+        for name, profile in resolved_priors.items()
     }
     means = [estimate["posterior"]["mean"] for estimate in estimates.values()]
     return {
         "model": "beta_binomial_prior_sensitivity",
         "priors": {
-            name: {"alpha": alpha, "beta": beta}
-            for name, (alpha, beta) in priors.items()
+            name: {
+                "alpha": profile["alpha"],
+                "beta": profile["beta"],
+                "description": profile["description"],
+            }
+            for name, profile in resolved_priors.items()
         },
         "estimates": estimates,
         "mean_range": round(max(means) - min(means), 6) if means else 0.0,
@@ -130,6 +194,25 @@ def bayesian_prior_sensitivity(
             "Prior sensitivity compares posterior support under alternate explicit priors; "
             "large ranges indicate fragile confidence rather than settled evidence."
         ),
+    }
+
+
+def _resolve_prior_sensitivity_profiles(
+    priors: Mapping[str, tuple[float, float] | Mapping[str, Any] | str] | Sequence[str] | None,
+) -> dict[str, dict[str, Any]]:
+    if priors is None:
+        priors = ("skeptical", "neutral", "supportive", "source_conservative", "adversarial_aware")
+    if isinstance(priors, Mapping):
+        return {
+            name: {
+                **resolve_bayesian_prior_profile(profile),
+                "name": str(name),
+            }
+            for name, profile in priors.items()
+        }
+    return {
+        str(name): resolve_bayesian_prior_profile(str(name))
+        for name in priors
     }
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from epistemap import (
+    BAYESIAN_PRIOR_PROFILES,
     Edge,
     Node,
     bayesian_evidence_update,
@@ -8,6 +9,7 @@ from epistemap import (
     bayesian_reliability_markdown,
     beta_binomial_posterior,
     classify_bayesian_reliability,
+    resolve_bayesian_prior_profile,
     write_bayesian_reliability_markdown,
 )
 
@@ -60,6 +62,46 @@ def test_bayesian_prior_sensitivity_reports_fragility_range() -> None:
         > sensitivity["estimates"]["skeptical"]["posterior"]["mean"]
     )
     assert "Prior sensitivity" in sensitivity["interpretation"]
+
+
+def test_named_bayesian_prior_profiles_can_be_resolved_and_used() -> None:
+    assert "adversarial_aware" in BAYESIAN_PRIOR_PROFILES
+    profile = resolve_bayesian_prior_profile("source-conservative")
+
+    posterior = bayesian_evidence_update(
+        support_edges=[Edge(source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8)],
+        challenge_edges=[],
+        prior_profile="source_conservative",
+    )
+
+    assert profile["alpha"] == 1.0
+    assert profile["beta"] == 3.0
+    assert posterior["prior"]["profile"] == "source_conservative"
+    assert posterior["posterior"]["mean"] < bayesian_evidence_update(
+        support_edges=[Edge(source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8)],
+        challenge_edges=[],
+        prior_profile="neutral",
+    )["posterior"]["mean"]
+
+
+def test_bayesian_prior_sensitivity_uses_default_and_custom_profiles() -> None:
+    default_sensitivity = bayesian_prior_sensitivity(
+        support_edges=[Edge(source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8)],
+        challenge_edges=[],
+    )
+    custom_sensitivity = bayesian_prior_sensitivity(
+        support_edges=[Edge(source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8)],
+        challenge_edges=[],
+        priors=("neutral", "adversarial_aware"),
+    )
+
+    assert "source_conservative" in default_sensitivity["priors"]
+    assert "adversarial_aware" in default_sensitivity["priors"]
+    assert set(custom_sensitivity["priors"]) == {"neutral", "adversarial_aware"}
+    assert (
+        custom_sensitivity["estimates"]["neutral"]["posterior"]["mean"]
+        > custom_sensitivity["estimates"]["adversarial_aware"]["posterior"]["mean"]
+    )
 
 
 def test_bayesian_reliability_markdown_renders_posterior_and_sensitivity(tmp_path) -> None:

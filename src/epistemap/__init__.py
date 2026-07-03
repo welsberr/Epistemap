@@ -14,11 +14,13 @@ from .algorithms import (
     topological_order,
 )
 from .bayesian import (
+    BAYESIAN_PRIOR_PROFILES,
     bayesian_evidence_update,
     bayesian_prior_sensitivity,
     bayesian_reliability_markdown,
     beta_binomial_posterior,
     classify_bayesian_reliability,
+    resolve_bayesian_prior_profile,
     write_bayesian_reliability_markdown,
 )
 from .ids import node_id, slugify, typed_id
@@ -72,6 +74,7 @@ from .validation import GraphShape, validate_shape
 
 __all__ = [
     "availability_lag",
+    "BAYESIAN_PRIOR_PROFILES",
     "bayesian_evidence_update",
     "bayesian_prior_sensitivity",
     "bayesian_reliability_markdown",
@@ -117,6 +120,7 @@ __all__ = [
     "read_g_experiment_manifest",
     "read_g_rows_csv",
     "reliability_level_sensitivity",
+    "resolve_bayesian_prior_profile",
     "shortest_path",
     "slugify",
     "stale_claims_after",

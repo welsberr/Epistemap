@@ -17,6 +17,8 @@ assessment artifacts, not decide claim truth or promotion status.
 - Heuristic epistemic reports over support, challenge, grounding, revision, and
   source-trust signals.
 - Bayesian reliability estimates over weighted support/challenge evidence.
+- Named Bayesian prior profiles for neutral, skeptical, supportive,
+  source-conservative, and adversarial-aware assessment.
 - Bayesian Markdown reports.
 - Temporal graph slices, tenability windows, contradiction timing, stale-claim
   detection, recognition windows, and fair-play diagnostics.
@@ -33,11 +35,13 @@ assessment artifacts, not decide claim truth or promotion status.
    - Keep labels as review triage, not promotion authority.
 
 2. **Named prior profiles**
+   - Status: implemented.
    - Expose reusable prior profiles such as `neutral`, `skeptical`,
      `source_conservative`, and `adversarial_aware`.
    - Let callers request profile names without hand-building alpha/beta pairs.
 
 3. **Graph-level Bayesian assessment**
+   - Status: next.
    - Batch over claim or concept nodes.
    - Rank by thin evidence, wide intervals, prior sensitivity, and contested
      support.

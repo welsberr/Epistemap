@@ -64,11 +64,14 @@ Implemented:
 - review-triage labels via `classify_bayesian_reliability()`, which classifies
   posterior blocks as `stable_support`, `fragile_support`, `contested`,
   `thin_evidence`, or `prior_sensitive`.
+- named prior profiles via `BAYESIAN_PRIOR_PROFILES`,
+  `resolve_bayesian_prior_profile()`, `bayesian_evidence_update(...,
+  prior_profile=...)`, and profile-aware `bayesian_prior_sensitivity()`.
+  Current profiles are `neutral`, `skeptical`, `supportive`,
+  `source_conservative`, and `adversarial_aware`.
 
 Near-term:
 
-- expose prior profiles by name, such as `neutral`, `skeptical`,
-  `source_conservative`, and `adversarial_aware`;
 - add batch reports over all claims or concepts in a graph, ranking by low
   effective sample size, wide credible interval, and high prior sensitivity;
 - add CLI support for graph-level epistemic reports once graph bundle loading is
