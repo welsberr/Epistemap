@@ -27,12 +27,14 @@ from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .grounding_effect import (
     G_ROW_FIELDS,
     delta_g,
+    g_experiment_manifest,
     g_evaluation_row,
     g_estimate,
     g_rows_to_csv,
     graph_with_component_reliability,
     normalize_g_evaluation_row,
     reliability_level_sensitivity,
+    write_g_experiment_manifest,
     write_g_rows_csv,
 )
 from .temporal import (
@@ -60,6 +62,7 @@ __all__ = [
     "fair_play_diagnostic",
     "first_contradiction_time",
     "G_ROW_FIELDS",
+    "g_experiment_manifest",
     "g_evaluation_row",
     "g_estimate",
     "g_rows_to_csv",
@@ -96,6 +99,7 @@ __all__ = [
     "typed_id",
     "validate_shape",
     "write_cytoscape_json",
+    "write_g_experiment_manifest",
     "write_g_rows_csv",
     "write_graphviz_dot",
     "write_jsonld",

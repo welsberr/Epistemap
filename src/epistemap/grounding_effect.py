@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from copy import deepcopy
 from io import StringIO
 from pathlib import Path
@@ -196,6 +197,61 @@ def write_g_rows_csv(
     Path(destination).write_text(text, encoding="utf-8")
 
 
+def g_experiment_manifest(
+    *,
+    experiment_id: str,
+    row_file: str,
+    evaluation_target: str,
+    name: str = "",
+    corpus: str = "",
+    conditions: Sequence[str] = (),
+    phases: Sequence[str] = (),
+    reliability_treatment: str = "",
+    temporal_assumptions: Mapping[str, Any] | None = None,
+    fair_play_policy: Mapping[str, Any] | None = None,
+    row_count: int | None = None,
+    metadata: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Describe a G row export well enough for later comparison and audit."""
+
+    if not str(experiment_id).strip():
+        raise ValueError("G experiment manifests require a non-empty experiment_id")
+    if not str(row_file).strip():
+        raise ValueError("G experiment manifests require a non-empty row_file")
+    if not str(evaluation_target).strip():
+        raise ValueError("G experiment manifests require a non-empty evaluation_target")
+    manifest: dict[str, Any] = {
+        "manifest_kind": "epistemap_g_experiment",
+        "schema_version": "0.1",
+        "experiment_id": str(experiment_id),
+        "name": str(name),
+        "row_file": str(row_file),
+        "evaluation_target": str(evaluation_target),
+        "corpus": str(corpus),
+        "conditions": [str(condition) for condition in conditions],
+        "phases": [str(phase) for phase in phases],
+        "reliability_treatment": str(reliability_treatment),
+        "temporal_assumptions": dict(temporal_assumptions or {}),
+        "fair_play_policy": dict(fair_play_policy or {}),
+        "row_count": row_count,
+        "metadata": dict(metadata or {}),
+    }
+    return {key: value for key, value in manifest.items() if not _blank_manifest_value(value)}
+
+
+def write_g_experiment_manifest(
+    manifest: Mapping[str, Any],
+    destination: str | Path | TextIO,
+) -> None:
+    """Write a G experiment manifest as deterministic JSON."""
+
+    text = json.dumps(dict(manifest), indent=2, sort_keys=True) + "\n"
+    if hasattr(destination, "write"):
+        destination.write(text)  # type: ignore[union-attr]
+        return
+    Path(destination).write_text(text, encoding="utf-8")
+
+
 def delta_g(
     before_rows: Iterable[Mapping[str, Any]],
     after_rows: Iterable[Mapping[str, Any]],
@@ -297,6 +353,10 @@ def _coerce_row(row: Mapping[str, Any]) -> dict[str, float]:
     if p < 0.0 or p > 1.0:
         raise ValueError("G rows require p in [0, 1]")
     return {"y": float(y), "p": p}
+
+
+def _blank_manifest_value(value: Any) -> bool:
+    return value is None or value == "" or value == ()
 
 
 def _brier(rows: Sequence[Mapping[str, float]]) -> float:

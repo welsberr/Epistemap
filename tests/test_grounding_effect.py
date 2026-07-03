@@ -6,12 +6,14 @@ from epistemap import (
     GraphBundle,
     Node,
     delta_g,
+    g_experiment_manifest,
     g_evaluation_row,
     g_estimate,
     g_rows_to_csv,
     graph_with_component_reliability,
     normalize_g_evaluation_row,
     reliability_level_sensitivity,
+    write_g_experiment_manifest,
     write_g_rows_csv,
 )
 
@@ -111,6 +113,32 @@ def test_write_g_rows_csv_writes_to_path(tmp_path) -> None:
 
     assert destination.read_text(encoding="utf-8").startswith("run_id,subject_id,condition")
     assert '"story, chapter 4"' in destination.read_text(encoding="utf-8")
+
+
+def test_g_experiment_manifest_records_row_context(tmp_path) -> None:
+    manifest = g_experiment_manifest(
+        experiment_id="detective-fair-play-001",
+        name="Detective fair-play recognition",
+        row_file="g_rows.csv",
+        evaluation_target="contradiction_recognition",
+        corpus="open-detective-fiction",
+        conditions=["plain-reading", "kg-assisted"],
+        phases=["chapter", "denouement"],
+        reliability_treatment="source-visible",
+        temporal_assumptions={"clock": "narrative_order"},
+        fair_play_policy={"requires_prior_decisive_evidence": True},
+        row_count=12,
+        metadata={"reviewer": "human"},
+    )
+    destination = tmp_path / "manifest.json"
+
+    write_g_experiment_manifest(manifest, destination)
+
+    text = destination.read_text(encoding="utf-8")
+    assert manifest["manifest_kind"] == "epistemap_g_experiment"
+    assert manifest["conditions"] == ["plain-reading", "kg-assisted"]
+    assert manifest["fair_play_policy"]["requires_prior_decisive_evidence"] is True
+    assert '"row_file": "g_rows.csv"' in text
 
 
 def test_reliability_level_sensitivity_is_counterfactual_not_verdict() -> None:

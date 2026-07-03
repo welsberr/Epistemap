@@ -42,6 +42,12 @@ available to the reader and when the participant or model recognized it.
 Scientific-corpus benchmarks can use the same fields for evidential discovery,
 publication, instrumentation, correction, or consensus-change dates.
 
+Each row export can be paired with an `epistemap_g_experiment` manifest. The
+manifest records the row file, evaluation target, corpus, conditions, phases,
+reliability treatment, temporal assumptions, fair-play policy, and row count.
+This is intentionally descriptive rather than authoritative: it lets later
+analyses compare treatments without hiding what was actually varied.
+
 ## Reliability Sensitivity
 
 There is merit in asking how `delta_G` changes when a graph component is treated
