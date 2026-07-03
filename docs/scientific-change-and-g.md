@@ -53,6 +53,12 @@ grouped estimates, commonly by `condition` or `phase`. Groups that lack both
 clean and target environments keep the metric warning, which is a useful signal
 that an experiment design or export is not yet suitable for full G comparison.
 
+`g_summary_comparison()` and `g_experiment_comparison()` compare multiple
+exports by overall `G` and report deltas from a selected baseline. These
+comparisons are appropriate for ranking experimental treatments, hardware
+profiles, prompt variants, or graph interventions, provided the underlying row
+sets have compatible evaluation targets and environments.
+
 ## Reliability Sensitivity
 
 There is merit in asking how `delta_G` changes when a graph component is treated

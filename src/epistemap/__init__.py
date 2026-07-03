@@ -27,6 +27,7 @@ from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .grounding_effect import (
     G_ROW_FIELDS,
     delta_g,
+    g_experiment_comparison,
     g_experiment_manifest,
     g_evaluation_row,
     g_estimate,
@@ -37,6 +38,7 @@ from .grounding_effect import (
     read_g_experiment_manifest,
     read_g_rows_csv,
     reliability_level_sensitivity,
+    g_summary_comparison,
     write_g_experiment_manifest,
     write_g_rows_csv,
 )
@@ -65,6 +67,7 @@ __all__ = [
     "fair_play_diagnostic",
     "first_contradiction_time",
     "G_ROW_FIELDS",
+    "g_experiment_comparison",
     "g_experiment_manifest",
     "g_evaluation_row",
     "g_estimate",
@@ -96,6 +99,7 @@ __all__ = [
     "shortest_path",
     "slugify",
     "stale_claims_after",
+    "g_summary_comparison",
     "tenability_window",
     "timeline_events",
     "to_cytoscape_json",

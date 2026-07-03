@@ -6,6 +6,7 @@ from epistemap import (
     GraphBundle,
     Node,
     delta_g,
+    g_experiment_comparison,
     g_experiment_manifest,
     g_evaluation_row,
     g_estimate,
@@ -16,6 +17,7 @@ from epistemap import (
     read_g_experiment_manifest,
     read_g_rows_csv,
     reliability_level_sensitivity,
+    g_summary_comparison,
     write_g_experiment_manifest,
     write_g_rows_csv,
 )
@@ -186,6 +188,57 @@ def test_g_experiment_summary_groups_rows_by_condition() -> None:
     assert summary["manifest"]["experiment_id"] == "detective-fair-play-001"
     assert summary["groups"]["kg"]["G"] > summary["groups"]["plain"]["G"]
     assert "not a source-truth" in summary["interpretation"]
+
+
+def test_g_summary_comparison_ranks_experiments_against_baseline() -> None:
+    weak = g_experiment_summary(
+        _rows(target_confidence=0.6),
+        manifest={"experiment_id": "plain", "name": "Plain reading", "evaluation_target": "recognition"},
+    )
+    strong = g_experiment_summary(
+        _rows(target_confidence=0.9),
+        manifest={"experiment_id": "kg", "name": "KG assisted", "evaluation_target": "recognition"},
+    )
+
+    comparison = g_summary_comparison([weak, strong], baseline_id="plain")
+
+    assert comparison["comparison_kind"] == "epistemap_g_summary_comparison"
+    assert comparison["baseline_id"] == "plain"
+    assert comparison["summaries"][0]["experiment_id"] == "kg"
+    assert comparison["summaries"][0]["rank"] == 1
+    assert comparison["summaries"][0]["delta_from_baseline"] > 0
+    assert "not a source-truth" in comparison["interpretation"]
+
+
+def test_g_experiment_comparison_builds_summaries_from_rows() -> None:
+    comparison = g_experiment_comparison(
+        [
+            {
+                "manifest": {"experiment_id": "plain", "evaluation_target": "recognition"},
+                "rows": _rows(target_confidence=0.55),
+            },
+            {
+                "manifest": {"experiment_id": "kg", "evaluation_target": "recognition"},
+                "rows": _rows(target_confidence=0.9),
+            },
+        ],
+        baseline_id="plain",
+    )
+
+    assert comparison["group_by"] == "condition"
+    assert comparison["summaries"][0]["experiment_id"] == "kg"
+    assert comparison["summaries"][0]["delta_from_baseline"] > 0
+
+
+def test_g_summary_comparison_preserves_metric_warnings() -> None:
+    summary = g_experiment_summary(
+        [g_evaluation_row(y=1, p=0.8, env="K", condition="target-only")],
+        manifest={"experiment_id": "target-only", "evaluation_target": "recognition"},
+    )
+
+    comparison = g_summary_comparison([summary])
+
+    assert comparison["summaries"][0]["warning"] == "both clean and target environments are required"
 
 
 def test_reliability_level_sensitivity_is_counterfactual_not_verdict() -> None:

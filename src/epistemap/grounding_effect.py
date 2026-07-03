@@ -311,6 +311,61 @@ def g_experiment_summary(
     }
 
 
+def g_summary_comparison(
+    summaries: Iterable[Mapping[str, Any]],
+    *,
+    baseline_id: str | None = None,
+) -> dict[str, Any]:
+    """Compare multiple G experiment summaries by overall G."""
+
+    materialized = [dict(summary) for summary in summaries]
+    rows = [_summary_comparison_row(summary) for summary in materialized]
+    rows.sort(key=lambda row: row["G"], reverse=True)
+    if baseline_id is None and rows:
+        baseline_id = rows[-1]["experiment_id"]
+    baseline = next((row for row in rows if row["experiment_id"] == baseline_id), None)
+    baseline_g = float(baseline["G"]) if baseline is not None else 0.0
+    for rank, row in enumerate(rows, start=1):
+        row["rank"] = rank
+        row["delta_from_baseline"] = row["G"] - baseline_g
+    return {
+        "comparison_kind": "epistemap_g_summary_comparison",
+        "baseline_id": baseline_id,
+        "summaries": rows,
+        "interpretation": (
+            "Compares learner/model grounding-effectiveness summaries; "
+            "not a source-truth or provenance ranking."
+        ),
+    }
+
+
+def g_experiment_comparison(
+    experiments: Iterable[Mapping[str, Any]],
+    *,
+    group_by: str = "condition",
+    baseline_id: str | None = None,
+    target_env: str = "K",
+    clean_env: str = "C",
+    weights: tuple[float, float, float] = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0),
+) -> dict[str, Any]:
+    """Compare experiments supplied as mappings with `rows` and optional `manifest`."""
+
+    summaries = [
+        g_experiment_summary(
+            experiment["rows"],
+            manifest=experiment.get("manifest", {}),
+            group_by=group_by,
+            target_env=target_env,
+            clean_env=clean_env,
+            weights=weights,
+        )
+        for experiment in experiments
+    ]
+    comparison = g_summary_comparison(summaries, baseline_id=baseline_id)
+    comparison["group_by"] = group_by
+    return comparison
+
+
 def delta_g(
     before_rows: Iterable[Mapping[str, Any]],
     after_rows: Iterable[Mapping[str, Any]],
@@ -416,6 +471,28 @@ def _coerce_row(row: Mapping[str, Any]) -> dict[str, float]:
 
 def _blank_manifest_value(value: Any) -> bool:
     return value is None or value == "" or value == ()
+
+
+def _summary_comparison_row(summary: Mapping[str, Any]) -> dict[str, Any]:
+    manifest = summary.get("manifest", {})
+    if not isinstance(manifest, Mapping):
+        manifest = {}
+    overall = summary.get("overall", {})
+    if not isinstance(overall, Mapping):
+        overall = {}
+    experiment_id = str(manifest.get("experiment_id", "") or manifest.get("name", "") or "unlabeled")
+    row: dict[str, Any] = {
+        "experiment_id": experiment_id,
+        "name": str(manifest.get("name", "")),
+        "evaluation_target": str(manifest.get("evaluation_target", "")),
+        "corpus": str(manifest.get("corpus", "")),
+        "row_count": int(summary.get("row_count", 0) or manifest.get("row_count", 0) or 0),
+        "G": float(overall.get("G", 0.0)),
+        "n": dict(overall.get("n", {})) if isinstance(overall.get("n", {}), Mapping) else {},
+    }
+    if "warning" in overall:
+        row["warning"] = overall["warning"]
+    return row
 
 
 def _brier(rows: Sequence[Mapping[str, float]]) -> float:
