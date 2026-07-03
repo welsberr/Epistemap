@@ -7,8 +7,10 @@ from epistemap import (
     availability_lag,
     claim_status_at,
     evidence_available_at,
+    fair_play_diagnostic,
     first_contradiction_time,
     graph_at,
+    recognition_window,
     stale_claims_after,
     tenability_window,
     timeline_events,
@@ -73,6 +75,24 @@ def _detective_bundle() -> GraphBundle:
     )
 
 
+def _unfair_detective_bundle() -> GraphBundle:
+    return GraphBundle(
+        graph_id="unfair-detective",
+        nodes=[
+            Node(id="claim::alibi", type="claim", title="The alibi is true", metadata={"timestep": 1}),
+            Node(id="clue::hidden", type="evidence", title="Hidden diary", metadata={"timestep": 9}),
+        ],
+        edges=[
+            Edge(
+                source="clue::hidden",
+                target="claim::alibi",
+                type="contradicts",
+                metadata={"timestep": 9, "access_scope": "detective_only"},
+            ),
+        ],
+    )
+
+
 def test_graph_at_slices_by_available_date() -> None:
     early = graph_at(_scholarship_bundle(), "1902-01-01")
 
@@ -104,6 +124,7 @@ def test_detective_story_numeric_timesteps_support_recognition_lag() -> None:
     assert evidence_available_at(bundle, "claim::alibi", 7)["summary"]["challenge_count"] == 1
     assert first_contradiction_time(bundle, "claim::alibi")["time"] == "7"
     assert availability_lag(1, 7, 9)["post_contradiction_persistence"] == 2.0
+    assert recognition_window(bundle, "claim::alibi", recognized_at=9)["recognition_lag"] == 2.0
 
 
 def test_timeline_events_are_sorted_and_keep_original_labels() -> None:
@@ -111,3 +132,20 @@ def test_timeline_events_are_sorted_and_keep_original_labels() -> None:
 
     assert [event["time"] for event in events[:2]] == ["1900-01-01", "1901-01-01"]
     assert events[-1]["time"] == "1953-04-25"
+
+
+def test_fair_play_diagnostic_accepts_prior_decisive_evidence() -> None:
+    report = fair_play_diagnostic(_detective_bundle(), reveal_at=9)
+
+    assert report["rating"] == "fair"
+    assert report["claims"][0]["first_decisive_evidence"]["time"] == "7"
+
+
+def test_fair_play_diagnostic_flags_late_or_hidden_decisive_evidence() -> None:
+    late = fair_play_diagnostic(_detective_bundle(), reveal_at=6)
+    hidden = fair_play_diagnostic(_unfair_detective_bundle(), reveal_at=10)
+
+    assert late["rating"] == "unfair"
+    assert "late_decisive_evidence" in late["claims"][0]["failures"]
+    assert hidden["rating"] == "unfair"
+    assert "hidden_or_private_decisive_evidence" in hidden["claims"][0]["failures"]

@@ -47,6 +47,10 @@ experimental sequences may use numeric `timestep` values.
 - `timeline_events(bundle)`: sorted dated events from graph metadata.
 - `availability_lag(...)`: comparable intervals such as post-contradiction
   persistence.
+- `recognition_window(bundle, claim_id, recognized_at)`: compare first
+  available contradiction with an observed learner/model recognition time.
+- `fair_play_diagnostic(bundle, reveal_at=...)`: check whether decisive
+  contradiction or revision evidence was available before the reveal.
 
 ## Scholarship
 
@@ -80,7 +84,14 @@ Useful measurements include:
 
 Stories that violate the reader contract by withholding decisive evidence until
 the reveal should be excluded from the gold fair-play set or used as negative
-controls.
+controls. `fair_play_diagnostic` flags common admission failures:
+
+- `no_decisive_evidence`;
+- `undated_decisive_evidence`;
+- `late_decisive_evidence`;
+- `decisive_evidence_at_reveal`;
+- `hidden_or_private_decisive_evidence`;
+- `uncomparable_reveal_time`.
 
 ## Denialist Persistence
 
@@ -88,4 +99,3 @@ The same machinery applies to denialist claims. The relevant question is not
 whether a claim was always unreasonable, but when the public evidence made it no
 longer tenable. Continued assertion after that point is a graph-visible pattern:
 post-contradiction persistence without clarifying explanatory gain.
-
