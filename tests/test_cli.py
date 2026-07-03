@@ -107,3 +107,56 @@ def test_cli_g_compare_writes_comparison(tmp_path, monkeypatch, capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["summaries"][0]["experiment_id"] == "strong"
     assert comparison_path.exists()
+
+
+def test_cli_g_compare_can_require_compatible_inputs(tmp_path, monkeypatch, capsys) -> None:
+    recognition_path = tmp_path / "recognition.json"
+    translation_path = tmp_path / "translation.json"
+    recognition_path.write_text(
+        json.dumps(
+            g_experiment_summary(
+                [
+                    g_evaluation_row(y=1, p=0.9, env="C"),
+                    g_evaluation_row(y=0, p=0.1, env="C"),
+                    g_evaluation_row(y=1, p=0.8, env="K"),
+                    g_evaluation_row(y=0, p=0.2, env="K"),
+                ],
+                manifest={"experiment_id": "recognition", "evaluation_target": "recognition"},
+            )
+        ),
+        encoding="utf-8",
+    )
+    translation_path.write_text(
+        json.dumps(
+            g_experiment_summary(
+                [
+                    g_evaluation_row(y=1, p=0.9, env="C"),
+                    g_evaluation_row(y=0, p=0.1, env="C"),
+                    g_evaluation_row(y=1, p=0.9, env="K"),
+                    g_evaluation_row(y=0, p=0.1, env="K"),
+                ],
+                manifest={"experiment_id": "translation", "evaluation_target": "translation"},
+            )
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "epistemap",
+            "g-compare",
+            str(recognition_path),
+            str(translation_path),
+            "--require-compatible",
+        ],
+    )
+
+    try:
+        main()
+    except SystemExit as exc:
+        assert exc.code == 2
+    else:
+        raise AssertionError("expected incompatible comparison to exit with status 2")
+    payload = json.loads(capsys.readouterr().out)
+    assert "mixed evaluation targets; compare G values only with caution" in payload["warnings"]

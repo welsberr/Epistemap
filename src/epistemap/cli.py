@@ -22,6 +22,11 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("summaries", nargs="+")
     compare.add_argument("--baseline-id", default=None)
     compare.add_argument("--out", default=None, help="Optional output comparison JSON path.")
+    compare.add_argument(
+        "--require-compatible",
+        action="store_true",
+        help="Exit with status 2 if compatibility diagnostics contain warnings.",
+    )
 
     return parser
 
@@ -48,6 +53,8 @@ def main() -> None:
         parser.print_help()
         return
     print(json.dumps(payload, indent=2))
+    if args.command == "g-compare" and args.require_compatible and not payload["compatibility"]["compatible"]:
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":

@@ -34,4 +34,5 @@ The `epistemap` CLI can summarize and compare G artifacts:
 ```bash
 epistemap g-summary g_rows.csv --manifest g_manifest.json --out g_summary.json
 epistemap g-compare run-a/g_summary.json run-b/g_summary.json --baseline-id run-a --out comparison.json
+epistemap g-compare run-a/g_summary.json run-b/g_summary.json --require-compatible
 ```
