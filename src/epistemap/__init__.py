@@ -13,6 +13,11 @@ from .algorithms import (
     shortest_path,
     topological_order,
 )
+from .bayesian import (
+    bayesian_evidence_update,
+    bayesian_prior_sensitivity,
+    beta_binomial_posterior,
+)
 from .ids import node_id, slugify, typed_id
 from .exporters import (
     to_cytoscape_json,
@@ -64,6 +69,9 @@ from .validation import GraphShape, validate_shape
 
 __all__ = [
     "availability_lag",
+    "bayesian_evidence_update",
+    "bayesian_prior_sensitivity",
+    "beta_binomial_posterior",
     "Edge",
     "claim_status_at",
     "delta_g",

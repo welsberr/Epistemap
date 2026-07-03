@@ -58,6 +58,9 @@ def test_epistemic_summary_surfaces_support_challenge_and_grounding() -> None:
     assert "challenge_penalty" in summary["reliability"]["components"]
     assert summary["reliability"]["components"]["source_quality"] < 1
     assert summary["reliability"]["components"]["adversarial_penalty"] > 0
+    assert summary["bayesian_reliability"]["model"] == "beta_binomial_weighted_evidence"
+    assert summary["bayesian_reliability"]["posterior"]["mean"] > 0.5
+    assert summary["bayesian_reliability"]["prior_sensitivity"]["mean_range"] > 0
 
 
 def test_epistemic_report_counts_flags() -> None:

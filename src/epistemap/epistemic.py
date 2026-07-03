@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
+from .bayesian import bayesian_evidence_update, bayesian_prior_sensitivity
 from .models import Edge, GraphBundle, Node
 
 SUPPORT_EDGE_TYPES = {"supports", "supports_claim", "about_concept", "supports_concept", "teaches_concept"}
@@ -68,6 +69,16 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         source_quality=source_quality,
         source_stances=source_stances,
     )
+    bayesian = bayesian_evidence_update(
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        nodes_by_id=nodes,
+    )
+    bayesian["prior_sensitivity"] = bayesian_prior_sensitivity(
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        nodes_by_id=nodes,
+    )
     return {
         "node_id": node_id,
         "node_type": target.type if target is not None else "",
@@ -86,6 +97,7 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         "source_stance_summary": dict(sorted(source_stances.items())),
         "flags": flags,
         "reliability": reliability,
+        "bayesian_reliability": bayesian,
         "support_edges": [_edge_ref(edge) for edge in support_edges[:12]],
         "challenge_edges": [_edge_ref(edge) for edge in challenge_edges[:12]],
         "revision_edges": [_edge_ref(edge) for edge in revision_edges[:12]],

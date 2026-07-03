@@ -29,6 +29,11 @@ Temporal epistemic graph operations are documented in
 windows, contradiction timing, and stale-claim detection for both scholarly
 timelines and fair-play detective-story experiments.
 
+Bayesian reliability estimates are documented in
+`docs/bayesian-reliability.md`. These add explicit posterior support estimates
+and prior-sensitivity checks alongside the existing heuristic epistemic
+reliability summaries.
+
 The `epistemap` CLI can summarize and compare G artifacts:
 
 ```bash
