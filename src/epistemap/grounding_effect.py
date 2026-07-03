@@ -340,6 +340,67 @@ def g_experiment_summary_from_files(
     return summary
 
 
+def g_experiment_summary_markdown(summary: Mapping[str, Any]) -> str:
+    """Render a G experiment summary as a compact Markdown report."""
+
+    manifest = summary.get("manifest", {})
+    if not isinstance(manifest, Mapping):
+        manifest = {}
+    overall = summary.get("overall", {})
+    if not isinstance(overall, Mapping):
+        overall = {}
+    lines = [
+        "# Epistemap G Summary",
+        "",
+        f"- Experiment: `{manifest.get('experiment_id', '')}`",
+        f"- Evaluation target: `{manifest.get('evaluation_target', '')}`",
+        f"- Corpus: `{manifest.get('corpus', '')}`",
+        f"- G: `{float(overall.get('G', 0.0)):.6f}`",
+        f"- Rows: `{int(summary.get('row_count', 0) or 0)}`",
+        f"- Manifest consistent: `{summary.get('consistency', {}).get('consistent', False)}`",
+    ]
+    warnings = [str(warning) for warning in summary.get("warnings", [])]
+    if overall.get("warning"):
+        warnings.insert(0, str(overall["warning"]))
+    if warnings:
+        lines.extend(["", "## Warnings"])
+        lines.extend(f"- {warning}" for warning in warnings)
+    lines.extend(
+        [
+            "",
+            "## Groups",
+            "",
+            "| Group | G | Clean n | Target n | Warning |",
+            "| --- | ---: | ---: | ---: | --- |",
+        ]
+    )
+    for label, estimate in sorted(summary.get("groups", {}).items()):
+        n = estimate.get("n", {}) if isinstance(estimate, Mapping) else {}
+        lines.append(
+            "| `{label}` | {g:.6f} | {clean} | {target} | {warning} |".format(
+                label=label,
+                g=float(estimate.get("G", 0.0)),
+                clean=int(n.get("clean", 0) or 0),
+                target=int(n.get("target", 0) or 0),
+                warning=str(estimate.get("warning", "")),
+            )
+        )
+    lines.extend(["", summary.get("interpretation", "")])
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_g_experiment_summary_markdown(summary: Mapping[str, Any], destination: str | Path | TextIO) -> None:
+    """Write a Markdown report for a G experiment summary."""
+
+    text = g_experiment_summary_markdown(summary)
+    if hasattr(destination, "write"):
+        destination.write(text)  # type: ignore[union-attr]
+        return
+    path = Path(destination)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
 def g_summary_comparison(
     summaries: Iterable[Mapping[str, Any]],
     *,

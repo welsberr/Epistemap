@@ -17,6 +17,7 @@ def test_cli_g_summary_writes_summary(tmp_path, monkeypatch, capsys) -> None:
     rows_path = tmp_path / "g_rows.csv"
     manifest_path = tmp_path / "g_manifest.json"
     summary_path = tmp_path / "g_summary.json"
+    markdown_path = tmp_path / "g_summary.md"
     write_g_rows_csv(
         [
             g_evaluation_row(y=1, p=0.9, env="C", condition="plain"),
@@ -45,6 +46,8 @@ def test_cli_g_summary_writes_summary(tmp_path, monkeypatch, capsys) -> None:
             str(manifest_path),
             "--out",
             str(summary_path),
+            "--out-md",
+            str(markdown_path),
         ],
     )
 
@@ -53,6 +56,7 @@ def test_cli_g_summary_writes_summary(tmp_path, monkeypatch, capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["manifest"]["experiment_id"] == "cli-summary"
     assert summary_path.exists()
+    assert "# Epistemap G Summary" in markdown_path.read_text(encoding="utf-8")
 
 
 def test_cli_g_summary_can_require_consistent_manifest(tmp_path, monkeypatch, capsys) -> None:

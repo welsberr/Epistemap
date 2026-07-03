@@ -6,6 +6,7 @@ import json
 from .grounding_effect import (
     g_experiment_summary_from_files,
     g_summary_comparison_from_files,
+    write_g_experiment_summary_markdown,
     write_g_summary_comparison_markdown,
 )
 
@@ -18,6 +19,7 @@ def build_parser() -> argparse.ArgumentParser:
     summary.add_argument("rows_csv")
     summary.add_argument("--manifest", default=None, help="Optional Epistemap G experiment manifest JSON.")
     summary.add_argument("--out", default=None, help="Optional output summary JSON path.")
+    summary.add_argument("--out-md", default=None, help="Optional output Markdown report path.")
     summary.add_argument("--group-by", default="condition")
     summary.add_argument("--target-env", default="K")
     summary.add_argument("--clean-env", default="C")
@@ -53,6 +55,8 @@ def main() -> None:
             target_env=args.target_env,
             clean_env=args.clean_env,
         )
+        if args.out_md is not None:
+            write_g_experiment_summary_markdown(payload, args.out_md)
     elif args.command == "g-compare":
         payload = g_summary_comparison_from_files(
             args.summaries,

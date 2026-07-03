@@ -14,6 +14,7 @@ from epistemap import (
     g_estimate,
     g_experiment_summary,
     g_experiment_summary_from_files,
+    g_experiment_summary_markdown,
     g_rows_to_csv,
     graph_with_component_reliability,
     normalize_g_evaluation_row,
@@ -24,6 +25,7 @@ from epistemap import (
     g_summary_comparison_from_files,
     g_summary_comparison_markdown,
     write_g_experiment_manifest,
+    write_g_experiment_summary_markdown,
     write_g_rows_csv,
     write_g_summary_comparison_markdown,
 )
@@ -241,6 +243,26 @@ def test_g_experiment_summary_from_files_writes_summary(tmp_path) -> None:
 
     assert summary["manifest"]["experiment_id"] == "file-summary"
     assert summary_path.exists()
+
+
+def test_g_experiment_summary_markdown_renders_groups_and_warnings(tmp_path) -> None:
+    summary = g_experiment_summary(
+        [
+            g_evaluation_row(y=1, p=0.9, env="C", condition="plain"),
+            g_evaluation_row(y=1, p=0.8, env="K", condition="plain"),
+        ],
+        manifest={"experiment_id": "summary-report", "evaluation_target": "recognition", "row_count": 3},
+    )
+    destination = tmp_path / "summary.md"
+
+    markdown = g_experiment_summary_markdown(summary)
+    write_g_experiment_summary_markdown(summary, destination)
+
+    assert "# Epistemap G Summary" in markdown
+    assert "summary-report" in markdown
+    assert "manifest row_count does not match actual row count" in markdown
+    assert "| `plain` |" in markdown
+    assert destination.read_text(encoding="utf-8") == markdown
 
 
 def test_g_summary_comparison_ranks_experiments_against_baseline() -> None:
