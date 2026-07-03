@@ -1,6 +1,16 @@
 from __future__ import annotations
 
-from epistemap import Edge, GraphBundle, Node, ProvenanceRef, epistemic_report, epistemic_summary
+from epistemap import (
+    Edge,
+    GraphBundle,
+    Node,
+    ProvenanceRef,
+    bayesian_assessment_markdown,
+    bayesian_assessment_report,
+    epistemic_report,
+    epistemic_summary,
+    write_bayesian_assessment_markdown,
+)
 
 
 def _bundle() -> GraphBundle:
@@ -74,3 +84,23 @@ def test_epistemic_report_counts_flags() -> None:
     assert report["summary"]["node_count"] == 3
     assert report["summary"]["flag_counts"]["challenged"] >= 1
     assert report["summary"]["reliability_bands"]
+
+
+def test_bayesian_assessment_report_ranks_and_counts_graph_nodes(tmp_path) -> None:
+    report = bayesian_assessment_report(_bundle())
+
+    assert report["report_kind"] == "epistemap_bayesian_assessment_report"
+    assert report["summary"]["node_count"] == 3
+    assert report["summary"]["label_counts"]
+    assert report["nodes"][0]["bayesian_label"] in {"prior_sensitive", "thin_evidence", "contested", "fragile_support"}
+    assert "posterior_mean" in report["nodes"][0]
+    assert "effective_sample_size" in report["nodes"][0]
+
+    markdown = bayesian_assessment_markdown(report)
+    destination = tmp_path / "bayesian-assessment.md"
+    write_bayesian_assessment_markdown(report, destination)
+
+    assert "# Epistemap Bayesian Assessment" in markdown
+    assert "| Node | Type | Label | Flags | Mean | N | Prior Range |" in markdown
+    assert "not automatic claim promotion decisions" in markdown
+    assert destination.read_text(encoding="utf-8") == markdown

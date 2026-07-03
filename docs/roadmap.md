@@ -41,13 +41,14 @@ assessment artifacts, not decide claim truth or promotion status.
    - Let callers request profile names without hand-building alpha/beta pairs.
 
 3. **Graph-level Bayesian assessment**
-   - Status: next.
+   - Status: implemented.
    - Batch over claim or concept nodes.
    - Rank by thin evidence, wide intervals, prior sensitivity, and contested
      support.
    - Emit deterministic JSON and compact Markdown.
 
 4. **Assessment manifests**
+   - Status: next.
    - Extend experiment metadata to record Bayesian prior profile, graph
      extraction policy, evidence weighting policy, temporal policy, and
      reliability treatment.

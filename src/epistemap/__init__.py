@@ -32,7 +32,13 @@ from .exporters import (
     write_graphviz_dot,
     write_jsonld,
 )
-from .epistemic import epistemic_report, epistemic_summary
+from .epistemic import (
+    bayesian_assessment_markdown,
+    bayesian_assessment_report,
+    epistemic_report,
+    epistemic_summary,
+    write_bayesian_assessment_markdown,
+)
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .grounding_effect import (
     G_ROW_FIELDS,
@@ -76,6 +82,8 @@ __all__ = [
     "availability_lag",
     "BAYESIAN_PRIOR_PROFILES",
     "bayesian_evidence_update",
+    "bayesian_assessment_markdown",
+    "bayesian_assessment_report",
     "bayesian_prior_sensitivity",
     "bayesian_reliability_markdown",
     "beta_binomial_posterior",
@@ -137,6 +145,7 @@ __all__ = [
     "validate_shape",
     "write_cytoscape_json",
     "write_bayesian_reliability_markdown",
+    "write_bayesian_assessment_markdown",
     "write_g_experiment_manifest",
     "write_g_experiment_summary_markdown",
     "write_g_rows_csv",

@@ -69,11 +69,13 @@ Implemented:
   prior_profile=...)`, and profile-aware `bayesian_prior_sensitivity()`.
   Current profiles are `neutral`, `skeptical`, `supportive`,
   `source_conservative`, and `adversarial_aware`.
+- graph-level assessment reports via `bayesian_assessment_report()`,
+  `bayesian_assessment_markdown()`, and
+  `write_bayesian_assessment_markdown()`. Reports batch over claims and
+  concepts, rank rows by review urgency, and summarize label and flag counts.
 
 Near-term:
 
-- add batch reports over all claims or concepts in a graph, ranking by low
-  effective sample size, wide credible interval, and high prior sensitivity;
 - add CLI support for graph-level epistemic reports once graph bundle loading is
   standardized for downstream repos.
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from pathlib import Path
 from typing import Any
 
 from .bayesian import bayesian_evidence_update, bayesian_prior_sensitivity, classify_bayesian_reliability
@@ -127,6 +128,131 @@ def epistemic_report(bundle: GraphBundle, *, node_types: set[str] | None = None)
         },
         "nodes": summaries,
     }
+
+
+def bayesian_assessment_report(bundle: GraphBundle, *, node_types: set[str] | None = None) -> dict[str, Any]:
+    """Batch Bayesian assessment summaries over graph claims or concepts."""
+    node_types = node_types or {"concept", "claim"}
+    rows = [
+        _bayesian_assessment_row(epistemic_summary(bundle, node.id))
+        for node in bundle.nodes
+        if node.type in node_types
+    ]
+    rows = sorted(rows, key=_bayesian_assessment_sort_key)
+    label_counts = Counter(row["bayesian_label"] for row in rows)
+    flag_counts: Counter[str] = Counter()
+    for row in rows:
+        flag_counts.update(row["bayesian_flags"])
+    return {
+        "report_kind": "epistemap_bayesian_assessment_report",
+        "graph_id": bundle.graph_id,
+        "summary": {
+            "node_count": len(rows),
+            "label_counts": dict(sorted(label_counts.items())),
+            "flag_counts": dict(sorted(flag_counts.items())),
+        },
+        "nodes": rows,
+    }
+
+
+def bayesian_assessment_markdown(report: dict[str, Any]) -> str:
+    """Render a compact Markdown report for a graph-level Bayesian assessment."""
+    summary = report.get("summary", {})
+    lines = [
+        "# Epistemap Bayesian Assessment",
+        "",
+        f"- Graph: `{report.get('graph_id', '')}`",
+        f"- Nodes assessed: `{summary.get('node_count', 0)}`",
+        f"- Label counts: `{_counter_text(summary.get('label_counts', {}))}`",
+        f"- Flag counts: `{_counter_text(summary.get('flag_counts', {}))}`",
+        "",
+        "| Node | Type | Label | Flags | Mean | N | Prior Range |",
+        "| --- | --- | --- | --- | ---: | ---: | ---: |",
+    ]
+    for row in report.get("nodes", []):
+        lines.append(
+            "| {node} | {node_type} | `{label}` | {flags} | {mean} | {n} | {prior_range} |".format(
+                node=row.get("title") or row.get("node_id", ""),
+                node_type=row.get("node_type", ""),
+                label=row.get("bayesian_label", ""),
+                flags=", ".join(row.get("bayesian_flags", [])) or "none",
+                mean=_fmt_float(row.get("posterior_mean")),
+                n=_fmt_float(row.get("effective_sample_size")),
+                prior_range=_fmt_float(row.get("prior_sensitivity_range")),
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "Labels are review triage signals over explicit priors and extracted graph evidence, not automatic claim promotion decisions.",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
+def write_bayesian_assessment_markdown(report: dict[str, Any], destination: str | Path) -> None:
+    """Write a graph-level Bayesian assessment Markdown report."""
+    path = Path(destination)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(bayesian_assessment_markdown(report), encoding="utf-8")
+
+
+def _bayesian_assessment_row(summary: dict[str, Any]) -> dict[str, Any]:
+    bayesian = summary.get("bayesian_reliability", {})
+    posterior = bayesian.get("posterior", {}) if isinstance(bayesian, dict) else {}
+    evidence = bayesian.get("evidence", {}) if isinstance(bayesian, dict) else {}
+    sensitivity = bayesian.get("prior_sensitivity", {}) if isinstance(bayesian, dict) else {}
+    classification = bayesian.get("classification", {}) if isinstance(bayesian, dict) else {}
+    metrics = classification.get("metrics", {}) if isinstance(classification, dict) else {}
+    interval = posterior.get("credible_interval", {}) if isinstance(posterior, dict) else {}
+    return {
+        "node_id": summary.get("node_id", ""),
+        "node_type": summary.get("node_type", ""),
+        "title": summary.get("title", ""),
+        "bayesian_label": classification.get("label", ""),
+        "bayesian_flags": list(classification.get("flags", []) or []),
+        "posterior_mean": posterior.get("mean"),
+        "credible_interval_lower": interval.get("lower"),
+        "credible_interval_upper": interval.get("upper"),
+        "credible_interval_width": metrics.get("credible_interval_width"),
+        "effective_sample_size": evidence.get("effective_sample_size"),
+        "support_edge_count": evidence.get("support_edge_count", 0),
+        "challenge_edge_count": evidence.get("challenge_edge_count", 0),
+        "prior_sensitivity_range": sensitivity.get("mean_range"),
+        "reliability_band": summary.get("reliability", {}).get("band", ""),
+        "epistemic_flags": list(summary.get("flags", []) or []),
+    }
+
+
+def _bayesian_assessment_sort_key(row: dict[str, Any]) -> tuple[int, float, float, str]:
+    label_rank = {
+        "prior_sensitive": 0,
+        "thin_evidence": 1,
+        "contested": 2,
+        "fragile_support": 3,
+        "stable_support": 4,
+    }
+    return (
+        label_rank.get(str(row.get("bayesian_label", "")), 9),
+        -float(row.get("prior_sensitivity_range") or 0.0),
+        float(row.get("effective_sample_size") or 0.0),
+        str(row.get("node_id", "")),
+    )
+
+
+def _counter_text(value: Any) -> str:
+    if not isinstance(value, dict) or not value:
+        return "none"
+    return ", ".join(f"{key}: {value[key]}" for key in sorted(value))
+
+
+def _fmt_float(value: Any) -> str:
+    if value is None:
+        return ""
+    try:
+        return f"{float(value):.6f}"
+    except (TypeError, ValueError):
+        return str(value)
 
 
 def reliability_assessment(
