@@ -9,9 +9,12 @@ from epistemap import (
     g_experiment_manifest,
     g_evaluation_row,
     g_estimate,
+    g_experiment_summary,
     g_rows_to_csv,
     graph_with_component_reliability,
     normalize_g_evaluation_row,
+    read_g_experiment_manifest,
+    read_g_rows_csv,
     reliability_level_sensitivity,
     write_g_experiment_manifest,
     write_g_rows_csv,
@@ -115,6 +118,24 @@ def test_write_g_rows_csv_writes_to_path(tmp_path) -> None:
     assert '"story, chapter 4"' in destination.read_text(encoding="utf-8")
 
 
+def test_read_g_rows_csv_round_trips_rows(tmp_path) -> None:
+    destination = tmp_path / "g-rows.csv"
+    write_g_rows_csv(
+        [
+            g_evaluation_row(y=1, p=0.9, env="C", condition="plain", metadata={"source": "chapter 1"}),
+            g_evaluation_row(y=0, p=0.2, env="K", condition="plain", metadata={"source": "chapter 2"}),
+        ],
+        destination,
+    )
+
+    rows = read_g_rows_csv(destination)
+
+    assert rows[0]["y"] == 1
+    assert rows[0]["p"] == 0.9
+    assert rows[1]["env"] == "K"
+    assert rows[1]["source"] == "chapter 2"
+
+
 def test_g_experiment_manifest_records_row_context(tmp_path) -> None:
     manifest = g_experiment_manifest(
         experiment_id="detective-fair-play-001",
@@ -139,6 +160,32 @@ def test_g_experiment_manifest_records_row_context(tmp_path) -> None:
     assert manifest["conditions"] == ["plain-reading", "kg-assisted"]
     assert manifest["fair_play_policy"]["requires_prior_decisive_evidence"] is True
     assert '"row_file": "g_rows.csv"' in text
+    assert read_g_experiment_manifest(destination)["experiment_id"] == "detective-fair-play-001"
+
+
+def test_g_experiment_summary_groups_rows_by_condition() -> None:
+    rows = [
+        g_evaluation_row(y=1, p=0.9, env="C", condition="plain"),
+        g_evaluation_row(y=0, p=0.1, env="C", condition="plain"),
+        g_evaluation_row(y=1, p=0.6, env="K", condition="plain"),
+        g_evaluation_row(y=0, p=0.4, env="K", condition="plain"),
+        g_evaluation_row(y=1, p=0.9, env="C", condition="kg"),
+        g_evaluation_row(y=0, p=0.1, env="C", condition="kg"),
+        g_evaluation_row(y=1, p=0.9, env="K", condition="kg"),
+        g_evaluation_row(y=0, p=0.1, env="K", condition="kg"),
+    ]
+
+    summary = g_experiment_summary(
+        rows,
+        manifest={"experiment_id": "detective-fair-play-001"},
+        group_by="condition",
+    )
+
+    assert summary["summary_kind"] == "epistemap_g_experiment_summary"
+    assert summary["row_count"] == 8
+    assert summary["manifest"]["experiment_id"] == "detective-fair-play-001"
+    assert summary["groups"]["kg"]["G"] > summary["groups"]["plain"]["G"]
+    assert "not a source-truth" in summary["interpretation"]
 
 
 def test_reliability_level_sensitivity_is_counterfactual_not_verdict() -> None:

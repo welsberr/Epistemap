@@ -197,6 +197,17 @@ def write_g_rows_csv(
     Path(destination).write_text(text, encoding="utf-8")
 
 
+def read_g_rows_csv(source: str | Path | TextIO) -> list[dict[str, Any]]:
+    """Read canonical G evaluation rows from a CSV path or text file object."""
+
+    if hasattr(source, "read"):
+        text = source.read()  # type: ignore[union-attr]
+    else:
+        text = Path(source).read_text(encoding="utf-8")
+    reader = csv.DictReader(StringIO(text))
+    return [normalize_g_evaluation_row(row) for row in reader]
+
+
 def g_experiment_manifest(
     *,
     experiment_id: str,
@@ -250,6 +261,54 @@ def write_g_experiment_manifest(
         destination.write(text)  # type: ignore[union-attr]
         return
     Path(destination).write_text(text, encoding="utf-8")
+
+
+def read_g_experiment_manifest(source: str | Path | TextIO) -> dict[str, Any]:
+    """Read a G experiment manifest from a JSON path or text file object."""
+
+    if hasattr(source, "read"):
+        text = source.read()  # type: ignore[union-attr]
+    else:
+        text = Path(source).read_text(encoding="utf-8")
+    manifest = json.loads(text)
+    if manifest.get("manifest_kind") != "epistemap_g_experiment":
+        raise ValueError("not an Epistemap G experiment manifest")
+    return manifest
+
+
+def g_experiment_summary(
+    rows: Iterable[Mapping[str, Any]],
+    *,
+    manifest: Mapping[str, Any] | None = None,
+    group_by: str = "condition",
+    target_env: str = "K",
+    clean_env: str = "C",
+    weights: tuple[float, float, float] = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0),
+) -> dict[str, Any]:
+    """Summarize G estimates for a row export, optionally grouped by a row field."""
+
+    materialized = [normalize_g_evaluation_row(row) for row in rows]
+    overall = g_estimate(materialized, target_env=target_env, clean_env=clean_env, weights=weights)
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for row in materialized:
+        label = str(row.get(group_by, "") or "unlabeled")
+        groups.setdefault(label, []).append(row)
+    grouped = {
+        label: g_estimate(group_rows, target_env=target_env, clean_env=clean_env, weights=weights)
+        for label, group_rows in sorted(groups.items())
+    }
+    return {
+        "summary_kind": "epistemap_g_experiment_summary",
+        "manifest": dict(manifest or {}),
+        "group_by": group_by,
+        "overall": overall,
+        "groups": grouped,
+        "row_count": len(materialized),
+        "interpretation": (
+            "G summarizes learner/model grounding effectiveness for explicit evaluation rows; "
+            "it is not a source-truth or provenance score."
+        ),
+    }
 
 
 def delta_g(

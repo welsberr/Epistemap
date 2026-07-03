@@ -48,6 +48,11 @@ reliability treatment, temporal assumptions, fair-play policy, and row count.
 This is intentionally descriptive rather than authoritative: it lets later
 analyses compare treatments without hiding what was actually varied.
 
+`g_experiment_summary()` can then load the rows into an overall `G` estimate and
+grouped estimates, commonly by `condition` or `phase`. Groups that lack both
+clean and target environments keep the metric warning, which is a useful signal
+that an experiment design or export is not yet suitable for full G comparison.
+
 ## Reliability Sensitivity
 
 There is merit in asking how `delta_G` changes when a graph component is treated
