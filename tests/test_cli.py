@@ -55,6 +55,48 @@ def test_cli_g_summary_writes_summary(tmp_path, monkeypatch, capsys) -> None:
     assert summary_path.exists()
 
 
+def test_cli_g_summary_can_require_consistent_manifest(tmp_path, monkeypatch, capsys) -> None:
+    rows_path = tmp_path / "g_rows.csv"
+    manifest_path = tmp_path / "g_manifest.json"
+    write_g_rows_csv(
+        [
+            g_evaluation_row(y=1, p=0.9, env="C", condition="plain"),
+            g_evaluation_row(y=1, p=0.8, env="K", condition="plain"),
+        ],
+        rows_path,
+    )
+    write_g_experiment_manifest(
+        g_experiment_manifest(
+            experiment_id="cli-inconsistent-summary",
+            row_file="g_rows.csv",
+            evaluation_target="recognition",
+            row_count=3,
+        ),
+        manifest_path,
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "epistemap",
+            "g-summary",
+            str(rows_path),
+            "--manifest",
+            str(manifest_path),
+            "--require-consistent",
+        ],
+    )
+
+    try:
+        main()
+    except SystemExit as exc:
+        assert exc.code == 2
+    else:
+        raise AssertionError("expected inconsistent summary to exit with status 2")
+    payload = json.loads(capsys.readouterr().out)
+    assert "manifest row_count does not match actual row count" in payload["warnings"]
+
+
 def test_cli_g_compare_writes_comparison(tmp_path, monkeypatch, capsys) -> None:
     weak_path = tmp_path / "weak.json"
     strong_path = tmp_path / "strong.json"

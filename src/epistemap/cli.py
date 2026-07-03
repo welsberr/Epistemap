@@ -17,6 +17,11 @@ def build_parser() -> argparse.ArgumentParser:
     summary.add_argument("--group-by", default="condition")
     summary.add_argument("--target-env", default="K")
     summary.add_argument("--clean-env", default="C")
+    summary.add_argument(
+        "--require-consistent",
+        action="store_true",
+        help="Exit with status 2 if manifest consistency diagnostics contain warnings.",
+    )
 
     compare = subparsers.add_parser("g-compare", help="Compare Epistemap G summary JSON files.")
     compare.add_argument("summaries", nargs="+")
@@ -53,6 +58,8 @@ def main() -> None:
         parser.print_help()
         return
     print(json.dumps(payload, indent=2))
+    if args.command == "g-summary" and args.require_consistent and not payload["consistency"]["consistent"]:
+        raise SystemExit(2)
     if args.command == "g-compare" and args.require_compatible and not payload["compatibility"]["compatible"]:
         raise SystemExit(2)
 
