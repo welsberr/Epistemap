@@ -29,6 +29,14 @@ from .bayesian import (
     resolve_bayesian_prior_profile,
     write_bayesian_reliability_markdown,
 )
+from .detective_corpus import (
+    detective_corpus_summary,
+    detective_recognition_g_row,
+    detective_story_annotation,
+    read_detective_story_annotation,
+    validate_detective_story_annotation,
+    write_detective_story_annotation,
+)
 from .ids import node_id, slugify, typed_id
 from .exporters import (
     to_cytoscape_json,
@@ -133,6 +141,9 @@ __all__ = [
     "cycle_nodes",
     "descendants",
     "diagnostics",
+    "detective_corpus_summary",
+    "detective_recognition_g_row",
+    "detective_story_annotation",
     "graph_qa_report",
     "incoming_edges",
     "k_hop_subgraph",
@@ -143,6 +154,7 @@ __all__ = [
     "recognition_window",
     "read_g_experiment_manifest",
     "read_assessment_manifest",
+    "read_detective_story_annotation",
     "read_g_rows_csv",
     "reliability_level_sensitivity",
     "resolve_bayesian_prior_profile",
@@ -162,8 +174,10 @@ __all__ = [
     "validate_shape",
     "validate_assessment_readiness",
     "validate_assessment_manifest",
+    "validate_detective_story_annotation",
     "write_assessment_manifest",
     "write_assessment_validation_markdown",
+    "write_detective_story_annotation",
     "write_cytoscape_json",
     "write_bayesian_reliability_markdown",
     "write_bayesian_assessment_markdown",

@@ -42,6 +42,10 @@ Assessment manifests record the policies and artifact paths needed to reproduce
 graph assessment conditions across GroundRecall, Didactopus, and experiment
 runners.
 
+Fair-play detective-corpus annotation helpers are documented in
+`docs/fair-play-detective-corpus.md`. These support controlled
+contradiction-recognition experiments using public-domain detective stories.
+
 The current implementation sequence is tracked in `docs/roadmap.md`.
 
 The `epistemap` CLI can summarize and compare G artifacts:
