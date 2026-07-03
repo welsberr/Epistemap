@@ -297,6 +297,7 @@ def g_experiment_summary(
         label: g_estimate(group_rows, target_env=target_env, clean_env=clean_env, weights=weights)
         for label, group_rows in sorted(groups.items())
     }
+    consistency = _summary_manifest_consistency(materialized, manifest or {})
     return {
         "summary_kind": "epistemap_g_experiment_summary",
         "manifest": dict(manifest or {}),
@@ -304,6 +305,8 @@ def g_experiment_summary(
         "overall": overall,
         "groups": grouped,
         "row_count": len(materialized),
+        "consistency": consistency,
+        "warnings": consistency["warnings"],
         "interpretation": (
             "G summarizes learner/model grounding effectiveness for explicit evaluation rows; "
             "it is not a source-truth or provenance score."
@@ -521,6 +524,31 @@ def _write_json(path: str | Path, payload: Mapping[str, Any]) -> None:
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(dict(payload), indent=2), encoding="utf-8")
+
+
+def _summary_manifest_consistency(rows: Sequence[Mapping[str, Any]], manifest: Mapping[str, Any]) -> dict[str, Any]:
+    actual_conditions = sorted({str(row.get("condition", "")) for row in rows if str(row.get("condition", ""))})
+    actual_phases = sorted({str(row.get("phase", "")) for row in rows if str(row.get("phase", ""))})
+    declared_conditions = sorted(str(condition) for condition in manifest.get("conditions", []))
+    declared_phases = sorted(str(phase) for phase in manifest.get("phases", []))
+    declared_row_count = manifest.get("row_count")
+    warnings: list[str] = []
+    if declared_row_count is not None and int(declared_row_count) != len(rows):
+        warnings.append("manifest row_count does not match actual row count")
+    if declared_conditions and declared_conditions != actual_conditions:
+        warnings.append("manifest conditions do not match row conditions")
+    if declared_phases and declared_phases != actual_phases:
+        warnings.append("manifest phases do not match row phases")
+    return {
+        "consistent": not warnings,
+        "declared_row_count": declared_row_count,
+        "actual_row_count": len(rows),
+        "declared_conditions": declared_conditions,
+        "actual_conditions": actual_conditions,
+        "declared_phases": declared_phases,
+        "actual_phases": actual_phases,
+        "warnings": warnings,
+    }
 
 
 def _summary_comparison_row(summary: Mapping[str, Any]) -> dict[str, Any]:

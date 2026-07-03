@@ -191,7 +191,30 @@ def test_g_experiment_summary_groups_rows_by_condition() -> None:
     assert summary["row_count"] == 8
     assert summary["manifest"]["experiment_id"] == "detective-fair-play-001"
     assert summary["groups"]["kg"]["G"] > summary["groups"]["plain"]["G"]
+    assert summary["consistency"]["consistent"] is True
     assert "not a source-truth" in summary["interpretation"]
+
+
+def test_g_experiment_summary_flags_manifest_row_mismatches() -> None:
+    rows = [
+        g_evaluation_row(y=1, p=0.9, env="C", condition="plain", phase="read"),
+        g_evaluation_row(y=1, p=0.8, env="K", condition="plain", phase="read"),
+    ]
+
+    summary = g_experiment_summary(
+        rows,
+        manifest={
+            "experiment_id": "mismatch",
+            "row_count": 3,
+            "conditions": ["kg"],
+            "phases": ["reveal"],
+        },
+    )
+
+    assert summary["consistency"]["consistent"] is False
+    assert "manifest row_count does not match actual row count" in summary["warnings"]
+    assert "manifest conditions do not match row conditions" in summary["warnings"]
+    assert "manifest phases do not match row phases" in summary["warnings"]
 
 
 def test_g_experiment_summary_from_files_writes_summary(tmp_path) -> None:

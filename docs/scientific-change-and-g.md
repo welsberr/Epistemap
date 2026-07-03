@@ -52,6 +52,8 @@ analyses compare treatments without hiding what was actually varied.
 grouped estimates, commonly by `condition` or `phase`. Groups that lack both
 clean and target environments keep the metric warning, which is a useful signal
 that an experiment design or export is not yet suitable for full G comparison.
+Summaries also report manifest consistency warnings when declared row counts,
+conditions, or phases do not match the row export.
 
 `g_summary_comparison()` and `g_experiment_comparison()` compare multiple
 exports by overall `G` and report deltas from a selected baseline. These
