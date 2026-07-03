@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, TextIO
 
 from .grounding_effect import g_evaluation_row
+from .models import Edge, GraphBundle, Node, ProvenanceRef
+from .temporal import fair_play_diagnostic
 
 FAIR_PLAY_STATUSES = {
     "fair_play",
@@ -275,6 +277,160 @@ def detective_corpus_summary(annotations: Iterable[Mapping[str, Any]]) -> dict[s
     }
 
 
+def detective_annotation_graph_bundle(annotation: Mapping[str, Any]) -> GraphBundle:
+    """Convert a detective story annotation into a temporal graph bundle."""
+
+    story_id = str(annotation.get("story_id", ""))
+    story_title = str(annotation.get("title", ""))
+    provenance = _annotation_provenance(annotation)
+    nodes: list[Node] = [
+        Node(
+            id=story_id,
+            type="story",
+            title=story_title,
+            description=str(annotation.get("notes", "")),
+            status=str(annotation.get("fair_play_status", "")),
+            provenance=provenance,
+            metadata={
+                "publication_year": annotation.get("publication_year", ""),
+                "public_domain": annotation.get("public_domain", ""),
+                "source_license": annotation.get("source_license", ""),
+                "narrative_unit": annotation.get("narrative_unit", ""),
+                "reveal_point": annotation.get("reveal_point", ""),
+                **dict(annotation.get("metadata", {}) or {}),
+            },
+        )
+    ]
+    edges: list[Edge] = []
+
+    for claim in annotation.get("claims", []) or []:
+        claim_id = str(claim.get("claim_id", ""))
+        nodes.append(
+            Node(
+                id=claim_id,
+                type="claim",
+                title=str(claim.get("text", "")),
+                description=str(claim.get("notes", "")),
+                status=str(claim.get("truth_status", "")),
+                provenance=provenance,
+                metadata={
+                    "speaker": claim.get("speaker", ""),
+                    "truth_status": claim.get("truth_status", ""),
+                    "narrative_anchor": claim.get("narrative_anchor", ""),
+                    "introduced_at": claim.get("introduced_at", ""),
+                    "story_id": story_id,
+                    **dict(claim.get("metadata", {}) or {}),
+                },
+            )
+        )
+        edges.append(
+            Edge(
+                id=f"edge::{story_id}::contains::{claim_id}",
+                source=story_id,
+                target=claim_id,
+                type="contains_claim",
+                title="Story contains claim",
+                provenance=provenance,
+                metadata={
+                    "story_id": story_id,
+                    "introduced_at": claim.get("introduced_at", ""),
+                },
+            )
+        )
+
+    for item in annotation.get("decisive_evidence", []) or []:
+        evidence_id = str(item.get("evidence_id", ""))
+        claim_id = str(item.get("contradicts_claim_id", ""))
+        nodes.append(
+            Node(
+                id=evidence_id,
+                type="evidence",
+                title=str(item.get("text", "")),
+                description=str(item.get("notes", "")),
+                status=str(item.get("access_scope", "")),
+                provenance=provenance,
+                metadata={
+                    "available_at": item.get("available_at", ""),
+                    "narrative_anchor": item.get("narrative_anchor", ""),
+                    "access_scope": item.get("access_scope", "reader_available"),
+                    "story_id": story_id,
+                    **dict(item.get("metadata", {}) or {}),
+                },
+            )
+        )
+        edges.extend(
+            [
+                Edge(
+                    id=f"edge::{story_id}::contains::{evidence_id}",
+                    source=story_id,
+                    target=evidence_id,
+                    type="contains_evidence",
+                    title="Story contains decisive evidence",
+                    provenance=provenance,
+                    metadata={
+                        "story_id": story_id,
+                        "available_at": item.get("available_at", ""),
+                    },
+                ),
+                Edge(
+                    id=f"edge::{evidence_id}::contradicts::{claim_id}",
+                    source=evidence_id,
+                    target=claim_id,
+                    type="contradicts",
+                    title="Evidence contradicts claim",
+                    justification=str(item.get("text", "")),
+                    evidence_ids=[evidence_id],
+                    provenance=provenance,
+                    metadata={
+                        "available_at": item.get("available_at", ""),
+                        "narrative_anchor": item.get("narrative_anchor", ""),
+                        "access_scope": item.get("access_scope", "reader_available"),
+                        "story_id": story_id,
+                    },
+                ),
+            ]
+        )
+
+    return GraphBundle(
+        graph_id=f"{story_id}::detective-annotation-graph",
+        title=story_title,
+        description=f"Temporal graph derived from detective annotation {story_id}",
+        nodes=nodes,
+        edges=edges,
+        metadata={
+            "annotation_kind": annotation.get("annotation_kind", ""),
+            "schema_version": annotation.get("schema_version", ""),
+            "story_id": story_id,
+            "fair_play_status": annotation.get("fair_play_status", ""),
+            "reveal_point": annotation.get("reveal_point", ""),
+            "narrative_unit": annotation.get("narrative_unit", ""),
+            "summary": {
+                "claim_count": len(annotation.get("claims", []) or []),
+                "decisive_evidence_count": len(annotation.get("decisive_evidence", []) or []),
+            },
+        },
+    )
+
+
+def detective_annotation_fair_play_diagnostic(annotation: Mapping[str, Any]) -> dict[str, Any]:
+    """Run temporal fair-play checks for false or misleading annotation claims."""
+
+    graph = detective_annotation_graph_bundle(annotation)
+    claim_ids = [
+        str(claim.get("claim_id", ""))
+        for claim in annotation.get("claims", []) or []
+        if claim.get("truth_status") in {"false", "misleading", "contradicted"}
+    ]
+    report = fair_play_diagnostic(graph, claim_ids=claim_ids, reveal_at=annotation.get("reveal_point"))
+    report["annotation"] = {
+        "story_id": annotation.get("story_id", ""),
+        "title": annotation.get("title", ""),
+        "fair_play_status": annotation.get("fair_play_status", ""),
+        "graph_id": graph.graph_id,
+    }
+    return report
+
+
 def _normalize_claim(claim: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "claim_id": str(claim.get("claim_id", "")),
@@ -299,6 +455,24 @@ def _normalize_evidence(item: Mapping[str, Any]) -> dict[str, Any]:
         "notes": str(item.get("notes", "")),
         "metadata": dict(item.get("metadata", {}) or {}),
     }
+
+
+def _annotation_provenance(annotation: Mapping[str, Any]) -> list[ProvenanceRef]:
+    return [
+        ProvenanceRef(
+            source_id=str(annotation.get("story_id", "")),
+            artifact_id=str(annotation.get("title", "")),
+            source_url=str(annotation.get("source_url", "")),
+            support_kind="detective_story_annotation",
+            grounding_status=str(annotation.get("metadata", {}).get("annotation_status", "")),
+            metadata={
+                "author": annotation.get("author", ""),
+                "publication_year": annotation.get("publication_year", ""),
+                "source_license": annotation.get("source_license", ""),
+                "public_domain": annotation.get("public_domain", ""),
+            },
+        )
+    ]
 
 
 def _claim_by_id(annotation: Mapping[str, Any], claim_id: str) -> dict[str, Any]:

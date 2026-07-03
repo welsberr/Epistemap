@@ -3,6 +3,8 @@ from __future__ import annotations
 import pytest
 
 from epistemap import (
+    detective_annotation_fair_play_diagnostic,
+    detective_annotation_graph_bundle,
     detective_corpus_summary,
     detective_recognition_g_row,
     detective_story_annotation,
@@ -132,6 +134,27 @@ def test_detective_recognition_g_row_uses_decisive_evidence_window() -> None:
     assert row["fair_play_rating"] == "fair_play"
     assert row["evaluation_target"] == "detective_contradiction_recognition"
     assert row["decisive_evidence_id"] == "evidence::goose-chain"
+
+
+def test_detective_annotation_graph_bundle_feeds_temporal_fair_play_diagnostic() -> None:
+    annotation = _annotation()
+    graph = detective_annotation_graph_bundle(annotation)
+    report = detective_annotation_fair_play_diagnostic(annotation)
+
+    assert graph.graph_id == "story::blue-carbuncle::detective-annotation-graph"
+    assert {node.id for node in graph.nodes} >= {
+        "story::blue-carbuncle",
+        "claim::innocent",
+        "evidence::goose-chain",
+    }
+    assert {
+        (edge.source, edge.target, edge.type)
+        for edge in graph.edges
+    } >= {("evidence::goose-chain", "claim::innocent", "contradicts")}
+    assert report["rating"] == "fair"
+    assert report["claims"][0]["claim_id"] == "claim::innocent"
+    assert report["claims"][0]["first_decisive_evidence"]["time"] == "7"
+    assert report["annotation"]["fair_play_status"] == "fair_play"
 
 
 def test_detective_corpus_summary_counts_validation_status() -> None:

@@ -32,6 +32,16 @@ Use `detective_corpus_summary()` to summarize a candidate corpus before running
 experiments. The summary counts validation status, fair-play status, claims, and
 decisive evidence annotations.
 
+Use `detective_annotation_graph_bundle()` to convert an annotation into a
+temporal `GraphBundle`. Claims become claim nodes, decisive evidence becomes
+evidence nodes, and decisive evidence entries become `contradicts` edges with
+availability metadata.
+
+Use `detective_annotation_fair_play_diagnostic()` to run the temporal
+fair-play diagnostic over false, misleading, or contradicted claims from an
+annotation. This connects the detective schema to the same graph timing checks
+used for scholarly temporal tenability.
+
 The intended first pilot is 3-5 public-domain stories with human-reviewed
 annotations. Exclude or separately classify stories where the decisive evidence
 is introduced only at the reveal or is available only to the detective.

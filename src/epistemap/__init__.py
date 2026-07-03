@@ -30,6 +30,8 @@ from .bayesian import (
     write_bayesian_reliability_markdown,
 )
 from .detective_corpus import (
+    detective_annotation_fair_play_diagnostic,
+    detective_annotation_graph_bundle,
     detective_corpus_summary,
     detective_recognition_g_row,
     detective_story_annotation,
@@ -142,6 +144,8 @@ __all__ = [
     "descendants",
     "diagnostics",
     "detective_corpus_summary",
+    "detective_annotation_fair_play_diagnostic",
+    "detective_annotation_graph_bundle",
     "detective_recognition_g_row",
     "detective_story_annotation",
     "graph_qa_report",

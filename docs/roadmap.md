@@ -25,7 +25,8 @@ assessment artifacts, not decide claim truth or promotion status.
 - Assessment manifests that record graph extraction, Bayesian prior, evidence
   weighting, temporal, reliability, and validation policies for reproducible
   experiments.
-- Fair-play detective story annotations, validation, corpus summaries, and
+- Fair-play detective story annotations, validation, corpus summaries,
+  annotation-to-temporal-graph conversion, temporal fair-play diagnostics, and
   contradiction-recognition `G` row generation.
 - Temporal graph slices, tenability windows, contradiction timing, stale-claim
   detection, recognition windows, and fair-play diagnostics.
@@ -103,11 +104,13 @@ assessment artifacts, not decide claim truth or promotion status.
    - Compare temporal assessment with learner/model revision behavior.
 
 4. **Fair-play detective corpus**
-   - Status: annotation schema implemented.
+   - Status: candidate fixtures and temporal graph bridge implemented.
    - Use fair detective stories as controlled contradiction-recognition
      experiments.
    - Exclude or separately classify stories that withhold decisive evidence
      until the reveal.
+   - Next: human-review source anchors, generate stable graph sidecars, and
+     define treatment manifests for plain-reading versus graph-assisted runs.
 
 5. **Notebook and mentor interventions**
    - Compare plain source reading, graph-neighborhood reading, Bayesian

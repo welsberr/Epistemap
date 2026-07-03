@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from epistemap import (
+    detective_annotation_fair_play_diagnostic,
+    detective_annotation_graph_bundle,
     detective_corpus_summary,
     detective_recognition_g_row,
     read_detective_story_annotation,
@@ -71,3 +73,32 @@ def test_detective_candidate_fixture_can_emit_recognition_g_row() -> None:
     assert row["contradiction_available_at"] == evidence["available_at"]
     assert row["recognition_lag"] == 0
     assert row["fair_play_rating"] == "fair_play"
+
+
+def test_detective_candidate_fixtures_feed_temporal_fair_play_diagnostics() -> None:
+    diagnostics = {
+        annotation["story_id"]: detective_annotation_fair_play_diagnostic(annotation)
+        for annotation in _fixtures()
+    }
+
+    fair_reports = [
+        report
+        for report in diagnostics.values()
+        if report["annotation"]["fair_play_status"] == "fair_play"
+    ]
+    control = diagnostics["story::purloined-letter-control"]
+
+    assert fair_reports
+    assert all(report["rating"] == "fair" for report in fair_reports)
+    assert control["rating"] == "unfair"
+    assert "hidden_or_private_decisive_evidence" in control["claims"][0]["failures"]
+
+
+def test_detective_candidate_fixture_graphs_preserve_public_source_provenance() -> None:
+    annotation = _fixtures()[0]
+    graph = detective_annotation_graph_bundle(annotation)
+
+    story_node = graph.node_index()[annotation["story_id"]]
+    assert story_node.provenance[0].source_url == annotation["source_url"]
+    assert graph.metadata["fair_play_status"] == annotation["fair_play_status"]
+    assert graph.metadata["summary"]["claim_count"] == len(annotation["claims"])
