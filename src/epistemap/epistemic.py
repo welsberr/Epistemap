@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
-from .bayesian import bayesian_evidence_update, bayesian_prior_sensitivity
+from .bayesian import bayesian_evidence_update, bayesian_prior_sensitivity, classify_bayesian_reliability
 from .models import Edge, GraphBundle, Node
 
 SUPPORT_EDGE_TYPES = {"supports", "supports_claim", "about_concept", "supports_concept", "teaches_concept"}
@@ -79,6 +79,7 @@ def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_thres
         challenge_edges=challenge_edges,
         nodes_by_id=nodes,
     )
+    bayesian["classification"] = classify_bayesian_reliability(bayesian)
     return {
         "node_id": node_id,
         "node_type": target.type if target is not None else "",

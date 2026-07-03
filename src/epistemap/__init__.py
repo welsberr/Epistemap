@@ -18,6 +18,7 @@ from .bayesian import (
     bayesian_prior_sensitivity,
     bayesian_reliability_markdown,
     beta_binomial_posterior,
+    classify_bayesian_reliability,
     write_bayesian_reliability_markdown,
 )
 from .ids import node_id, slugify, typed_id
@@ -75,6 +76,7 @@ __all__ = [
     "bayesian_prior_sensitivity",
     "bayesian_reliability_markdown",
     "beta_binomial_posterior",
+    "classify_bayesian_reliability",
     "Edge",
     "claim_status_at",
     "delta_g",

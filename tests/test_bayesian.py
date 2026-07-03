@@ -7,6 +7,7 @@ from epistemap import (
     bayesian_prior_sensitivity,
     bayesian_reliability_markdown,
     beta_binomial_posterior,
+    classify_bayesian_reliability,
     write_bayesian_reliability_markdown,
 )
 
@@ -77,6 +78,42 @@ def test_bayesian_reliability_markdown_renders_posterior_and_sensitivity(tmp_pat
 
     assert "# Epistemap Bayesian Reliability" in markdown
     assert "Posterior mean" in markdown
+    assert "Assessment label" in markdown
     assert "Prior Sensitivity" in markdown
     assert "| Support |" in markdown
     assert destination.read_text(encoding="utf-8") == markdown
+
+
+def test_classify_bayesian_reliability_labels_stable_support() -> None:
+    reliability = beta_binomial_posterior(success_weight=10.0, failure_weight=0.0)
+    reliability["stability"] = "stable"
+
+    classification = classify_bayesian_reliability(reliability)
+
+    assert classification["label"] == "stable_support"
+    assert classification["flags"] == []
+    assert classification["metrics"]["posterior_mean"] > 0.75
+    assert "not automatic promotion authority" in classification["interpretation"]
+
+
+def test_classify_bayesian_reliability_labels_thin_and_prior_sensitive() -> None:
+    thin = beta_binomial_posterior(success_weight=0.2, failure_weight=0.0)
+    sensitive = beta_binomial_posterior(success_weight=4.0, failure_weight=1.0)
+    sensitive["prior_sensitivity"] = {"mean_range": 0.3}
+
+    assert classify_bayesian_reliability(thin)["label"] == "thin_evidence"
+    sensitivity_classification = classify_bayesian_reliability(sensitive)
+    assert sensitivity_classification["label"] == "prior_sensitive"
+    assert "prior_sensitive" in sensitivity_classification["flags"]
+
+
+def test_classify_bayesian_reliability_labels_contested_or_fragile_support() -> None:
+    contested = beta_binomial_posterior(success_weight=3.0, failure_weight=3.0)
+    fragile = beta_binomial_posterior(success_weight=4.0, failure_weight=0.6)
+
+    contested_classification = classify_bayesian_reliability(contested)
+    fragile_classification = classify_bayesian_reliability(fragile)
+
+    assert contested_classification["label"] == "contested"
+    assert "mixed_support_challenge" in contested_classification["flags"]
+    assert fragile_classification["label"] in {"fragile_support", "prior_sensitive", "thin_evidence"}

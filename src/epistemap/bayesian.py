@@ -135,6 +135,7 @@ def bayesian_prior_sensitivity(
 
 def bayesian_reliability_markdown(reliability: Mapping[str, Any]) -> str:
     """Render a compact Markdown report for a Bayesian reliability block."""
+    classification = classify_bayesian_reliability(reliability)
     posterior = reliability.get("posterior", {})
     interval = posterior.get("credible_interval", {})
     evidence = reliability.get("evidence", {})
@@ -144,6 +145,7 @@ def bayesian_reliability_markdown(reliability: Mapping[str, Any]) -> str:
         "",
         f"- Model: `{reliability.get('model', '')}`",
         f"- Posterior mean: `{_fmt(posterior.get('mean'))}`",
+        f"- Assessment label: `{classification.get('label', '')}`",
         (
             "- Credible interval: "
             f"`{_fmt(interval.get('lower'))}` to `{_fmt(interval.get('upper'))}` "
@@ -151,6 +153,7 @@ def bayesian_reliability_markdown(reliability: Mapping[str, Any]) -> str:
         ),
         f"- Effective sample size: `{_fmt(evidence.get('effective_sample_size'))}`",
         f"- Stability: `{reliability.get('stability', '')}`",
+        f"- Flags: `{', '.join(classification.get('flags', [])) or 'none'}`",
         (
             "- Prior: "
             f"alpha `{_fmt(prior.get('alpha'))}`, "
@@ -199,6 +202,96 @@ def bayesian_reliability_markdown(reliability: Mapping[str, Any]) -> str:
     if interpretation:
         lines.extend(["", interpretation])
     return "\n".join(lines) + "\n"
+
+
+def classify_bayesian_reliability(
+    reliability: Mapping[str, Any],
+    *,
+    support_threshold: float = 0.75,
+    weak_support_threshold: float = 0.65,
+    contested_lower: float = 0.35,
+    contested_upper: float = 0.65,
+    minimum_effective_n: float = 2.0,
+    wide_interval_threshold: float = 0.45,
+    prior_sensitivity_threshold: float = 0.2,
+) -> dict[str, Any]:
+    """Classify a Bayesian reliability block for review triage.
+
+    Labels summarize evidence strength and fragility for downstream review.
+    They are not claim-truth labels and should not be used as automatic
+    promotion or rejection authority.
+    """
+
+    posterior = reliability.get("posterior", {}) if isinstance(reliability.get("posterior"), Mapping) else {}
+    interval = posterior.get("credible_interval", {}) if isinstance(posterior.get("credible_interval"), Mapping) else {}
+    evidence = reliability.get("evidence", {}) if isinstance(reliability.get("evidence"), Mapping) else {}
+    sensitivity = (
+        reliability.get("prior_sensitivity", {})
+        if isinstance(reliability.get("prior_sensitivity"), Mapping)
+        else {}
+    )
+
+    mean = _float_or_none(posterior.get("mean"))
+    lower = _float_or_none(interval.get("lower"))
+    upper = _float_or_none(interval.get("upper"))
+    interval_width = (upper - lower) if lower is not None and upper is not None else None
+    effective_n = _float_or_none(evidence.get("effective_sample_size")) or 0.0
+    support_weight = _float_or_none(evidence.get("success_weight")) or 0.0
+    challenge_weight = _float_or_none(evidence.get("failure_weight")) or 0.0
+    prior_range = _float_or_none(sensitivity.get("mean_range")) or 0.0
+
+    flags: list[str] = []
+    if effective_n < minimum_effective_n:
+        flags.append("thin_evidence")
+    if interval_width is None or interval_width >= wide_interval_threshold:
+        flags.append("wide_interval")
+    if prior_range >= prior_sensitivity_threshold:
+        flags.append("prior_sensitive")
+    if support_weight > 0 and challenge_weight > 0:
+        flags.append("mixed_support_challenge")
+
+    if mean is None:
+        label = "thin_evidence"
+    elif "thin_evidence" in flags:
+        label = "thin_evidence"
+    elif "prior_sensitive" in flags:
+        label = "prior_sensitive"
+    elif contested_lower <= mean <= contested_upper and support_weight > 0 and challenge_weight > 0:
+        label = "contested"
+    elif mean >= support_threshold and not flags:
+        label = "stable_support"
+    elif mean >= weak_support_threshold:
+        label = "fragile_support"
+    elif support_weight > 0 and challenge_weight > 0:
+        label = "contested"
+    else:
+        label = "thin_evidence"
+
+    return {
+        "label": label,
+        "flags": flags,
+        "metrics": {
+            "posterior_mean": mean,
+            "credible_interval_width": interval_width,
+            "effective_sample_size": effective_n,
+            "support_weight": support_weight,
+            "challenge_weight": challenge_weight,
+            "prior_sensitivity_range": prior_range,
+        },
+        "thresholds": {
+            "support_threshold": support_threshold,
+            "weak_support_threshold": weak_support_threshold,
+            "contested_lower": contested_lower,
+            "contested_upper": contested_upper,
+            "minimum_effective_n": minimum_effective_n,
+            "wide_interval_threshold": wide_interval_threshold,
+            "prior_sensitivity_threshold": prior_sensitivity_threshold,
+        },
+        "interpretation": (
+            "Review triage label for a Bayesian reliability block; not a truth "
+            "oracle and not automatic promotion authority."
+        ),
+    }
 
 
 def write_bayesian_reliability_markdown(reliability: Mapping[str, Any], destination: str | Path | TextIO) -> None:
@@ -338,3 +431,12 @@ def _fmt(value: Any) -> str:
         return f"{float(value):.6f}"
     except (TypeError, ValueError):
         return str(value)
+
+
+def _float_or_none(value: Any) -> float | None:
+    if value in {"", None}:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None

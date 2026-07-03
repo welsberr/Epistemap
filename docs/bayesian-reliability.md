@@ -32,7 +32,9 @@ The Bayesian block includes:
 - `evidence`: support/challenge weights and effective sample size;
 - `stability`: a coarse label based on interval width and evidence weight;
 - `prior_sensitivity`: the same evidence under skeptical, neutral, and
-  supportive priors.
+  supportive priors;
+- `classification`: a review-triage label and flags for thin evidence, wide
+  intervals, prior sensitivity, and mixed support/challenge evidence.
 
 ## Interpretation
 
@@ -59,11 +61,12 @@ Implemented:
 - compact Markdown rendering for `bayesian_reliability` blocks via
   `bayesian_reliability_markdown()` and
   `write_bayesian_reliability_markdown()`.
+- review-triage labels via `classify_bayesian_reliability()`, which classifies
+  posterior blocks as `stable_support`, `fragile_support`, `contested`,
+  `thin_evidence`, or `prior_sensitive`.
 
 Near-term:
 
-- add threshold helpers that classify posterior estimates as `stable_support`,
-  `fragile_support`, `contested`, `thin_evidence`, or `prior_sensitive`;
 - expose prior profiles by name, such as `neutral`, `skeptical`,
   `source_conservative`, and `adversarial_aware`;
 - add batch reports over all claims or concepts in a graph, ranking by low

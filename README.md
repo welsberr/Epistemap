@@ -34,6 +34,8 @@ Bayesian reliability estimates are documented in
 and prior-sensitivity checks alongside the existing heuristic epistemic
 reliability summaries.
 
+The current implementation sequence is tracked in `docs/roadmap.md`.
+
 The `epistemap` CLI can summarize and compare G artifacts:
 
 ```bash
