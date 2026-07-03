@@ -48,3 +48,70 @@ coherence under multiple priors as new evidence arrives. Denialist material
 often depends on flattening source reliability or amplifying low-weight
 challenges; that should appear as fragility, low effective sample size, or
 strong prior dependence rather than stable clarification.
+
+## Feature Roadmap
+
+The Bayesian layer changes the next useful Epistemap features from generic
+confidence scoring toward auditable assessment workflows.
+
+Near-term:
+
+- add a compact Markdown renderer for `bayesian_reliability` blocks so query
+  bundles can be reviewed without inspecting nested JSON;
+- add threshold helpers that classify posterior estimates as `stable_support`,
+  `fragile_support`, `contested`, `thin_evidence`, or `prior_sensitive`;
+- expose prior profiles by name, such as `neutral`, `skeptical`,
+  `source_conservative`, and `adversarial_aware`;
+- add batch reports over all claims or concepts in a graph, ranking by low
+  effective sample size, wide credible interval, and high prior sensitivity;
+- add CLI support for graph-level epistemic reports once graph bundle loading is
+  standardized for downstream repos.
+
+Medium-term:
+
+- let reliability priors be learned or calibrated from reviewed corpora while
+  keeping explicit fallback priors available;
+- track posterior change over temporal graph slices, so an assessment can show
+  when a claim moved from tenable ignorance to strong support or contradiction;
+- add experiment manifests that record Bayesian prior profile, evidence
+  weighting policy, and graph extraction policy alongside `G` manifests;
+- compare Bayesian posterior shifts with `delta_G` to see whether apparently
+  stronger graph evidence actually improves learner/model grounding behavior.
+
+Deferred:
+
+- full Bayesian networks over claim dependencies;
+- MCMC or heavyweight probabilistic programming dependencies;
+- automatic promotion of claims based only on posterior score.
+
+Those are deferred because the immediate value is transparent, reviewable
+posterior assessment, not a black-box authority layer.
+
+## Experiment Roadmap
+
+Priority experiments should use the Bayesian layer as an explanatory variable
+and `G` as a learner/model outcome measure.
+
+1. Source-quality ablation:
+   Compare posterior stability and `G` when source-quality metadata is visible,
+   flattened, or adversarial-aware.
+
+2. Denialist-material stress test:
+   Build matched graph neighborhoods with genuine challenge evidence versus
+   manufactured-doubt signals. Expected useful output is not simple rejection,
+   but detection of low effective sample size, prior sensitivity, and failure
+   to improve `G`.
+
+3. Temporal tenability experiment:
+   Use dated evidence to assess when a claim was reasonably tenable, when it
+   became contradicted, and whether models or learners revise after the decisive
+   evidence date.
+
+4. Detective-story fair-play experiment:
+   Measure whether posterior contradiction signals become available before the
+   reveal and whether recognition timing predicts `G` improvement.
+
+5. Notebook/mentor intervention experiment:
+   Compare plain source reading, graph neighborhood reading, Bayesian
+   reliability summaries, and mentor explanations that explicitly communicate
+   uncertainty.

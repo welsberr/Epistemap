@@ -95,6 +95,19 @@ Useful outputs include:
   `G`;
 - graph regions where accuracy rises but calibration or transfer does not.
 
+Bayesian reliability estimates add a separate assessment surface. They should
+be used to characterize the graph evidence being presented, while `G` measures
+the learner/model behavior after that presentation. The most useful experiment
+designs will therefore record both:
+
+- posterior support mean, credible interval, effective sample size, and prior
+  sensitivity for the graph region;
+- `G`, `delta_G`, and component shifts for the learner/model evaluation rows.
+
+This lets Epistemap ask whether stronger or more stable graph evidence actually
+improves grounding behavior, and whether fragile graph evidence predicts
+calibration failures.
+
 ## Scientific Revolutions
 
 Kuhn-style scientific revolutions should be represented as graph
@@ -131,6 +144,8 @@ The correct operational stance is exploratory:
 
 - use `G` for evaluation of learner/model behavior under graph interventions;
 - use provenance and source-trust metadata for evidence quality;
+- use Bayesian posterior estimates to expose evidential strength, fragility,
+  and prior dependence;
 - use graph transformations for proposed theory change;
 - keep denialist or adversarial source signals explicit;
 - avoid converting any single score into an authority marker.
