@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-07-25
 
-**Review state:** reviewed against local source and tests; not released
+**Review state:** committed and pushed for review; not merged or released
 
 **Scope:** Epistemap, CiteGeist, GroundRecall, and Didactopus
 
@@ -12,20 +12,22 @@ The overhaul is **in progress**. The local working trees contain a useful
 portable assessment foundation and several consumer prototypes, but the
 roadmap's definition of done has not been met.
 
-All confidence-overhaul changes remain uncommitted. At audit time each
-repository's `main` branch matched its remote-tracking tip:
+At the start of the audit, all confidence-overhaul changes were uncommitted and
+each repository's `main` branch matched its remote-tracking tip. The reviewed
+changes have since been committed and pushed on
+`agent/reconcile-confidence-and-roadmaps`:
 
-| Repository | Audited `HEAD` | Confidence work in history? |
+| Repository | Base `main` | Pushed implementation commit |
 | --- | --- | --- |
-| Epistemap | `f452d4f` | No; working tree only |
-| GroundRecall | `6f98df8` | No; working tree only |
-| CiteGeist | `40117c5` | No; working tree only |
-| Didactopus | `5644c46` | No; working tree only |
+| Epistemap | `f452d4f` | `0b0a579` |
+| GroundRecall | `6f98df8` | `7dbe47b` |
+| CiteGeist | `40117c5` | `61534cf` |
+| Didactopus | `5644c46` | `f321a26` |
 
-Consequently, earlier implementation summaries are prototype reports rather
-than release reports. They correctly identify many files and passing local
-tests, but any statement that the unified roadmap was applied "to completion"
-is too broad.
+These are review-branch implementation commits, not release commits. Earlier
+summaries correctly identify many files and passing local tests, but any
+statement that the unified roadmap was applied "to completion" remains too
+broad.
 
 ## Phase Status
 
@@ -53,7 +55,7 @@ Status meanings:
 | D2 evidence coverage separation | partial | Canonical `evidence_coverage` name plus legacy property/function aliases; corrected docs | Threshold/report alias migration, deprecation warnings, duplicate-evidence acceptance fixture, compatibility release |
 | D3 graph and candidate migration | partial | Course graph emits typed extraction assessments; graph retrieval preserves profiles | Rule-specific extraction versus grounding semantics, candidate migration, mentor prompt changes, GroundRecall bridge fixtures |
 | D4 response calibration | partial | Benchmark confidence remains response-correctness probability | Use Epistemap reports, abstention/discrimination/calibration split, minimum-sample policy gates, versioned learner policy manifests |
-| X1 cross-repository release | blocked | Local suites can use sibling source trees | Commit/review phases, tag Epistemap, update consumer dependencies, clean installed-package matrix, consumer releases, then begin deprecation clock |
+| X1 cross-repository release | blocked | Review branches are pushed; GroundRecall and Didactopus pin Epistemap implementation commit `0b0a579` | Merge/review phases, tag Epistemap, replace implementation pins with the tagged release, run a clean installed-package matrix, release consumers, then begin the deprecation clock |
 
 ## Reconciliation Of Concurrent Changes
 
@@ -121,9 +123,8 @@ sequence is:
 2. finish E3 eligibility semantics;
 3. implement and test CiteGeist and GroundRecall CLI migrations with rollback;
 4. complete Didactopus D1-D4 compatibility work;
-5. commit and review the scoped changes separately from concurrent feature
-   work;
-6. tag Epistemap and update consumer dependency declarations;
+5. review and merge the pushed repository branches;
+6. tag Epistemap and replace temporary consumer commit pins with the release;
 7. run the cross-repository matrix in clean environments without sibling
    `PYTHONPATH`;
 8. tag consumer compatibility releases, then begin documented deprecation.
