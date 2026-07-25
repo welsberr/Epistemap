@@ -51,6 +51,8 @@ def to_jsonld(bundle: GraphBundle) -> dict[str, Any]:
         }
         if node.provenance:
             payload["prov:wasDerivedFrom"] = [_provenance_payload(item) for item in node.provenance]
+        if node.assessments:
+            payload["assessments"] = [_assessment_payload(item) for item in node.assessments]
         graph.append(_strip_empty(payload))
     for edge in bundle.edges:
         edge_id = edge.id or f"{edge.source}--{edge.type}--{edge.target}"
@@ -68,6 +70,8 @@ def to_jsonld(bundle: GraphBundle) -> dict[str, Any]:
         }
         if edge.provenance:
             payload["prov:wasDerivedFrom"] = [_provenance_payload(item) for item in edge.provenance]
+        if edge.assessments:
+            payload["assessments"] = [_assessment_payload(item) for item in edge.assessments]
         graph.append(_strip_empty(payload))
     return {
         "@context": {
@@ -76,6 +80,7 @@ def to_jsonld(bundle: GraphBundle) -> dict[str, Any]:
             "source": {"@id": "http://schema.org/source", "@type": "@id"},
             "target": {"@id": "http://schema.org/target", "@type": "@id"},
             "confidence": "https://welsberr.github.io/epistemap/vocab/confidence",
+            "assessments": "https://welsberr.github.io/epistemap/vocab/assessments",
             "evidence": "https://welsberr.github.io/epistemap/vocab/evidence",
             "prov": "http://www.w3.org/ns/prov#",
         },
@@ -102,6 +107,7 @@ def _node_payload(node: Node) -> dict[str, Any]:
             "description": node.description,
             "status": node.status,
             "confidence": node.confidence,
+            "assessments": [_assessment_payload(item) for item in node.assessments],
             **node.metadata,
         }
     )
@@ -117,11 +123,16 @@ def _edge_payload(edge: Edge) -> dict[str, Any]:
             "title": edge.title,
             "justification": edge.justification,
             "confidence": edge.confidence,
+            "assessments": [_assessment_payload(item) for item in edge.assessments],
             "status": edge.status,
             "evidence_ids": edge.evidence_ids,
             **edge.metadata,
         }
     )
+
+
+def _assessment_payload(assessment) -> dict[str, Any]:
+    return _strip_empty(assessment.model_dump(exclude_none=True))
 
 
 def _provenance_payload(provenance) -> dict[str, Any]:

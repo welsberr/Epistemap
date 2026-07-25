@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    "graph-assisted",
+    "plain-reading"
+  ],
+  "out_dir": "examples/detective_corpus/treatments/detective_fair_play_run_sheets",
+  "packet_kind": "epistemap_detective_g_run_sheets",
+  "phases": [
+    "post-reveal",
+    "pre-reveal"
+  ],
+  "row_count": 16,
+  "run_id_prefix": "detective-fair-play-pilot-001",
+  "schema_version": "0.1",
+  "seed": 20260705,
+  "sheet_count": 2,
+  "sheets": [
+    {
+      "condition": "graph-assisted",
+      "file_name": "detective-fair-play-pilot-001-graph-assisted-01.csv",
+      "phases": [
+        "post-reveal",
+        "pre-reveal"
+      ],
+      "row_count": 8,
+      "run_id": "detective-fair-play-pilot-001-graph-assisted-01",
+      "subject_id": "pilot-reader-graph-assisted-01"
+    },
+    {
+      "condition": "plain-reading",
+      "file_name": "detective-fair-play-pilot-001-plain-reading-01.csv",
+      "phases": [
+        "post-reveal",
+        "pre-reveal"
+      ],
+      "row_count": 8,
+      "run_id": "detective-fair-play-pilot-001-plain-reading-01",
+      "subject_id": "pilot-reader-plain-reading-01"
+    }
+  ],
+  "subject_prefix": "pilot-reader",
+  "subjects_per_condition": 1,
+  "template_file": "examples/detective_corpus/treatments/detective_fair_play_g_collection_template.csv"
+}

@@ -4,6 +4,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from .confidence import ConfidenceAssessment
+
 
 class ProvenanceRef(BaseModel):
     source_id: str = ""
@@ -23,6 +25,7 @@ class Node(BaseModel):
     aliases: list[str] = Field(default_factory=list)
     status: str = ""
     confidence: float | None = None
+    assessments: list[ConfidenceAssessment] = Field(default_factory=list)
     provenance: list[ProvenanceRef] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -35,6 +38,7 @@ class Edge(BaseModel):
     title: str = ""
     justification: str = ""
     confidence: float | None = None
+    assessments: list[ConfidenceAssessment] = Field(default_factory=list)
     status: str = ""
     evidence_ids: list[str] = Field(default_factory=list)
     provenance: list[ProvenanceRef] = Field(default_factory=list)
@@ -61,4 +65,3 @@ class GraphBundle(BaseModel):
             **dict(self.metadata.get("summary", {})),
         }
         return payload
-

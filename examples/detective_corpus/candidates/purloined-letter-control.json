@@ -6,6 +6,14 @@
       "claim_id": "claim::purloined-letter::secret-compartment",
       "introduced_at": 2,
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "police description of exhaustive hidden-place searches",
+          "reviewed_source_locator": "Wikisource, Purloined Letter, Prefect's search methods",
+          "reviewed_source_quote": "\"Suppose you detail,\" said I, \"the particulars of your search.\"\n\n\"Why the fact is, we took our time, and we searched every where. I have had long experience in these affairs. I took the entire building, room by room; devoting the nights of a whole week to each. We examined, first, the furniture of each apartment. We opened every possible drawer; and I presume you know that, to a properly trained police agent, such a thing as a secret drawer is impossible. Any man is a dolt who permits a 'secret' drawer to escape him in a search of this kind. The thing is so plain. There is a certain amount of bulk\u2014of space\u2014to be accounted for in every cabinet. Then we have accurate rules. The fiftieth part of a line could not escape us. After the cabinets we took the chairs. The cushions we probed with the fine long needles you have seen me employ. From the tables we removed the tops.\" ",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "misleading_search_premise"
       },
       "narrative_anchor": "police description of exhaustive hidden-place searches",
@@ -18,6 +26,14 @@
       "claim_id": "claim::purloined-letter::plain-sight",
       "introduced_at": 9,
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "Dupin's retrospective explanation",
+          "reviewed_source_locator": "Wikisource, Purloined Letter, Dupin's explanation after payment",
+          "reviewed_source_quote": "\"No sooner had I glanced at this letter, than I concluded it to be that of which I was in search. To be sure, it was, to all appearance, radically different from the one of which the Prefect had read us so minute a description. Here the seal was large and black, with the D\u2014\u2014 cipher; there it was small and red, with the ducal arms of the S\u2014\u2014 family. Here, the address, to the Minister, diminutive and feminine; there the superscription, to a certain royal personage, was markedly bold and decided; the size alone formed a point of correspondence. But, then, the radicalness of these differences, which was excessive; the dirt; the soiled and torn condition of the paper, so inconsistent with the true methodical habits of D\u2014\u2014, and so suggestive of a design to delude the beholder into an idea of the worthlessness of the document; these things, together with the hyper-obtrusive situation of this document, full in the view of every visiter, and thus exactly in accordance with the conclusions to which I had previously arrived; these things, I say, were strongly corroborative of suspicion, in one who came with the intention to suspect. ",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "corrective_account"
       },
       "narrative_anchor": "Dupin's retrospective explanation",
@@ -34,6 +50,14 @@
       "contradicts_claim_id": "claim::purloined-letter::secret-compartment",
       "evidence_id": "evidence::purloined-letter::dupin-observation",
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "Dupin reports his prior visit and observation after the fact",
+          "reviewed_source_locator": "Wikisource, Purloined Letter, Dupin reports his earlier visit",
+          "reviewed_source_quote": "Dupin's decisive observation is reported retrospectively. He says he visited the minister, noticed a letter-like object in plain sight, memorized its appearance, returned the next morning with a duplicate, created a diversion, and substituted his facsimile for the real letter.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "withheld_control"
       },
       "narrative_anchor": "Dupin reports his prior visit and observation after the fact",
@@ -45,7 +69,17 @@
   "graph_file": "../sidecars/purloined-letter-control/epistemap_graph.json",
   "manifest_file": "../sidecars/purloined-letter-control/assessment_manifest.json",
   "metadata": {
-    "annotation_status": "candidate_human_review_needed",
+    "anchor_review": {
+      "missing_row_count": 0,
+      "review_row_count": 3,
+      "review_status": "reviewed",
+      "reviewed_at": "2026-07-04",
+      "reviewers": [
+        "Wesley R. Elsberry"
+      ],
+      "source_file": "examples/detective_corpus/treatments/detective_anchor_review_completed.csv"
+    },
+    "annotation_status": "human_anchor_reviewed",
     "candidate_use": "control_fixture",
     "source_collection": "The Gift: A Christmas and New Year's Present for 1845"
   },

@@ -6,6 +6,14 @@
       "claim_id": "claim::blue-carbuncle::baker-stole-jewel",
       "introduced_at": 1,
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "opening inquiry after the recovered hat and goose",
+          "reviewed_source_locator": "Paragraph 8 under https://en.wikisource.org/wiki/Page%3AThe_Strand_Magazine_(Volume_3).djvu/78",
+          "reviewed_source_quote": "You see, Watson, our little deductions have suddenly assumed a much more important and less innocent aspect. Here is the stone; the stone came from the goose, and the goose came from Mr. Henry Baker, the gentleman with the bad hat and all the other characteristics with which I have bored you. So now we must set ourselves very seriously to finding this gentleman, and ascertaining what part he has played in this little mystery.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "false_suspicion"
       },
       "narrative_anchor": "opening inquiry after the recovered hat and goose",
@@ -18,9 +26,17 @@
       "claim_id": "claim::blue-carbuncle::jewel-entered-goose-before-baker",
       "introduced_at": 7,
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "The jewel entered the goose through a chain of events separate from Henry Baker's ownership.",
+          "reviewed_source_locator": "Paragraph 2 under https://en.wikisource.org/wiki/Page%3AThe_Strand_Magazine_(Volume_3).djvu/80",
+          "reviewed_source_quote": "The man burst into a hearty laugh. \"They might be useful to me as relics of my adventure,\" said he, \"but beyond that I can hardly see what use the disjecta membra of my late acquaintance are going to be to me. No, sir, I think that, with your permission, I will confine my attentions to the excellent bird which I perceive upon the sideboard.\" ",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "corrective_account"
       },
-      "narrative_anchor": "goose dealer trail",
+      "narrative_anchor": "The jewel entered the goose through a chain of events separate from Henry Baker's ownership.",
       "notes": "This corrective claim is included to support graph linking, not as the primary recognition target.",
       "speaker": "investigation result",
       "text": "The jewel entered the goose through a chain of events separate from Henry Baker's ownership.",
@@ -34,9 +50,17 @@
       "contradicts_claim_id": "claim::blue-carbuncle::baker-stole-jewel",
       "evidence_id": "evidence::blue-carbuncle::goose-chain",
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "The goose-purchase chain separates Henry Baker from the jewel's placement in the bird.",
+          "reviewed_source_locator": "Paragraph 1 under https://en.wikisource.org/wiki/Page%3AThe_Strand_Magazine_(Volume_3).djvu/84",
+          "reviewed_source_quote": "Ryder quivered with emotion. \"Oh, sir, he cried, \"can you tell me where it went to?\"",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "contradiction"
       },
-      "narrative_anchor": "Holmes traces the goose from Baker through the dealer chain",
+      "narrative_anchor": "The goose-purchase chain separates Henry Baker from the jewel's placement in the bird.",
       "notes": "The chain separates Baker from the incriminating placement of the jewel.",
       "text": "The goose-purchase chain separates Henry Baker from the jewel's placement in the bird."
     }
@@ -45,7 +69,17 @@
   "graph_file": "../sidecars/blue-carbuncle/epistemap_graph.json",
   "manifest_file": "../sidecars/blue-carbuncle/assessment_manifest.json",
   "metadata": {
-    "annotation_status": "candidate_human_review_needed",
+    "anchor_review": {
+      "missing_row_count": 0,
+      "review_row_count": 3,
+      "review_status": "reviewed",
+      "reviewed_at": "2026-07-04",
+      "reviewers": [
+        "Wesley R. Elsberry"
+      ],
+      "source_file": "examples/detective_corpus/treatments/detective_anchor_review_completed.csv"
+    },
+    "annotation_status": "human_anchor_reviewed",
     "candidate_use": "pilot_fixture",
     "source_collection": "The Adventures of Sherlock Holmes"
   },

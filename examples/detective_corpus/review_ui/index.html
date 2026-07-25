@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Epistemap Detective Anchor Review</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f4;
+      --panel: #ffffff;
+      --ink: #17211b;
+      --muted: #667066;
+      --line: #cfd7ce;
+      --line-strong: #9aaa9a;
+      --accent: #216e63;
+      --accent-soft: #d8ebe7;
+      --warn: #9a5b12;
+      --done: #1f6c3f;
+      --bad: #9c2f2f;
+      --focus: #2e7dd1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line-strong);
+      background: var(--panel);
+      color: var(--ink);
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: var(--accent); }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .subline {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .file-button {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--panel);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .file-button input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+    }
+
+    aside {
+      min-height: 0;
+      border-right: 1px solid var(--line);
+      background: #fbfcfa;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+    }
+
+    .filters {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 8px;
+    }
+
+    .filters input, .filters select {
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 10px;
+      background: var(--panel);
+      color: var(--ink);
+    }
+
+    .metrics {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+      background: var(--panel);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .row-list {
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .row-item {
+      width: 100%;
+      height: auto;
+      display: grid;
+      gap: 4px;
+      padding: 11px 12px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      text-align: left;
+      background: transparent;
+    }
+
+    .row-item[aria-selected="true"] {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+
+    .row-title {
+      font-size: 13px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .row-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .pill.needs_review { color: var(--warn); border-color: #d7ad6c; background: #fff6e6; }
+    .pill.reviewed { color: var(--done); border-color: #8dc59d; background: #edf8ef; }
+    .pill.blocked { color: var(--bad); border-color: #d69a9a; background: #fff0f0; }
+
+    .workspace {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
+    }
+
+    .source-pane, .review-pane {
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      padding: 18px;
+    }
+
+    .source-pane {
+      border-right: 1px solid var(--line);
+      background: #fffdf8;
+    }
+
+    .panel-title {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .source-block {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .source-block dt {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+
+    .source-block dd {
+      margin: 0 0 12px;
+      overflow-wrap: anywhere;
+      line-height: 1.35;
+    }
+
+    .source-block dd:last-child { margin-bottom: 0; }
+
+    .vicinity {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .vicinity-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .vicinity-title {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .vicinity-locator {
+      color: var(--muted);
+      font-size: 11px;
+      text-align: right;
+    }
+
+    .vicinity-text {
+      margin: 0;
+      white-space: pre-wrap;
+      line-height: 1.45;
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+      font-size: 15px;
+    }
+
+    .source-link {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .source-link:hover { text-decoration: underline; }
+
+    .review-form {
+      display: grid;
+      gap: 14px;
+      max-width: 980px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    label span {
+      color: var(--muted);
+    }
+
+    .field-help {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    input, textarea, select {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 9px 10px;
+      min-width: 0;
+    }
+
+    textarea {
+      min-height: 104px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    textarea.compact-field {
+      min-height: 64px;
+    }
+
+    .status-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .candidate-note {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f2f7f5;
+      color: var(--muted);
+      padding: 9px 10px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .status-row button[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      header { grid-template-columns: 1fr; }
+      .toolbar { justify-content: flex-start; }
+      main { grid-template-columns: 1fr; }
+      aside { max-height: 42vh; border-right: 0; border-bottom: 1px solid var(--line); }
+      .workspace { grid-template-columns: 1fr; }
+      .source-pane { border-right: 0; border-bottom: 1px solid var(--line); }
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 12px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr 1fr 1fr; }
+      .source-pane, .review-pane { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Epistemap Detective Anchor Review</h1>
+        <div class="subline" id="datasetName">Pilot anchor template</div>
+      </div>
+      <div class="toolbar">
+        <label class="file-button">
+          Import CSV
+          <input id="fileInput" type="file" accept=".csv,text/csv">
+        </label>
+        <button id="exportButton" type="button">Export CSV</button>
+        <button id="resetButton" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main>
+      <aside>
+        <div class="filters">
+          <input id="searchInput" type="search" placeholder="Search">
+          <select id="statusFilter" aria-label="Status filter">
+            <option value="">All statuses</option>
+            <option value="needs_review">Needs review</option>
+            <option value="reviewed">Reviewed</option>
+            <option value="blocked">Blocked</option>
+          </select>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong id="totalCount">0</strong><span>Total</span></div>
+          <div class="metric"><strong id="reviewedCount">0</strong><span>Reviewed</span></div>
+          <div class="metric"><strong id="remainingCount">0</strong><span>Open</span></div>
+        </div>
+        <div class="row-list" id="rowList"></div>
+      </aside>
+
+      <section class="workspace">
+        <div class="source-pane">
+          <h2 class="panel-title">Source Anchor</h2>
+          <dl class="source-block">
+            <dt>Story</dt>
+            <dd id="storyTitle"></dd>
+            <dt>Artifact</dt>
+            <dd><span id="artifactKind"></span> · <span id="artifactId"></span></dd>
+            <dt>Current Anchor</dt>
+            <dd id="currentAnchor"></dd>
+            <dt>Annotated Text</dt>
+            <dd id="artifactText"></dd>
+            <dt>Source</dt>
+            <dd><a class="source-link" id="sourceUrl" href="#" target="_blank" rel="noreferrer"></a></dd>
+            <dt>Notes</dt>
+            <dd id="sourceNotes"></dd>
+          </dl>
+          <div class="vicinity">
+            <div class="vicinity-header">
+              <h3 class="vicinity-title">Source Vicinity</h3>
+              <div class="vicinity-locator" id="vicinityLocator"></div>
+            </div>
+            <p class="vicinity-text" id="sourceVicinity"></p>
+          </div>
+        </div>
+
+        <div class="review-pane">
+          <h2 class="panel-title">Review</h2>
+          <form class="review-form" id="reviewForm">
+            <div class="candidate-note">
+              Candidate locator, passage, and anchor fields are prefilled from the current analysis. Mark the row reviewed only after checking them against the source.
+            </div>
+            <div class="status-row" id="statusButtons">
+              <button type="button" data-status="needs_review">Needs review</button>
+              <button type="button" data-status="reviewed">Reviewed</button>
+              <button type="button" data-status="blocked">Blocked</button>
+            </div>
+            <div class="form-grid">
+              <label>
+                <span>Locator</span>
+                <textarea class="compact-field" id="reviewed_source_locator" data-field="reviewed_source_locator"></textarea>
+                <small class="field-help">Precise citation target: page, paragraph, line, chapter section, or stable URL fragment.</small>
+              </label>
+              <label>
+                <span>Reviewed Anchor</span>
+                <textarea class="compact-field" id="reviewed_narrative_anchor" data-field="reviewed_narrative_anchor"></textarea>
+                <small class="field-help">Short narrative label to replace or confirm the provisional anchor.</small>
+              </label>
+            </div>
+            <label>
+              <span>Source Quote</span>
+              <textarea id="reviewed_source_quote" data-field="reviewed_source_quote"></textarea>
+              <small class="field-help">Prefilled candidate passage; replace with the minimal exact words that justify the locator and anchor decision.</small>
+            </label>
+            <div class="form-grid">
+              <label><span>Reviewer</span><input id="reviewer" data-field="reviewer" autocomplete="name"></label>
+              <label><span>Reviewed At</span><input id="reviewed_at" data-field="reviewed_at" type="date"></label>
+            </div>
+            <label><span>Notes</span><textarea id="notes" data-field="notes"></textarea></label>
+            <div class="actions">
+              <div class="muted" id="saveState">Saved locally</div>
+              <div>
+                <button id="previousButton" type="button">Previous</button>
+                <button id="nextButton" type="button">Next</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const fields = [
+      "story_id", "story_title", "source_url", "artifact_kind", "artifact_id",
+      "current_narrative_anchor", "text", "reviewed_source_locator",
+      "reviewed_source_quote", "reviewed_narrative_anchor", "review_status",
+      "reviewer", "reviewed_at", "notes"
+    ];
+
+    const seedRows = [
+      {
+        story_id: "story::blue-carbuncle",
+        story_title: "The Adventure of the Blue Carbuncle",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+        artifact_kind: "claim",
+        artifact_id: "claim::blue-carbuncle::baker-stole-jewel",
+        current_narrative_anchor: "opening inquiry after the recovered hat and goose",
+        text: "Henry Baker stole the blue carbuncle.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "Working claim for contradiction-recognition testing; human review should confirm exact narrative anchors."
+      },
+      {
+        story_id: "story::blue-carbuncle",
+        story_title: "The Adventure of the Blue Carbuncle",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+        artifact_kind: "claim",
+        artifact_id: "claim::blue-carbuncle::jewel-entered-goose-before-baker",
+        current_narrative_anchor: "goose dealer trail",
+        text: "The jewel entered the goose through a chain of events separate from Henry Baker's ownership.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "This corrective claim is included to support graph linking, not as the primary recognition target."
+      },
+      {
+        story_id: "story::blue-carbuncle",
+        story_title: "The Adventure of the Blue Carbuncle",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Blue_Carbuncle",
+        artifact_kind: "decisive_evidence",
+        artifact_id: "evidence::blue-carbuncle::goose-chain",
+        current_narrative_anchor: "Holmes traces the goose from Baker through the dealer chain",
+        text: "The goose-purchase chain separates Henry Baker from the jewel's placement in the bird.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "The chain separates Baker from the incriminating placement of the jewel."
+      },
+      {
+        story_id: "story::purloined-letter-control",
+        story_title: "The Purloined Letter",
+        source_url: "https://en.wikisource.org/wiki/The_Purloined_Letter",
+        artifact_kind: "claim",
+        artifact_id: "claim::purloined-letter::secret-compartment",
+        current_narrative_anchor: "police description of exhaustive hidden-place searches",
+        text: "The stolen letter must be hidden in a secret compartment or concealed recess.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "This is a useful control because the police premise is described before Dupin's decisive observation is narrated."
+      },
+      {
+        story_id: "story::purloined-letter-control",
+        story_title: "The Purloined Letter",
+        source_url: "https://en.wikisource.org/wiki/The_Purloined_Letter",
+        artifact_kind: "claim",
+        artifact_id: "claim::purloined-letter::plain-sight",
+        current_narrative_anchor: "Dupin's retrospective explanation",
+        text: "The letter is disguised and left in plain sight.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "Corrective claim appears as part of the explanation rather than as reader-available decisive evidence."
+      },
+      {
+        story_id: "story::purloined-letter-control",
+        story_title: "The Purloined Letter",
+        source_url: "https://en.wikisource.org/wiki/The_Purloined_Letter",
+        artifact_kind: "decisive_evidence",
+        artifact_id: "evidence::purloined-letter::dupin-observation",
+        current_narrative_anchor: "Dupin reports his prior visit and observation after the fact",
+        text: "Dupin personally observes the disguised letter in plain sight before reporting the solution.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "The key observation is attributed retrospectively to Dupin, making this a control for withheld decisive evidence."
+      },
+      {
+        story_id: "story::red-headed-league",
+        story_title: "The Red-Headed League",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+        artifact_kind: "claim",
+        artifact_id: "claim::red-headed-league::legitimate-job",
+        current_narrative_anchor: "Wilson's account of the advertised copying work",
+        text: "The Red-Headed League is a legitimate copying job.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "The work arrangement is the false surface premise that later evidence contradicts."
+      },
+      {
+        story_id: "story::red-headed-league",
+        story_title: "The Red-Headed League",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+        artifact_kind: "claim",
+        artifact_id: "claim::red-headed-league::bank-target",
+        current_narrative_anchor: "Holmes inspects the neighborhood and assistant's situation",
+        text: "The league is a diversion enabling a bank burglary through nearby premises.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "Included to support later graph treatments of motive, opportunity, and setting."
+      },
+      {
+        story_id: "story::red-headed-league",
+        story_title: "The Red-Headed League",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Red-Headed_League",
+        artifact_kind: "decisive_evidence",
+        artifact_id: "evidence::red-headed-league::dissolution-assistant-bank",
+        current_narrative_anchor: "the league's abrupt dissolution and the inspection of Spaulding and the bank neighborhood",
+        text: "The sudden dissolution of the league, the assistant's behavior, and the nearby bank make the copying job a diversion rather than legitimate work.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "The candidate contradiction combines the artificial job's disappearance with spatial evidence around the bank."
+      },
+      {
+        story_id: "story::speckled-band",
+        story_title: "The Adventure of the Speckled Band",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+        artifact_kind: "claim",
+        artifact_id: "claim::speckled-band::natural-or-fright",
+        current_narrative_anchor: "Helen Stoner's account of Julia's death and the locked room",
+        text: "Julia Stoner died from fright or natural causes in a locked room.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "The premise captures natural, fright, or inexplicable locked-room explanations later contradicted by room evidence."
+      },
+      {
+        story_id: "story::speckled-band",
+        story_title: "The Adventure of the Speckled Band",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+        artifact_kind: "claim",
+        artifact_id: "claim::speckled-band::engineered-animal-attack",
+        current_narrative_anchor: "Holmes examines the ventilator, bell-rope, and fixed bed",
+        text: "The room arrangement enables an engineered attack rather than a natural locked-room death.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "Included for graph treatment of mechanism and opportunity."
+      },
+      {
+        story_id: "story::speckled-band",
+        story_title: "The Adventure of the Speckled Band",
+        source_url: "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
+        artifact_kind: "decisive_evidence",
+        artifact_id: "evidence::speckled-band::ventilator-bell-rope-bed",
+        current_narrative_anchor: "inspection of the ventilator, bell-rope, and fixed bed",
+        text: "The ventilator, dummy bell-rope, and fixed bed form a physical mechanism inconsistent with a natural locked-room death.",
+        reviewed_source_locator: "",
+        reviewed_source_quote: "",
+        reviewed_narrative_anchor: "",
+        review_status: "needs_review",
+        reviewer: "",
+        reviewed_at: "",
+        notes: "The physical arrangement provides a mechanism inconsistent with a merely natural or fright-based explanation."
+      }
+    ];
+
+    const sourceVicinity = {
+      "claim::blue-carbuncle::baker-stole-jewel": {
+        locator: "Wikisource, Blue Carbuncle, police-court report vicinity",
+        text: "John Horner, a plumber, was brought up upon the charge of having abstracted the blue carbuncle from the Countess of Morcar's jewel-case. The report says Ryder had shown Horner to the dressing-room, then returned to find Horner gone, the bureau forced open, and the jewel-case empty. Horner was arrested and protested his innocence."
+      },
+      "claim::blue-carbuncle::jewel-entered-goose-before-baker": {
+        locator: "Wikisource, Blue Carbuncle, Holmes traces the goose chain",
+        text: "Holmes follows the goose from Henry Baker to the Alpha Inn, then to Breckinridge in Covent Garden. He later identifies the chain as Mrs. Oakshott of Brixton Road to Breckinridge, then to Windigate of the Alpha, and from him to the club of which Henry Baker is a member."
+      },
+      "evidence::blue-carbuncle::goose-chain": {
+        locator: "Wikisource, Blue Carbuncle, Baker interview and Covent Garden trace",
+        text: "Baker says he obtained the goose through the Alpha Inn goose club, and Holmes concludes that Baker knows nothing about the jewel. The trail then moves to the Alpha Inn and Covent Garden, where the geese are traced back through Breckinridge toward Mrs. Oakshott."
+      },
+      "claim::purloined-letter::secret-compartment": {
+        locator: "Wikisource, Purloined Letter, Prefect's search methods",
+        text: "The Prefect describes searching the minister's premises with exhaustive attention to hidden places: furniture, drawers, chair rungs, table tops, mirrors, beds, carpets, books, and possible secret recesses. The police approach assumes the letter must be concealed in a hidden compartment or similarly disguised hiding place."
+      },
+      "claim::purloined-letter::plain-sight": {
+        locator: "Wikisource, Purloined Letter, Dupin's explanation after payment",
+        text: "After the Prefect pays him, Dupin unlocks an escritoire and produces the letter. He explains that the police search was competent but misapplied: they looked only where they themselves would hide something, while the minister's successful move was to make the object too plain for that search pattern."
+      },
+      "evidence::purloined-letter::dupin-observation": {
+        locator: "Wikisource, Purloined Letter, Dupin reports his earlier visit",
+        text: "Dupin's decisive observation is reported retrospectively. He says he visited the minister, noticed a letter-like object in plain sight, memorized its appearance, returned the next morning with a duplicate, created a diversion, and substituted his facsimile for the real letter."
+      },
+      "claim::red-headed-league::legitimate-job": {
+        locator: "Wikisource, Red-Headed League, Wilson's account of the copying work",
+        text: "Wilson is told the position pays four pounds a week and that the work is purely nominal: he must remain in the office from ten to two and copy out the Encyclopaedia Britannica. He initially believes the arrangement is extraordinary but legitimate and reports being paid weekly."
+      },
+      "claim::red-headed-league::bank-target": {
+        locator: "Wikisource, Red-Headed League, Holmes surveys Saxe-Coburg Square",
+        text: "Holmes inspects the neighborhood behind Saxe-Coburg Square and notes the order of businesses, including the Coburg branch of the City and Suburban Bank. Later he says a serious crime is in contemplation and brings Watson, Jones, and the bank director Merryweather to the cellar."
+      },
+      "evidence::red-headed-league::dissolution-assistant-bank": {
+        locator: "Wikisource, Red-Headed League, dissolution notice and bank cellar",
+        text: "The League suddenly dissolves, ending Wilson's copying work. Holmes connects that artificial absence from the shop with Spaulding's behavior, the nearby bank, and the hollow-sounding cellar floor, where the party waits to intercept the attempted burglary."
+      },
+      "claim::speckled-band::natural-or-fright": {
+        locator: "Wikisource, Speckled Band, Helen Stoner recounts Julia's death",
+        text: "Helen Stoner describes Julia's terror, the locked room, her cry about a speckled band, and the absence of any apparent cause. The early account leaves natural causes, fright, or an inexplicable locked-room event as live surface explanations."
+      },
+      "claim::speckled-band::engineered-animal-attack": {
+        locator: "Wikisource, Speckled Band, room inspection",
+        text: "Holmes examines the bedroom and finds a dummy bell-rope, a ventilator that opens into Roylott's room, a fixed bed, a safe, saucer of milk, and a dog-lash tied into a loop. These details point toward an engineered mechanism rather than a natural locked-room death."
+      },
+      "evidence::speckled-band::ventilator-bell-rope-bed": {
+        locator: "Wikisource, Speckled Band, ventilator, bell-rope, and fixed bed",
+        text: "Holmes observes that the bell-rope is a dummy and is fastened near the ventilator. He remarks on ventilators that do not ventilate and dummy bell-ropes, then examines Roylott's room, where the safe, milk, chair, and looped lash add mechanism evidence."
+      }
+    };
+
+    const candidateReviewDefaults = Object.fromEntries(
+      seedRows.map(row => {
+        const vicinity = sourceVicinity[row.artifact_id] || {};
+        return [
+          row.artifact_id,
+          {
+            reviewed_source_locator: vicinity.locator || row.current_narrative_anchor,
+            reviewed_source_quote: vicinity.text || row.text,
+            reviewed_narrative_anchor: row.current_narrative_anchor
+          }
+        ];
+      })
+    );
+
+    const storageKey = "epistemap.detectiveAnchorReview.v1";
+    let rows = loadRows();
+    let selected = 0;
+
+    const els = {
+      datasetName: document.getElementById("datasetName"),
+      fileInput: document.getElementById("fileInput"),
+      exportButton: document.getElementById("exportButton"),
+      resetButton: document.getElementById("resetButton"),
+      searchInput: document.getElementById("searchInput"),
+      statusFilter: document.getElementById("statusFilter"),
+      totalCount: document.getElementById("totalCount"),
+      reviewedCount: document.getElementById("reviewedCount"),
+      remainingCount: document.getElementById("remainingCount"),
+      rowList: document.getElementById("rowList"),
+      storyTitle: document.getElementById("storyTitle"),
+      artifactKind: document.getElementById("artifactKind"),
+      artifactId: document.getElementById("artifactId"),
+      currentAnchor: document.getElementById("currentAnchor"),
+      artifactText: document.getElementById("artifactText"),
+      sourceUrl: document.getElementById("sourceUrl"),
+      sourceNotes: document.getElementById("sourceNotes"),
+      sourceVicinity: document.getElementById("sourceVicinity"),
+      vicinityLocator: document.getElementById("vicinityLocator"),
+      statusButtons: document.getElementById("statusButtons"),
+      saveState: document.getElementById("saveState"),
+      previousButton: document.getElementById("previousButton"),
+      nextButton: document.getElementById("nextButton")
+    };
+
+    function loadRows() {
+      const saved = window.localStorage.getItem(storageKey);
+      if (!saved) return normalizeRows(structuredClone(seedRows));
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length) return normalizeRows(parsed);
+      } catch (_error) {}
+      return normalizeRows(structuredClone(seedRows));
+    }
+
+    function normalizeRows(inputRows) {
+      return inputRows.map(row => {
+        const normalized = {};
+        fields.forEach(field => normalized[field] = row[field] ?? "");
+        const defaults = candidateReviewDefaults[normalized.artifact_id] || {};
+        ["reviewed_source_locator", "reviewed_source_quote", "reviewed_narrative_anchor"].forEach(field => {
+          if (!String(normalized[field] || "").trim() && defaults[field]) {
+            normalized[field] = defaults[field];
+          }
+        });
+        if (!normalized.review_status) normalized.review_status = "needs_review";
+        return normalized;
+      });
+    }
+
+    function saveRows() {
+      window.localStorage.setItem(storageKey, JSON.stringify(rows));
+      els.saveState.textContent = "Saved locally";
+    }
+
+    function filteredIndexes() {
+      const query = els.searchInput.value.trim().toLowerCase();
+      const status = els.statusFilter.value;
+      return rows.map((row, index) => ({ row, index })).filter(({ row }) => {
+        const statusMatch = !status || row.review_status === status;
+        const text = fields.map(field => row[field]).join(" ").toLowerCase();
+        return statusMatch && (!query || text.includes(query));
+      }).map(item => item.index);
+    }
+
+    function renderList() {
+      const indexes = filteredIndexes();
+      els.rowList.replaceChildren();
+      indexes.forEach(index => {
+        const row = rows[index];
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "row-item";
+        button.setAttribute("aria-selected", index === selected ? "true" : "false");
+        button.addEventListener("click", () => {
+          selected = index;
+          render();
+        });
+
+        const title = document.createElement("div");
+        title.className = "row-title";
+        title.textContent = row.artifact_id;
+        const meta = document.createElement("div");
+        meta.className = "row-meta";
+        const story = document.createElement("span");
+        story.textContent = row.story_title;
+        const status = document.createElement("span");
+        status.className = `pill ${row.review_status}`;
+        status.textContent = row.review_status.replace("_", " ");
+        meta.append(story, status);
+        button.append(title, meta);
+        els.rowList.appendChild(button);
+      });
+      if (!indexes.includes(selected) && indexes.length) selected = indexes[0];
+    }
+
+    function renderMetrics() {
+      const reviewed = rows.filter(row => row.review_status === "reviewed").length;
+      const remaining = rows.filter(row => row.review_status !== "reviewed").length;
+      els.totalCount.textContent = rows.length;
+      els.reviewedCount.textContent = reviewed;
+      els.remainingCount.textContent = remaining;
+    }
+
+    function renderDetails() {
+      const row = rows[selected] || rows[0];
+      if (!row) return;
+      els.storyTitle.textContent = row.story_title;
+      els.artifactKind.textContent = row.artifact_kind.replace("_", " ");
+      els.artifactId.textContent = row.artifact_id;
+      els.currentAnchor.textContent = row.current_narrative_anchor;
+      els.artifactText.textContent = row.text;
+      els.sourceUrl.href = row.source_url || "#";
+      els.sourceUrl.textContent = row.source_url || "";
+      els.sourceNotes.textContent = row.notes;
+      const vicinity = sourceVicinity[row.artifact_id] || {
+        locator: "No local source-vicinity passage",
+        text: "Import or generate a source-vicinity dataset for this artifact before final review."
+      };
+      els.vicinityLocator.textContent = vicinity.locator;
+      els.sourceVicinity.textContent = vicinity.text;
+
+      document.querySelectorAll("[data-field]").forEach(input => {
+        input.value = row[input.dataset.field] || "";
+      });
+      els.statusButtons.querySelectorAll("button").forEach(button => {
+        button.setAttribute("aria-pressed", button.dataset.status === row.review_status ? "true" : "false");
+      });
+    }
+
+    function render() {
+      renderMetrics();
+      renderList();
+      renderDetails();
+    }
+
+    function setField(field, value) {
+      if (!rows[selected]) return;
+      rows[selected][field] = value;
+      els.saveState.textContent = "Saving";
+      saveRows();
+      renderMetrics();
+      renderList();
+    }
+
+    function parseCsv(text) {
+      const records = [];
+      let row = [];
+      let value = "";
+      let quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (quoted) {
+          if (char === '"' && next === '"') {
+            value += '"';
+            i += 1;
+          } else if (char === '"') {
+            quoted = false;
+          } else {
+            value += char;
+          }
+        } else if (char === '"') {
+          quoted = true;
+        } else if (char === ",") {
+          row.push(value);
+          value = "";
+        } else if (char === "\n") {
+          row.push(value);
+          records.push(row);
+          row = [];
+          value = "";
+        } else if (char !== "\r") {
+          value += char;
+        }
+      }
+      if (value || row.length) {
+        row.push(value);
+        records.push(row);
+      }
+      const header = records.shift() || [];
+      return records.filter(record => record.some(cell => cell !== "")).map(record => {
+        const item = {};
+        header.forEach((field, index) => item[field] = record[index] || "");
+        return item;
+      });
+    }
+
+    function toCsv(inputRows) {
+      const escape = value => {
+        const text = String(value ?? "");
+        return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+      };
+      return [
+        fields.join(","),
+        ...inputRows.map(row => fields.map(field => escape(row[field])).join(","))
+      ].join("\n") + "\n";
+    }
+
+    document.querySelectorAll("[data-field]").forEach(input => {
+      input.addEventListener("input", event => setField(event.target.dataset.field, event.target.value));
+    });
+
+    els.statusButtons.addEventListener("click", event => {
+      const button = event.target.closest("button[data-status]");
+      if (!button) return;
+      setField("review_status", button.dataset.status);
+      renderDetails();
+    });
+
+    els.searchInput.addEventListener("input", render);
+    els.statusFilter.addEventListener("change", render);
+
+    els.previousButton.addEventListener("click", () => {
+      const indexes = filteredIndexes();
+      const current = indexes.indexOf(selected);
+      if (current > 0) selected = indexes[current - 1];
+      render();
+    });
+
+    els.nextButton.addEventListener("click", () => {
+      const indexes = filteredIndexes();
+      const current = indexes.indexOf(selected);
+      if (current >= 0 && current < indexes.length - 1) selected = indexes[current + 1];
+      render();
+    });
+
+    els.fileInput.addEventListener("change", async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      rows = normalizeRows(parseCsv(text));
+      selected = 0;
+      els.datasetName.textContent = file.name;
+      saveRows();
+      render();
+    });
+
+    els.exportButton.addEventListener("click", () => {
+      const blob = new Blob([toCsv(rows)], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "detective_anchor_review_completed.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    els.resetButton.addEventListener("click", () => {
+      rows = normalizeRows(structuredClone(seedRows));
+      selected = 0;
+      els.datasetName.textContent = "Pilot anchor template";
+      saveRows();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

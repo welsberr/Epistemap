@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .algorithms import cycle_nodes, graph_qa_report
+from .confidence import validate_assessment_lineage
 from .epistemic import CHALLENGE_EDGE_TYPES, REVISION_EDGE_TYPES, SUPPORT_EDGE_TYPES
 from .models import GraphBundle
 
@@ -53,6 +54,7 @@ class AssessmentValidationPolicy:
             "graph_extraction_policy",
         }
     )
+    legacy_confidence_mapping_policy_key: str = "legacy_confidence_mapping_policy"
 
 
 def validate_shape(bundle: GraphBundle, shape: GraphShape) -> dict:
@@ -147,6 +149,10 @@ def validate_assessment_readiness(
     node_ids = {node.id for node in bundle.nodes}
     nodes = bundle.node_index()
     qa = graph_qa_report(bundle, required_provenance_edge_types=policy.evidence_edge_types)
+    all_assessments = [assessment for node in bundle.nodes for assessment in node.assessments]
+    all_assessments.extend(assessment for edge in bundle.edges for assessment in edge.assessments)
+    for item in validate_assessment_lineage(all_assessments):
+        findings.append(item)
 
     if policy.require_graph_id and not bundle.graph_id:
         findings.append(_finding("warning", "missing_graph_id", "Graph bundle has no graph_id."))
@@ -192,6 +198,20 @@ def validate_assessment_readiness(
                     confidence=node.confidence,
                 )
             )
+        if node.confidence is not None and node.assessments and not _declares_legacy_confidence_mapping(
+            bundle.metadata,
+            node.metadata,
+            policy,
+        ):
+            findings.append(
+                _finding(
+                    "warning",
+                    "legacy_confidence_without_mapping_policy",
+                    "Legacy node confidence appears beside typed assessments without a declared mapping policy.",
+                    node_id=node.id,
+                    confidence=node.confidence,
+                )
+            )
         if node.type in policy.assessed_node_types and _needs_bayesian_policy(node.metadata):
             findings.extend(_bayesian_policy_findings(node.metadata, policy, subject={"node_id": node.id}))
 
@@ -225,6 +245,20 @@ def validate_assessment_readiness(
                     "error",
                     "invalid_edge_confidence",
                     "Edge confidence must be between 0 and 1.",
+                    confidence=edge.confidence,
+                    **edge_subject,
+                )
+            )
+        if edge.confidence is not None and edge.assessments and not _declares_legacy_confidence_mapping(
+            bundle.metadata,
+            edge.metadata,
+            policy,
+        ):
+            findings.append(
+                _finding(
+                    "warning",
+                    "legacy_confidence_without_mapping_policy",
+                    "Legacy edge confidence appears beside typed assessments without a declared mapping policy.",
                     confidence=edge.confidence,
                     **edge_subject,
                 )
@@ -278,6 +312,7 @@ def validate_assessment_readiness(
             "require_temporal_metadata_for_temporal_edges": policy.require_temporal_metadata_for_temporal_edges,
             "require_bayesian_policy_metadata": policy.require_bayesian_policy_metadata,
             "bayesian_policy_keys": sorted(policy.bayesian_policy_keys),
+            "legacy_confidence_mapping_policy_key": policy.legacy_confidence_mapping_policy_key,
         },
         "summary": {
             "status": "error" if severity_counts["error"] else "warning" if severity_counts["warning"] else "pass",
@@ -402,6 +437,15 @@ def _needs_bayesian_policy(metadata: dict[str, Any]) -> bool:
         "assessment_summary",
     }
     return any(key in metadata for key in keys)
+
+
+def _declares_legacy_confidence_mapping(
+    bundle_metadata: dict[str, Any],
+    subject_metadata: dict[str, Any],
+    policy: AssessmentValidationPolicy,
+) -> bool:
+    key = policy.legacy_confidence_mapping_policy_key
+    return bool(bundle_metadata.get(key) or subject_metadata.get(key))
 
 
 def _bayesian_policy_findings(

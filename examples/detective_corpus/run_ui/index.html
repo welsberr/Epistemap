@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Epistemap Detective Run</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f5;
+      --panel: #ffffff;
+      --ink: #17201d;
+      --muted: #68726d;
+      --line: #cfd8d3;
+      --accent: #1f6675;
+      --accent-soft: #dcecf0;
+      --ok: #216544;
+      --warn: #925a16;
+      --focus: #2e7dd1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, textarea { font: inherit; }
+
+    button, .file-button {
+      min-height: 38px;
+      border: 1px solid #95a39c;
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover, .file-button:hover { border-color: var(--accent); }
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+    }
+
+    .file-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .file-button input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .subline {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+    }
+
+    aside {
+      min-height: 0;
+      border-right: 1px solid var(--line);
+      background: #fbfcfb;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .metrics {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .row-list {
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .row-item {
+      width: 100%;
+      display: grid;
+      gap: 5px;
+      padding: 12px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      text-align: left;
+    }
+
+    .row-item[aria-selected="true"] {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+
+    .row-title {
+      font-size: 13px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .row-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .pill {
+      min-height: 20px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 7px;
+      background: var(--panel);
+      color: var(--muted);
+    }
+
+    .pill.done {
+      color: var(--ok);
+      border-color: #8abd9f;
+      background: #edf7f0;
+    }
+
+    .workspace {
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      padding: 18px;
+    }
+
+    .panel {
+      max-width: 880px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .context {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
+    }
+
+    .context div:last-child {
+      grid-column: 1 / -1;
+    }
+
+    dt {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .choices {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .choices button[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input, textarea {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 9px 10px;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .confidence {
+      display: grid;
+      grid-template-columns: 1fr 92px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: #1678d4;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 12px;
+      min-height: 18px;
+    }
+
+    .status.warn { color: var(--warn); }
+
+    .nav {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    @media (max-width: 820px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        max-height: 360px;
+      }
+
+      .context {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Epistemap Detective Run</h1>
+        <div class="subline" id="sheetLabel">pilot-reader-plain-reading-01</div>
+      </div>
+      <div class="toolbar">
+        <label class="file-button">Import CSV<input id="importCsv" type="file" accept=".csv,text/csv"></label>
+        <button id="exportCsv" type="button">Export CSV</button>
+        <button id="reset" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main>
+      <aside>
+        <section class="metrics" aria-label="Run progress">
+          <div class="metric"><strong id="totalCount">0</strong><span>Total</span></div>
+          <div class="metric"><strong id="doneCount">0</strong><span>Complete</span></div>
+          <div class="metric"><strong id="openCount">0</strong><span>Open</span></div>
+        </section>
+        <nav class="row-list" id="rowList" aria-label="Run items"></nav>
+      </aside>
+
+      <section class="workspace">
+        <article class="panel">
+          <dl class="context">
+            <div><dt>Story</dt><dd id="storyTitle"></dd></div>
+            <div><dt>Phase</dt><dd id="phase"></dd></div>
+            <div><dt>Item</dt><dd id="itemId"></dd></div>
+            <div><dt>Source Anchor</dt><dd id="sourceAnchor"></dd></div>
+          </dl>
+
+          <section class="form" aria-label="Run response">
+            <div>
+              <label>Recognition Outcome</label>
+              <div class="choices">
+                <button type="button" data-outcome="">Unset</button>
+                <button type="button" data-outcome="0">Not Recognized</button>
+                <button type="button" data-outcome="1">Recognized</button>
+              </div>
+            </div>
+
+            <label>Confidence p(y=1)
+              <div class="confidence">
+                <input id="pRange" type="range" min="0" max="1" step="0.01">
+                <input id="pValue" inputmode="decimal">
+              </div>
+            </label>
+
+            <label>Recognized At
+              <input id="recognizedAt" inputmode="decimal">
+            </label>
+
+            <label>Response
+              <textarea id="response"></textarea>
+            </label>
+
+            <label>Answer
+              <input id="answer">
+            </label>
+
+            <div class="status" id="status"></div>
+            <div class="nav">
+              <button id="previous" type="button">Previous</button>
+              <button id="next" type="button">Next</button>
+            </div>
+          </section>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const fields = [
+      "run_id", "subject_id", "story_title", "phase", "item_id", "source_anchor",
+      "y", "p", "answer", "response", "recognized_at", "row_key"
+    ];
+
+    const starterRows = [
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Adventure of the Speckled Band", "post-reveal", "story::speckled-band", "Helen Stoner's account of Julia's death and the locked room", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::001"],
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Red-Headed League", "post-reveal", "story::red-headed-league", "Wilson's account of the advertised copying work", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::002"],
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Purloined Letter", "pre-reveal", "story::purloined-letter-control", "police description of exhaustive hidden-place searches", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::003"],
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Red-Headed League", "pre-reveal", "story::red-headed-league", "Wilson's account of the advertised copying work", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::004"],
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Adventure of the Blue Carbuncle", "pre-reveal", "story::blue-carbuncle", "opening inquiry after the recovered hat and goose", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::005"],
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Purloined Letter", "post-reveal", "story::purloined-letter-control", "police description of exhaustive hidden-place searches", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::006"],
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Adventure of the Speckled Band", "pre-reveal", "story::speckled-band", "Helen Stoner's account of Julia's death and the locked room", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::007"],
+      ["detective-fair-play-pilot-001-plain-reading-01", "pilot-reader-plain-reading-01", "The Adventure of the Blue Carbuncle", "post-reveal", "story::blue-carbuncle", "opening inquiry after the recovered hat and goose", "", "", "", "", "", "detective-fair-play-pilot-001-plain-reading-01::008"]
+    ].map(values => Object.fromEntries(fields.map((field, index) => [field, values[index] || ""])));
+
+    const storageKey = "epistemap.detectiveRun.v1";
+    let rows = loadRows();
+    let selected = 0;
+
+    const els = {
+      sheetLabel: document.getElementById("sheetLabel"),
+      importCsv: document.getElementById("importCsv"),
+      exportCsv: document.getElementById("exportCsv"),
+      reset: document.getElementById("reset"),
+      totalCount: document.getElementById("totalCount"),
+      doneCount: document.getElementById("doneCount"),
+      openCount: document.getElementById("openCount"),
+      rowList: document.getElementById("rowList"),
+      storyTitle: document.getElementById("storyTitle"),
+      phase: document.getElementById("phase"),
+      itemId: document.getElementById("itemId"),
+      sourceAnchor: document.getElementById("sourceAnchor"),
+      outcomeButtons: Array.from(document.querySelectorAll("[data-outcome]")),
+      pRange: document.getElementById("pRange"),
+      pValue: document.getElementById("pValue"),
+      recognizedAt: document.getElementById("recognizedAt"),
+      response: document.getElementById("response"),
+      answer: document.getElementById("answer"),
+      status: document.getElementById("status"),
+      previous: document.getElementById("previous"),
+      next: document.getElementById("next")
+    };
+
+    function loadRows() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+        if (Array.isArray(saved) && saved.length) return saved;
+      } catch (_) {}
+      return starterRows.map(row => ({ ...row }));
+    }
+
+    function persist() {
+      localStorage.setItem(storageKey, JSON.stringify(rows));
+    }
+
+    function complete(row) {
+      return (row.y === "0" || row.y === "1") && row.p !== "";
+    }
+
+    function current() {
+      return rows[selected] || rows[0];
+    }
+
+    function render() {
+      if (!rows.length) rows = starterRows.map(row => ({ ...row }));
+      if (selected >= rows.length) selected = rows.length - 1;
+      const row = current();
+      const done = rows.filter(complete).length;
+      els.sheetLabel.textContent = `${row.subject_id || "unassigned"} · ${row.run_id || "no-run-id"}`;
+      els.totalCount.textContent = rows.length;
+      els.doneCount.textContent = done;
+      els.openCount.textContent = rows.length - done;
+      els.rowList.innerHTML = "";
+      rows.forEach((item, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "row-item";
+        button.setAttribute("aria-selected", String(index === selected));
+        button.innerHTML = `
+          <span class="row-title">${escapeHtml(item.story_title || item.item_id)}</span>
+          <span class="row-meta">
+            <span>${escapeHtml(item.phase || "")}</span>
+            <span class="pill ${complete(item) ? "done" : ""}">${complete(item) ? "complete" : "open"}</span>
+          </span>
+        `;
+        button.addEventListener("click", () => {
+          selected = index;
+          render();
+        });
+        els.rowList.appendChild(button);
+      });
+      els.storyTitle.textContent = row.story_title || "";
+      els.phase.textContent = row.phase || "";
+      els.itemId.textContent = row.item_id || "";
+      els.sourceAnchor.textContent = row.source_anchor || "";
+      els.outcomeButtons.forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.outcome === (row.y || "")));
+      });
+      els.pRange.value = row.p || "0.50";
+      els.pValue.value = row.p || "0.50";
+      els.recognizedAt.value = row.recognized_at || "";
+      els.response.value = row.response || "";
+      els.answer.value = row.answer || "";
+      const warnings = [];
+      if (!row.y) warnings.push("Recognition outcome is not set.");
+      if (row.y === "1" && !row.recognized_at) warnings.push("Recognition time is not set.");
+      els.status.textContent = warnings.length ? warnings.join(" ") : "Saved locally";
+      els.status.className = `status${warnings.length ? " warn" : ""}`;
+      persist();
+    }
+
+    function update(field, value) {
+      const row = current();
+      row[field] = value;
+      render();
+    }
+
+    function parseCsv(text) {
+      const records = [];
+      let record = [];
+      let value = "";
+      let quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (quoted) {
+          if (char === '"' && next === '"') {
+            value += '"';
+            i += 1;
+          } else if (char === '"') {
+            quoted = false;
+          } else {
+            value += char;
+          }
+        } else if (char === '"') {
+          quoted = true;
+        } else if (char === ",") {
+          record.push(value);
+          value = "";
+        } else if (char === "\n") {
+          record.push(value);
+          records.push(record);
+          record = [];
+          value = "";
+        } else if (char !== "\r") {
+          value += char;
+        }
+      }
+      if (value || record.length) {
+        record.push(value);
+        records.push(record);
+      }
+      const header = records.shift() || [];
+      return records.filter(row => row.length && row.some(cell => cell !== "")).map(row =>
+        Object.fromEntries(header.map((field, index) => [field, row[index] || ""]))
+      );
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? "");
+      return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+    }
+
+    function exportCsv() {
+      const text = [fields.join(","), ...rows.map(row => fields.map(field => csvEscape(row[field])).join(","))].join("\n") + "\n";
+      const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+      const link = document.createElement("a");
+      const subject = (current().subject_id || "detective_run_sheet").replace(/[^a-zA-Z0-9_-]+/g, "-");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${subject}_completed.csv`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    els.outcomeButtons.forEach(button => {
+      button.addEventListener("click", () => update("y", button.dataset.outcome || ""));
+    });
+    els.pRange.addEventListener("input", () => update("p", Number(els.pRange.value).toFixed(2)));
+    els.pValue.addEventListener("input", () => update("p", els.pValue.value));
+    els.recognizedAt.addEventListener("input", () => update("recognized_at", els.recognizedAt.value));
+    els.response.addEventListener("input", () => update("response", els.response.value));
+    els.answer.addEventListener("input", () => update("answer", els.answer.value));
+    els.previous.addEventListener("click", () => {
+      selected = Math.max(0, selected - 1);
+      render();
+    });
+    els.next.addEventListener("click", () => {
+      selected = Math.min(rows.length - 1, selected + 1);
+      render();
+    });
+    els.reset.addEventListener("click", () => {
+      localStorage.removeItem(storageKey);
+      rows = starterRows.map(row => ({ ...row }));
+      selected = 0;
+      render();
+    });
+    els.exportCsv.addEventListener("click", exportCsv);
+    els.importCsv.addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      file.text().then(text => {
+        rows = parseCsv(text).map(row => Object.fromEntries(fields.map(field => [field, row[field] || ""])));
+        selected = 0;
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
