@@ -7,9 +7,13 @@ one confidence meaning from another repository's scalar field.
 
 The evidence-backed phase audit is maintained in
 [confidence-overhaul-implementation-status.md](confidence-overhaul-implementation-status.md).
-The overhaul is in progress, not complete: portable assessment models exist in
-the working tree, while evidence-ledger, migration-command, installed-package,
-and release/deprecation work remains.
+The overhaul is in progress, not complete: portable assessment models are
+merged, while evidence-ledger, migration-command, installed-package,
+consumer-release, and deprecation work remains.
+
+The portable assessment contract is available in alpha release
+[`v0.1.0a1`](releases/v0.1.0a1.md). This release preserves legacy readers and
+does not begin scalar-field removal.
 
 This roadmap organizes Epistemap work around the current shared use case:
 GroundRecall supplies provenance-rich graph memory, CiteGeist supplies

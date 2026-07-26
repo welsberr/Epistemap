@@ -2,7 +2,8 @@
 
 **Audit date:** 2026-07-25
 
-**Review state:** committed and pushed for review; not merged or released
+**Review state:** merged and released as Epistemap `v0.1.0a1`; consumer
+compatibility releases remain pending
 
 **Scope:** Epistemap, CiteGeist, GroundRecall, and Didactopus
 
@@ -43,7 +44,7 @@ Status meanings:
 | Phase | Status | Evidence in the working trees | Work still required |
 | --- | --- | --- | --- |
 | C0 baseline and contract | partial | Roadmap, compatibility tests, explicit-zero and missing-value round trips | Cross-repository fixture directory, full semantic inventory, and recorded installed baseline |
-| E1 portable assessment models | substantial | `confidence.py`; node/edge assessment lists; lineage validation; JSON, JSON-LD, and Cytoscape preservation | Tagged Epistemap release, fixture matrix, consumer-installed validation, and deprecation diagnostics at public API boundaries |
+| E1 portable assessment models | substantial | `confidence.py`; node/edge assessment lists; lineage validation; JSON, JSON-LD, and Cytoscape preservation; released in `v0.1.0a1` | Fixture matrix, consumer-installed validation, and deprecation diagnostics at public API boundaries |
 | E2 evidence ledger and Bayesian assessment | partial | Bayesian weighting prefers typed edge/source assessments and preserves explicit zero | `EvidenceUnit`, weighting-policy model, visible ledger, deterministic deduplication, source-family handling, revision-edge separation, reconstructable assessment output |
 | E3 calibration utilities | partial | Brier, log loss, bins, ECE, JSON, Markdown, missing-value behavior | Dimension-specific eligibility rules, declared outcome interpretation, identity candidate-set policy, discrimination/coverage separation, broader fixtures |
 | CITE1 / CG3 CiteGeist migration | partial | Versioned assessment table; identity assessments in verification output; dry-run-first idempotent migration function; OKF page rendering | CLI command, backup/rollback, portable interval storage, `match_score` alias migration, reviewed match outcomes/calibration, Epistemap graph export |
@@ -55,7 +56,7 @@ Status meanings:
 | D2 evidence coverage separation | partial | Canonical `evidence_coverage` name plus legacy property/function aliases; corrected docs | Threshold/report alias migration, deprecation warnings, duplicate-evidence acceptance fixture, compatibility release |
 | D3 graph and candidate migration | partial | Course graph emits typed extraction assessments; graph retrieval preserves profiles | Rule-specific extraction versus grounding semantics, candidate migration, mentor prompt changes, GroundRecall bridge fixtures |
 | D4 response calibration | partial | Benchmark confidence remains response-correctness probability | Use Epistemap reports, abstention/discrimination/calibration split, minimum-sample policy gates, versioned learner policy manifests |
-| X1 cross-repository release | blocked | Review branches are pushed; GroundRecall and Didactopus pin Epistemap implementation commit `0b0a579` | Merge/review phases, tag Epistemap, replace implementation pins with the tagged release, run a clean installed-package matrix, release consumers, then begin the deprecation clock |
+| X1 cross-repository release | partial | All implementation PRs are merged; Epistemap `v0.1.0a1` contains the typed schema and compatibility readers | Replace consumer implementation pins with `v0.1.0a1`, run a clean installed-package matrix, release consumers, then begin the deprecation clock |
 
 ## Reconciliation Of Concurrent Changes
 
@@ -123,11 +124,10 @@ sequence is:
 2. finish E3 eligibility semantics;
 3. implement and test CiteGeist and GroundRecall CLI migrations with rollback;
 4. complete Didactopus D1-D4 compatibility work;
-5. review and merge the pushed repository branches;
-6. tag Epistemap and replace temporary consumer commit pins with the release;
-7. run the cross-repository matrix in clean environments without sibling
+5. replace temporary consumer commit pins with Epistemap `v0.1.0a1`;
+6. run the cross-repository matrix in clean environments without sibling
    `PYTHONPATH`;
-8. tag consumer compatibility releases, then begin documented deprecation.
+7. tag consumer compatibility releases, then begin documented deprecation.
 
-Release tagging, destructive/store-wide migration, and publication remain
-human-authorized actions.
+Destructive/store-wide migration and publication beyond the reviewed release
+artifacts remain human-authorized actions.
