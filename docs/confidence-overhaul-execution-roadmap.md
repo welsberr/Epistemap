@@ -1,6 +1,7 @@
 # Confidence Overhaul Execution Roadmap After v0.1.0a1
 
-**Status:** W0-W3 merged; W4 implemented locally; remaining packages await dependency gates
+**Status:** W0-W12 merged; W13 compatibility releases and deprecation-clock
+start remain gated on explicit human approval
 
 **Baseline date:** 2026-07-25
 
@@ -40,6 +41,13 @@ the merged source and update both documents in the same pull request.
 Do not assume these hashes remain current. At the start of every work package,
 fetch the remote, inspect `git status`, and rebase the plan on the current
 default branch without discarding user changes.
+
+## Current Implementation State
+
+As of the W13 release-candidate review, the implementation heads are recorded in
+`docs/confidence-overhaul-implementation-status.md`. W13 must not tag releases,
+publish packages, merge release artifacts, or start the deprecation clock until
+release versions and timing are explicitly approved.
 
 ## Non-Negotiable Invariants
 

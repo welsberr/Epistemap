@@ -1,37 +1,38 @@
 # Unified Confidence Overhaul: Audited Implementation Status
 
-**Audit date:** 2026-07-25
+**Audit date:** 2026-07-26
 
-**Review state:** merged and released as Epistemap `v0.1.0a1`; consumer
-compatibility releases remain pending
+**Review state:** W0-W12 implementation PRs merged; W13 release-candidate
+planning is prepared for review; Epistemap remains released as `v0.1.0a1`;
+consumer compatibility releases and deprecation-clock start remain pending
+explicit human approval
 
 **Scope:** Epistemap, CiteGeist, GroundRecall, and Didactopus
 
 ## Executive Status
 
-The overhaul is **in progress**. The merged repositories contain a released
-portable assessment foundation and several partial consumer implementations,
-but the roadmap's definition of done has not been met.
+The overhaul is **implementation-complete through W12** and **release-gated at
+W13**. The merged repositories contain the portable assessment foundation,
+consumer migrations, compatibility aliases, evidence-coverage separation,
+response calibration, and installed-matrix checks. The roadmap's definition of
+done has not been met because release tagging, consumer compatibility releases,
+and deprecation-clock start require explicit human approval.
 
 The dependency-ordered coding-model queue for the remaining work is
 [`confidence-overhaul-execution-roadmap.md`](confidence-overhaul-execution-roadmap.md).
 
-At the start of the audit, all confidence-overhaul changes were uncommitted and
-each repository's `main` branch matched its remote-tracking tip. The reviewed
-changes have since been committed and pushed on
-`agent/reconcile-confidence-and-roadmaps`:
+Current merged heads after W0-W12:
 
-| Repository | Base `main` | Pushed implementation commit |
+| Repository | Current merged head | Last confidence-overhaul merge |
 | --- | --- | --- |
-| Epistemap | `f452d4f` | `0b0a579` |
-| GroundRecall | `6f98df8` | `7dbe47b` |
-| CiteGeist | `40117c5` | `61534cf` |
-| Didactopus | `5644c46` | `f321a26` |
+| Epistemap | `324f9d0` | W9 installed cross-repository matrix |
+| CiteGeist | `1ad1721` | W6 identity outcomes and graph export |
+| GroundRecall | `cf19ffa` | W8 governed confidence profiles |
+| Didactopus | `f10c5bd` | W12 response calibration reports |
 
-These are review-branch implementation commits, not release commits. Earlier
-summaries correctly identify many files and passing local tests, but any
-statement that the unified roadmap was applied "to completion" remains too
-broad.
+These are implementation commits, not release tags. Any statement that the
+unified roadmap is fully complete remains too broad until W13 release actions
+are authorized and performed.
 
 ## Phase Status
 
@@ -43,23 +44,25 @@ Status meanings:
 - `not started`: no roadmap-specific implementation was found;
 - `blocked`: implementation depends on an unreleased prerequisite or explicit
   release/migration authority.
+- `merged`: roadmap acceptance work is merged, but release tagging may still be
+  gated.
 
 | Phase | Status | Evidence in the working trees | Work still required |
 | --- | --- | --- | --- |
-| C0 baseline and contract | substantial | Roadmap, compatibility tests, explicit-zero and missing-value round trips, W0 synthetic fixture directory, compatibility matrix, and scalar-field inventory | Merge W0, then use the matrix as the gate for W1/W4/W5/W7; installed-package matrix remains X1/W9 work |
-| E1 portable assessment models | substantial | `confidence.py`; node/edge assessment lists; lineage validation; JSON, JSON-LD, and Cytoscape preservation; released in `v0.1.0a1` | Fixture matrix, consumer-installed validation, and deprecation diagnostics at public API boundaries |
-| E2 evidence ledger and Bayesian assessment | substantial | Bayesian weighting prefers typed edge/source assessments and preserves explicit zero; W1 evidence ledger models, W2 graph-to-ledger conversion/deduplication, and W3 ledger-backed posterior output exist locally | Broader downstream compatibility-alias hardening and installed-package validation |
-| E3 calibration utilities | substantial | Brier, log loss, bins, ECE, JSON, Markdown, missing-value behavior; W4 eligibility contract, identity candidate-set policy, restricted-dimension guards, and separated report blocks exist locally | Downstream adoption by CiteGeist identity outcomes and Didactopus response calibration |
-| CITE1 / CG3 CiteGeist migration | partial | Versioned assessment table; identity assessments in verification output; dry-run-first idempotent migration function; OKF page rendering | CLI command, backup/rollback, portable interval storage, `match_score` alias migration, reviewed match outcomes/calibration, Epistemap graph export |
-| G1 GroundRecall schema migration | partial | Optional bounded claim/observation scalars; typed assessment lists; explicit-zero-safe adapter selection; consumes Epistemap `v0.1.0a1` | Store migration command, versioned migration events, ambiguity report, rollback, and legacy-store fixtures |
-| G2 GroundRecall producer semantics | partial | Query adapter emits typed compatibility assessments with a declared policy | Per-producer rule/method provenance, basis hashes, adapter fixture coverage, readiness report, removal of blanket legacy reinterpretation |
-| G3 reviewer and temporal assessments | partial | Memory roadmap correctly separates expiry/supersession from historical confidence | Append-only identified reviewer records, disagreement/adjudication, query confidence profile, selection explanations |
-| G4 GroundRecall Bayesian integration | partial | Existing Epistemap Bayesian sidecar integration predates this audit | Claim evidence ledgers, deduplication, source-family dependence, compatibility aliases, paired current/`as_of` fixtures |
-| D1 Didactopus inventory and naming | partial | Machine-readable inventory and some bounded learner-state fields | Complete production occurrence inventory, duplicate-model alignment, optional ORM migration, ambiguity report, JSON/database compatibility tests |
-| D2 evidence coverage separation | partial | Canonical `evidence_coverage` name plus legacy property/function aliases; corrected docs | Threshold/report alias migration, deprecation warnings, duplicate-evidence acceptance fixture, compatibility release |
-| D3 graph and candidate migration | partial | Course graph emits typed extraction assessments; graph retrieval preserves profiles | Rule-specific extraction versus grounding semantics, candidate migration, mentor prompt changes, GroundRecall bridge fixtures |
-| D4 response calibration | partial | Benchmark confidence remains response-correctness probability | Use Epistemap reports, abstention/discrimination/calibration split, minimum-sample policy gates, versioned learner policy manifests |
-| X1 cross-repository release | partial | All implementation PRs are merged; Epistemap `v0.1.0a1` is published; GroundRecall and Didactopus consume the tag; both suites pass with the tag installed and no sibling `PYTHONPATH` | Complete the golden cross-repository matrix, release consumers, then begin the deprecation clock |
+| C0 baseline and contract | merged | W0 synthetic fixture directory, compatibility matrix, scalar-field inventory, explicit-zero and missing-value round trips | Release note and deprecation clock remain W13-gated |
+| E1 portable assessment models | merged | `confidence.py`; node/edge assessment lists; lineage validation; JSON, JSON-LD, and Cytoscape preservation; released in `v0.1.0a1` | Next release tag remains W13-gated |
+| E2 evidence ledger and Bayesian assessment | merged | W1-W3 ledger models, graph-to-ledger conversion/deduplication, ledger-backed posterior output, typed-assessment weighting, explicit-zero preservation | Release note and downstream version freeze remain W13-gated |
+| E3 calibration utilities | merged | W4 Brier/log loss/bins/ECE, eligibility contract, identity candidate-set policy, restricted-dimension guards, separated report blocks | Release note and downstream version freeze remain W13-gated |
+| CITE1 / CG3 CiteGeist migration | merged | W5 dry-run/apply/restore migration CLI; W6 `match_score`, reviewed identity outcomes, calibration rows, deterministic Epistemap-compatible graph export | Consumer release remains W13-gated |
+| G1 GroundRecall schema migration | merged | W7 typed assessments, migration contract, ambiguity reporting, legacy-store fixtures | Consumer release remains W13-gated |
+| G2 GroundRecall producer semantics | merged | W7/W8 producer profile preservation, typed profile fixtures, rule/method provenance | Consumer release remains W13-gated |
+| G3 reviewer and temporal assessments | merged | W8 governed profiles, reviewer disagreement, temporal applicability, expiry/supersession without destructive forgetting | Consumer release remains W13-gated |
+| G4 GroundRecall Bayesian integration | merged | W8 Bayesian profile and evidence-ledger integration with current/as-of behavior | Consumer release remains W13-gated |
+| D1 Didactopus inventory and naming | merged | W10 production inventory, optional ORM/API fields, candidate/citation typed assessments, migration ambiguity report | Consumer release remains W13-gated |
+| D2 evidence coverage separation | merged | W11 canonical `evidence_coverage`, deprecated aliases with warnings, duplicate-evidence fixture, stop/export separation | Consumer release remains W13-gated |
+| D3 graph and candidate migration | merged | W10 graph/candidate/citation extraction assessments and GroundRecall profile preservation | Consumer release remains W13-gated |
+| D4 response calibration | merged | W12 Epistemap calibration reports, selected-answer correctness vs `p_true`, abstention/discrimination/evidence coverage split, minimum-sample warnings | Consumer release remains W13-gated |
+| X1 cross-repository release | blocked | W9 installed matrix merged; W0-W12 implementation PRs merged | Tag consumer compatibility releases and start deprecation only after explicit approval |
 
 ## Reconciliation Of Concurrent Changes
 
@@ -82,10 +85,11 @@ of stored user data was performed.
 ### CiteGeist knowledge-graph work
 
 The graph roadmap aligns at the policy level: bibliographic identity, topic
-relevance, retrieval rank, and claim support remain separate. The local
-confidence module is a CiteGeist-owned canonical-equivalent prototype, but it
-does not yet store the portable interval shape and is not connected to the
-documented CLI migration or an Epistemap graph exporter.
+relevance, retrieval rank, and claim support remain separate. W5 added the
+dry-run/apply/restore migration command and W6 added canonical `match_score`,
+reviewed identity outcomes, calibration rows, and a deterministic
+Epistemap-compatible graph exporter. Citation and topic topology are marked as
+non-evidential in that export.
 
 Untracked `build/`, generated literature-explorer HTML, and a SQLite backup are
 adjacent artifacts, not evidence that CG3 is complete. Publication/private-data
@@ -95,14 +99,10 @@ review is required before any generated artifact is committed or published.
 
 The course-graph and retrieval changes align with the portable profile, and
 the evidence engine now distinguishes evidence mass from mastery confidence.
-However, Didactopus is pinned to Epistemap commit `f452d4f`, which predates the
-new confidence API. Tests using `/home/netuser/bin/Epistemap/src` validate a
-sibling working tree, not the declared installed dependency.
-
-The repository also contains duplicate API and vendored GroundRecall models,
-ORM scalars, promotion helpers, citation extractors, and adapters that still
-use ambiguous defaults or lack method provenance. These are recorded as D1/D3
-gaps rather than treated as completed migration.
+W10-W12 completed the production inventory, optional ORM/API migration,
+candidate and citation extraction assessments, GroundRecall profile
+preservation, evidence-coverage aliases/warnings, duplicate-evidence guard, and
+response-calibration reports.
 
 ## Corrections Made During This Audit
 
@@ -117,18 +117,23 @@ gaps rather than treated as completed migration.
   implemented, the full suite now has a recorded result, and confidence CG3 is
   explicitly separate and partial.
 - Added truthful phase-status pointers to the affected repository roadmaps.
+- Completed W6 and W10-W12 after the original audit, then updated this status
+  file to make W13 the remaining approval-gated release phase.
+- Prepared the W13 release-candidate plan with proposed compatibility versions,
+  current dependency state, corrected installed-matrix commands, and local
+  8-row matrix validation.
 
 ## Release Gate
 
 Do not start the scalar-confidence deprecation clock yet. The next defensible
-sequence is:
+sequence is now W13:
 
-1. merge C0/W0 fixtures and complete E2's evidence ledger;
-2. finish E3 eligibility semantics;
-3. implement and test CiteGeist and GroundRecall CLI migrations with rollback;
-4. complete Didactopus D1-D4 compatibility work;
-5. complete the remaining cross-repository golden fixtures;
-6. tag consumer compatibility releases, then begin documented deprecation.
+1. review [releases/confidence-compatibility-release-plan.md](releases/confidence-compatibility-release-plan.md);
+2. approve or revise release versions for Epistemap, CiteGeist, GroundRecall,
+   and Didactopus;
+3. rerun the installed matrix against the selected release candidates;
+4. tag consumer compatibility releases in dependency order;
+5. begin the documented deprecation clock for legacy scalar graph confidence.
 
 Destructive/store-wide migration and publication beyond the reviewed release
 artifacts remain human-authorized actions.
