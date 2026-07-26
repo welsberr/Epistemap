@@ -4,7 +4,7 @@ import hashlib
 import json
 import math
 from collections.abc import Mapping
-from typing import Any, Literal
+from typing import Any, Callable, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -230,21 +230,22 @@ def evidence_ledger_from_edges(
     revision_edges: list[Edge] | tuple[Edge, ...] = (),
     nodes_by_id: Mapping[str, Node] | None = None,
     weighting_policy: EvidenceWeightingPolicy | None = None,
+    effective_weight_resolver: Callable[[Edge], float] | None = None,
 ) -> EvidenceLedger:
     """Build a ledger from preselected edge groups while retaining legacy callers."""
 
     nodes_by_id = nodes_by_id or {}
     policy = weighting_policy or default_graph_weighting_policy()
     raw_units = [
-        _unit_from_edge(edge, "support", subject_claim_id, nodes_by_id, policy)
+        _unit_from_edge(edge, "support", subject_claim_id, nodes_by_id, policy, effective_weight_resolver)
         for edge in support_edges
     ]
     raw_units.extend(
-        _unit_from_edge(edge, "challenge", subject_claim_id, nodes_by_id, policy)
+        _unit_from_edge(edge, "challenge", subject_claim_id, nodes_by_id, policy, effective_weight_resolver)
         for edge in challenge_edges
     )
     raw_units.extend(
-        _unit_from_edge(edge, "revision", subject_claim_id, nodes_by_id, policy)
+        _unit_from_edge(edge, "revision", subject_claim_id, nodes_by_id, policy, effective_weight_resolver)
         for edge in revision_edges
     )
     return evidence_ledger_from_units(
@@ -354,10 +355,13 @@ def _unit_from_edge(
     subject_claim_id: str,
     nodes_by_id: Mapping[str, Node],
     weighting_policy: EvidenceWeightingPolicy | None,
+    effective_weight_resolver: Callable[[Edge], float] | None = None,
 ) -> EvidenceUnit:
     policy = weighting_policy or default_graph_weighting_policy()
     edge_id = edge.id or f"{edge.source}->{edge.type}->{edge.target}"
     weight, input_id, rule, diagnostic = _edge_weight(edge, nodes_by_id, policy)
+    effective_weight = float(effective_weight_resolver(edge)) if effective_weight_resolver is not None else weight
+    effective_rule = "bayesian_legacy_edge_weight" if effective_weight_resolver is not None else rule
     source_family_ids = _source_family_ids(edge, nodes_by_id)
     deduplication_key = _deduplication_key(edge)
     metadata: dict[str, Any] = {
@@ -389,9 +393,9 @@ def _unit_from_edge(
         source_family_ids=source_family_ids,
         input_assessments=edge.assessments,
         raw_weight=weight,
-        effective_weight=weight,
+        effective_weight=effective_weight,
         weight_input_id=input_id,
-        weight_policy_rule=rule,
+        weight_policy_rule=effective_rule,
         deduplication_key=deduplication_key,
         deduplication_rationale="artifact and fragment match" if "fragment_id" in edge.metadata else "graph edge identity",
         policy_id=policy.policy_id,
