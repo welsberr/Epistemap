@@ -1,6 +1,6 @@
 # Confidence Overhaul Execution Roadmap After v0.1.0a1
 
-**Status:** W0 merged; W1 implemented locally; remaining packages await dependency gates
+**Status:** W0 and W1 merged; W2 implemented locally; remaining packages await dependency gates
 
 **Baseline date:** 2026-07-25
 
@@ -249,6 +249,11 @@ Each evidence unit must retain:
 **Repository:** Epistemap
 
 **Depends on:** W1
+
+**Local status:** implemented with graph/edge-to-ledger conversion,
+deduplication, referring-edge preservation, raw/deduplicated count and weight
+reports, missing-weight diagnostics, source-family recording, concept component
+claim listing, and Bayesian compatibility report integration.
 
 **Objective:** produce a visible, reconstructable ledger from graph evidence.
 

@@ -1,0 +1,144 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "epistemap_deduplicated_graph_edges",
+  "title": "",
+  "description": "",
+  "nodes": [
+    {
+      "id": "source::paper",
+      "type": "source",
+      "title": "Paper",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "assessments": [],
+      "provenance": [],
+      "metadata": {
+        "source_family_id": "family::journal"
+      }
+    },
+    {
+      "id": "claim::main",
+      "type": "claim",
+      "title": "Main claim",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "assessments": [],
+      "provenance": [],
+      "metadata": {}
+    },
+    {
+      "id": "claim::component",
+      "type": "claim",
+      "title": "Component claim",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "assessments": [],
+      "provenance": [],
+      "metadata": {}
+    },
+    {
+      "id": "concept::topic",
+      "type": "concept",
+      "title": "Topic",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "assessments": [],
+      "provenance": [],
+      "metadata": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "source::paper",
+      "target": "claim::main",
+      "type": "supports_claim",
+      "id": "edge::support-a",
+      "title": "",
+      "justification": "",
+      "confidence": 0.8,
+      "assessments": [],
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [],
+      "metadata": {
+        "artifact_id": "artifact::paper",
+        "fragment_id": "fragment::same",
+        "source_family_id": "family::journal"
+      }
+    },
+    {
+      "source": "source::paper",
+      "target": "claim::main",
+      "type": "supports_claim",
+      "id": "edge::support-b",
+      "title": "",
+      "justification": "",
+      "confidence": 0.7,
+      "assessments": [],
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [],
+      "metadata": {
+        "artifact_id": "artifact::paper",
+        "fragment_id": "fragment::same",
+        "source_family_id": "family::journal"
+      }
+    },
+    {
+      "source": "source::paper",
+      "target": "claim::main",
+      "type": "contradicts",
+      "id": "edge::challenge-missing-weight",
+      "title": "",
+      "justification": "",
+      "assessments": [],
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [],
+      "metadata": {}
+    },
+    {
+      "source": "source::paper",
+      "target": "claim::main",
+      "type": "corrects",
+      "id": "edge::corrects",
+      "title": "",
+      "justification": "",
+      "assessments": [],
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [],
+      "metadata": {
+        "revises_unit_id": "evidence:graph-edge:edge::support-a"
+      }
+    },
+    {
+      "source": "claim::component",
+      "target": "concept::topic",
+      "type": "about_concept",
+      "id": "edge::component-topic",
+      "title": "",
+      "justification": "",
+      "confidence": 0.9,
+      "assessments": [],
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [],
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "fixture_id": "epistemap_deduplicated_graph_edges",
+    "producer": "Epistemap",
+    "schema_version": "epistemap_graph_bundle.v1",
+    "fixture_kind": "deduplicated_graph_evidence"
+  },
+  "summary": {
+    "node_count": 4,
+    "edge_count": 5
+  }
+}

@@ -110,9 +110,13 @@ from .evidence import (
     EvidenceUnit,
     EvidenceWeightingPolicy,
     SourceFamilyDependence,
+    default_graph_weighting_policy,
     derive_evidence_identity,
     deterministic_hash,
     deterministic_json,
+    evidence_ledger_from_edges,
+    evidence_ledger_from_units,
+    graph_to_evidence_ledger,
 )
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .grounding_effect import (
@@ -202,6 +206,7 @@ __all__ = [
     "ConfidenceInterval",
     "Edge",
     "claim_status_at",
+    "default_graph_weighting_policy",
     "delta_g",
     "derive_evidence_identity",
     "deterministic_hash",
@@ -213,6 +218,8 @@ __all__ = [
     "EvidenceStance",
     "EvidenceUnit",
     "EvidenceWeightingPolicy",
+    "evidence_ledger_from_edges",
+    "evidence_ledger_from_units",
     "epistemic_report",
     "epistemic_summary",
     "expected_calibration_error",
@@ -228,6 +235,7 @@ __all__ = [
     "g_experiment_summary_markdown",
     "g_rows_to_csv",
     "graph_at",
+    "graph_to_evidence_ledger",
     "graph_with_component_reliability",
     "GraphBundle",
     "GraphShape",

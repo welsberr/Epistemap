@@ -1,16 +1,22 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
 from epistemap import (
     AssessmentMethodRef,
     ConfidenceAssessment,
+    Edge,
     EvidenceLedger,
     EvidenceReference,
     EvidenceUnit,
     EvidenceWeightingPolicy,
+    GraphBundle,
+    Node,
     derive_evidence_identity,
+    graph_to_evidence_ledger,
 )
 
 
@@ -191,3 +197,65 @@ def test_ledger_validates_duplicate_ids_missing_subjects_dangling_revisions_and_
             method_name="fixture",
             method_version="",
         )
+
+
+def test_graph_to_ledger_deduplicates_same_fragment_and_preserves_referring_edges() -> None:
+    bundle = GraphBundle.model_validate_json(
+        (Path(__file__).parent / "fixtures" / "confidence" / "raw" / "epistemap_deduplicated_graph_edges.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    ledger = graph_to_evidence_ledger(bundle, "claim::main")
+    support_unit = next(unit for unit in ledger.units if unit.stance == "support")
+
+    assert ledger.metadata["raw_counts"]["support"] == 2
+    assert ledger.metadata["deduplicated_counts"]["support"] == 1
+    assert sorted(support_unit.referring_edge_ids) == ["edge::support-a", "edge::support-b"]
+    assert support_unit.source_family_ids == ["family::journal"]
+    assert support_unit.weight_input_id == "edge::support-a"
+    assert support_unit.weight_policy_rule == "legacy_edge_confidence"
+
+
+def test_graph_to_ledger_reports_missing_weight_defaults_and_revision_counts_separately() -> None:
+    bundle = GraphBundle.model_validate_json(
+        (Path(__file__).parent / "fixtures" / "confidence" / "raw" / "epistemap_deduplicated_graph_edges.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    ledger = graph_to_evidence_ledger(bundle, "claim::main")
+    challenge = next(unit for unit in ledger.units if unit.stance == "challenge")
+    revision = next(unit for unit in ledger.units if unit.stance == "revision")
+
+    assert challenge.effective_weight == 1.0
+    assert challenge.weight_policy_rule == "missing_weight_default"
+    assert "missing_weight_default_applied" in {diagnostic.code for diagnostic in ledger.diagnostics}
+    assert ledger.metadata["raw_counts"]["challenge"] == 1
+    assert ledger.metadata["raw_counts"]["revision"] == 1
+    assert revision.revision_of_unit_ids == ["evidence:graph-edge:edge::support-a"]
+    assert ledger.metadata["deduplicated_counts"]["challenge"] == 1
+
+
+def test_graph_to_ledger_lists_component_claims_for_concept_conversion() -> None:
+    bundle = GraphBundle(
+        graph_id="concept-components",
+        nodes=[
+            Node(id="claim::component", type="claim", title="Component"),
+            Node(id="concept::topic", type="concept", title="Topic"),
+        ],
+        edges=[
+            Edge(
+                id="edge::component-topic",
+                source="claim::component",
+                target="concept::topic",
+                type="about_concept",
+                confidence=0.9,
+            )
+        ],
+    )
+
+    ledger = graph_to_evidence_ledger(bundle, "concept::topic")
+
+    assert ledger.subject_claim_ids == ["claim::component"]
+    assert ledger.units[0].subject_claim_id == "claim::component"

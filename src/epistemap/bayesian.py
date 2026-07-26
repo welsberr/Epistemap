@@ -7,6 +7,7 @@ from typing import Any, Mapping, Sequence, TextIO
 
 from .models import Edge, Node
 from .confidence import latest_assessment
+from .evidence import evidence_ledger_from_edges
 
 HIGH_TRUST_VALUES = {"high", "trusted", "peer_reviewed", "primary", "official", "expert_reviewed"}
 MIXED_TRUST_VALUES = {"medium", "mixed", "provisional", "secondary", "tertiary"}
@@ -125,6 +126,7 @@ def bayesian_evidence_update(
     *,
     support_edges: Sequence[Edge],
     challenge_edges: Sequence[Edge],
+    revision_edges: Sequence[Edge] = (),
     nodes_by_id: Mapping[str, Node] | None = None,
     prior_alpha: float = 1.0,
     prior_beta: float = 1.0,
@@ -140,6 +142,14 @@ def bayesian_evidence_update(
         prior_beta = float(profile["beta"])
     support_weights = [_edge_evidence_weight(edge, nodes_by_id) for edge in support_edges]
     challenge_weights = [_edge_evidence_weight(edge, nodes_by_id) for edge in challenge_edges]
+    subject_claim_id = _subject_claim_id_for_edges(support_edges, challenge_edges, revision_edges)
+    ledger = evidence_ledger_from_edges(
+        subject_claim_id=subject_claim_id,
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        revision_edges=revision_edges,
+        nodes_by_id=nodes_by_id,
+    )
     posterior = beta_binomial_posterior(
         success_weight=sum(support_weights),
         failure_weight=sum(challenge_weights),
@@ -151,11 +161,32 @@ def bayesian_evidence_update(
     posterior["evidence"]["challenge_edge_count"] = len(challenge_edges)
     posterior["evidence"]["support_weights"] = [round(weight, 6) for weight in support_weights]
     posterior["evidence"]["challenge_weights"] = [round(weight, 6) for weight in challenge_weights]
+    posterior["evidence"]["ledger"] = {
+        "ledger_id": ledger.ledger_id,
+        "content_hash": ledger.content_hash(),
+        "raw_unit_count": ledger.metadata["raw_unit_count"],
+        "deduplicated_unit_count": ledger.metadata["deduplicated_unit_count"],
+        "raw_counts": ledger.metadata["raw_counts"],
+        "deduplicated_counts": ledger.metadata["deduplicated_counts"],
+        "raw_weights": ledger.metadata["raw_weights"],
+        "deduplicated_weights": ledger.metadata["deduplicated_weights"],
+        "diagnostics": [diagnostic.model_dump(mode="json") for diagnostic in ledger.diagnostics],
+    }
     posterior["stability"] = _posterior_stability(posterior)
     if profile is not None:
         posterior["prior"]["profile"] = profile["name"]
         posterior["prior"]["description"] = profile["description"]
     return posterior
+
+
+def _subject_claim_id_for_edges(
+    support_edges: Sequence[Edge],
+    challenge_edges: Sequence[Edge],
+    revision_edges: Sequence[Edge],
+) -> str:
+    for edge in [*support_edges, *challenge_edges, *revision_edges]:
+        return edge.target
+    return "claim::unknown"
 
 
 def bayesian_prior_sensitivity(
