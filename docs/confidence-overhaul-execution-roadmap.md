@@ -1,6 +1,6 @@
 # Confidence Overhaul Execution Roadmap After v0.1.0a1
 
-**Status:** W0 and W1 merged; W2 implemented locally; remaining packages await dependency gates
+**Status:** W0-W2 merged; W3 implemented locally; remaining packages await dependency gates
 
 **Baseline date:** 2026-07-25
 
@@ -291,6 +291,10 @@ claim listing, and Bayesian compatibility report integration.
 **Repository:** Epistemap
 
 **Depends on:** W2
+
+**Local status:** implemented with ledger-backed aggregation, policy ID
+`beta_binomial_weighted_evidence_v1`, exported ledger basis, compatibility
+evidence keys, and an `evidential_support` assessment payload.
 
 **Objective:** make posterior-support reports reproducible from exported data.
 

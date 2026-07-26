@@ -38,12 +38,13 @@ deduplicates repeated artifact-fragment evidence, preserves all referring edge
 IDs, records source-family IDs, reports raw and deduplicated counts/weights,
 and emits diagnostics when a versioned missing-weight default is applied.
 
-The ledger layer is visible in Bayesian reports, but W2 deliberately preserves
-legacy Bayesian aggregation behavior. W3 will make aggregation reconstruct from
-the exported ledger. Explicit zero-valued typed assessments remain valid
-evidence inputs and do not trigger fallback behavior. Revision evidence is
-represented with stance `revision` and links to the revised unit IDs; it is not
-ordinary challenge evidence.
+Bayesian aggregation now runs from an `EvidenceLedger`. Reports keep the legacy
+top-level evidence keys, but the posterior can be reconstructed from the
+exported ledger basis, prior parameters, policy ID, effective weights, and
+interval method. Explicit zero-valued typed assessments remain valid evidence
+inputs and do not trigger fallback behavior. Revision evidence is represented
+with stance `revision` and links to the revised unit IDs; it is not ordinary
+challenge evidence.
 
 ## Epistemic Summaries
 
@@ -58,6 +59,9 @@ The Bayesian block includes:
 - `prior`: alpha, beta, and prior mean;
 - `posterior`: alpha, beta, mean, variance, and approximate credible interval;
 - `evidence`: support/challenge weights and effective sample size;
+- `evidence.ledger`: the ledger ID, content hash, basis unit IDs, raw and
+  deduplicated counts/weights, and diagnostics;
+- `assessment`: an `evidential_support` `ConfidenceAssessment` payload;
 - `stability`: a coarse label based on interval width and evidence weight;
 - `prior_sensitivity`: the same evidence under skeptical, neutral, and
   supportive priors;
@@ -111,8 +115,8 @@ Implemented:
 
 Near-term:
 
-- make Bayesian aggregation reconstruct from exported ledgers while preserving
-  documented compatibility aliases;
+- harden compatibility aliases for downstream callers that still consume
+  scalar Bayesian report fields;
 - add CLI support for graph-level epistemic reports once graph bundle loading
   is standardized for downstream repos.
 

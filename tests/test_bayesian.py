@@ -3,14 +3,17 @@ from __future__ import annotations
 from epistemap import (
     AssessmentMethodRef,
     BAYESIAN_PRIOR_PROFILES,
+    BAYESIAN_WEIGHTING_POLICY_ID,
     ConfidenceAssessment,
     Edge,
     Node,
     bayesian_evidence_update,
     bayesian_prior_sensitivity,
     bayesian_reliability_markdown,
+    bayesian_update_from_evidence_ledger,
     beta_binomial_posterior,
     classify_bayesian_reliability,
+    evidence_ledger_from_edges,
     resolve_bayesian_prior_profile,
     write_bayesian_reliability_markdown,
 )
@@ -107,11 +110,32 @@ def test_bayesian_evidence_update_reports_ledger_without_changing_legacy_weights
     ledger = posterior["evidence"]["ledger"]
     assert posterior["evidence"]["support_edge_count"] == 2
     assert posterior["evidence"]["success_weight"] == sum(posterior["evidence"]["support_weights"])
-    assert posterior["evidence"]["support_weights"] == [0.442, 0.38675]
+    assert posterior["evidence"]["support_weights"] == [0.442]
     assert ledger["raw_counts"]["support"] == 2
     assert ledger["deduplicated_counts"]["support"] == 1
-    assert ledger["raw_weights"]["support"] == 1.5
-    assert ledger["deduplicated_weights"]["support"] == 0.8
+    assert ledger["raw_weights"]["support"] == 0.82875
+    assert ledger["deduplicated_weights"]["support"] == 0.442
+
+
+def test_bayesian_update_reconstructs_from_exported_ledger_basis() -> None:
+    edges = [
+        Edge(id="edge::support", source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8),
+        Edge(id="edge::challenge", source="obs::other", target="claim::main", type="contradicts", confidence=0.2),
+    ]
+    ledger = evidence_ledger_from_edges(
+        subject_claim_id="claim::main",
+        support_edges=[edges[0]],
+        challenge_edges=[edges[1]],
+    )
+
+    first = bayesian_update_from_evidence_ledger(ledger, prior_alpha=1.0, prior_beta=1.0)
+    reconstructed = bayesian_update_from_evidence_ledger(ledger, prior_alpha=1.0, prior_beta=1.0)
+
+    assert first["policy_id"] == BAYESIAN_WEIGHTING_POLICY_ID
+    assert first["posterior"] == reconstructed["posterior"]
+    assert first["evidence"]["ledger"]["content_hash"] == reconstructed["evidence"]["ledger"]["content_hash"]
+    assert first["assessment"]["dimension"] == "evidential_support"
+    assert first["assessment"]["basis_hash"] == ledger.content_hash()
 
 
 def test_bayesian_prior_sensitivity_reports_fragility_range() -> None:

@@ -6,8 +6,10 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence, TextIO
 
 from .models import Edge, Node
-from .confidence import latest_assessment
-from .evidence import evidence_ledger_from_edges
+from .confidence import AssessmentMethodRef, ConfidenceAssessment, ConfidenceInterval, confidence_band, latest_assessment
+from .evidence import EvidenceLedger, evidence_ledger_from_edges
+
+BAYESIAN_WEIGHTING_POLICY_ID = "beta_binomial_weighted_evidence_v1"
 
 HIGH_TRUST_VALUES = {"high", "trusted", "peer_reviewed", "primary", "official", "expert_reviewed"}
 MIXED_TRUST_VALUES = {"medium", "mixed", "provisional", "secondary", "tertiary"}
@@ -140,8 +142,6 @@ def bayesian_evidence_update(
         profile = resolve_bayesian_prior_profile(prior_profile)
         prior_alpha = float(profile["alpha"])
         prior_beta = float(profile["beta"])
-    support_weights = [_edge_evidence_weight(edge, nodes_by_id) for edge in support_edges]
-    challenge_weights = [_edge_evidence_weight(edge, nodes_by_id) for edge in challenge_edges]
     subject_claim_id = _subject_claim_id_for_edges(support_edges, challenge_edges, revision_edges)
     ledger = evidence_ledger_from_edges(
         subject_claim_id=subject_claim_id,
@@ -149,21 +149,64 @@ def bayesian_evidence_update(
         challenge_edges=challenge_edges,
         revision_edges=revision_edges,
         nodes_by_id=nodes_by_id,
+        effective_weight_resolver=lambda edge: _edge_evidence_weight(edge, nodes_by_id),
     )
-    posterior = beta_binomial_posterior(
-        success_weight=sum(support_weights),
-        failure_weight=sum(challenge_weights),
+    posterior = bayesian_update_from_evidence_ledger(
+        ledger,
         prior_alpha=prior_alpha,
         prior_beta=prior_beta,
         credibility=credibility,
     )
     posterior["evidence"]["support_edge_count"] = len(support_edges)
     posterior["evidence"]["challenge_edge_count"] = len(challenge_edges)
-    posterior["evidence"]["support_weights"] = [round(weight, 6) for weight in support_weights]
-    posterior["evidence"]["challenge_weights"] = [round(weight, 6) for weight in challenge_weights]
-    posterior["evidence"]["ledger"] = {
+    posterior["evidence"]["support_weights"] = [round(float(unit.effective_weight or 0.0), 6) for unit in ledger.units if unit.stance == "support"]
+    posterior["evidence"]["challenge_weights"] = [round(float(unit.effective_weight or 0.0), 6) for unit in ledger.units if unit.stance == "challenge"]
+    posterior["stability"] = _posterior_stability(posterior)
+    if profile is not None:
+        posterior["prior"]["profile"] = profile["name"]
+        posterior["prior"]["description"] = profile["description"]
+    return posterior
+
+
+def bayesian_update_from_evidence_ledger(
+    ledger: EvidenceLedger,
+    *,
+    prior_alpha: float = 1.0,
+    prior_beta: float = 1.0,
+    credibility: float = 0.95,
+) -> dict[str, Any]:
+    """Aggregate posterior support from a deduplicated evidence ledger."""
+
+    support_units = [unit for unit in ledger.units if unit.stance == "support"]
+    challenge_units = [unit for unit in ledger.units if unit.stance == "challenge"]
+    revision_units = [unit for unit in ledger.units if unit.stance == "revision"]
+    success_weight = sum(float(unit.effective_weight or 0.0) for unit in support_units)
+    failure_weight = sum(float(unit.effective_weight or 0.0) for unit in challenge_units)
+    posterior = beta_binomial_posterior(
+        success_weight=success_weight,
+        failure_weight=failure_weight,
+        prior_alpha=prior_alpha,
+        prior_beta=prior_beta,
+        credibility=credibility,
+    )
+    posterior["policy_id"] = BAYESIAN_WEIGHTING_POLICY_ID
+    posterior["evidence"]["support_weights"] = [round(float(unit.effective_weight or 0.0), 6) for unit in support_units]
+    posterior["evidence"]["challenge_weights"] = [
+        round(float(unit.effective_weight or 0.0), 6) for unit in challenge_units
+    ]
+    posterior["evidence"]["revision_weight"] = round(
+        sum(float(unit.effective_weight or 0.0) for unit in revision_units), 6
+    )
+    posterior["evidence"]["ledger"] = _ledger_basis_payload(ledger)
+    posterior["assessment"] = _evidential_support_assessment(ledger, posterior).model_dump(mode="json")
+    return posterior
+
+
+def _ledger_basis_payload(ledger: EvidenceLedger) -> dict[str, Any]:
+    return {
         "ledger_id": ledger.ledger_id,
         "content_hash": ledger.content_hash(),
+        "basis_unit_ids": [unit.unit_id for unit in ledger.units],
         "raw_unit_count": ledger.metadata["raw_unit_count"],
         "deduplicated_unit_count": ledger.metadata["deduplicated_unit_count"],
         "raw_counts": ledger.metadata["raw_counts"],
@@ -172,11 +215,35 @@ def bayesian_evidence_update(
         "deduplicated_weights": ledger.metadata["deduplicated_weights"],
         "diagnostics": [diagnostic.model_dump(mode="json") for diagnostic in ledger.diagnostics],
     }
-    posterior["stability"] = _posterior_stability(posterior)
-    if profile is not None:
-        posterior["prior"]["profile"] = profile["name"]
-        posterior["prior"]["description"] = profile["description"]
-    return posterior
+
+
+def _evidential_support_assessment(ledger: EvidenceLedger, posterior: Mapping[str, Any]) -> ConfidenceAssessment:
+    interval = posterior["posterior"]["credible_interval"]
+    value = float(posterior["posterior"]["mean"])
+    return ConfidenceAssessment(
+        assessment_id=f"{ledger.ledger_id}::evidential_support",
+        subject_id=ledger.subject_claim_ids[0] if ledger.subject_claim_ids else ledger.ledger_id,
+        dimension="evidential_support",
+        value=value,
+        band=confidence_band(value),
+        interval=ConfidenceInterval(
+            level=float(interval["level"]),
+            lower=float(interval["lower"]),
+            upper=float(interval["upper"]),
+            method=str(interval["method"]),
+        ),
+        method=AssessmentMethodRef(
+            name="beta_binomial_weighted_evidence",
+            version="1.0",
+            policy_id=BAYESIAN_WEIGHTING_POLICY_ID,
+        ),
+        basis_record_ids=[unit.unit_id for unit in ledger.units],
+        source_family_ids=sorted({family for unit in ledger.units for family in unit.source_family_ids}),
+        basis_hash=ledger.content_hash(),
+        rationale="Posterior evidential support under an explicit beta-binomial evidence policy.",
+        recorded_at=str(ledger.metadata.get("recorded_at", "2026-07-25T00:00:00+00:00")),
+        metadata={"ledger_id": ledger.ledger_id},
+    )
 
 
 def _subject_claim_id_for_edges(
