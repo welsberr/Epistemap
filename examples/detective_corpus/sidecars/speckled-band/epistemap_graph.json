@@ -18,7 +18,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,
@@ -33,7 +33,17 @@
         "source_license": "Public domain",
         "narrative_unit": "scene",
         "reveal_point": 8,
-        "annotation_status": "candidate_human_review_needed",
+        "anchor_review": {
+          "missing_row_count": 0,
+          "review_row_count": 3,
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewers": [
+            "Wesley R. Elsberry"
+          ],
+          "source_file": "examples/detective_corpus/treatments/detective_anchor_review_completed.csv"
+        },
+        "annotation_status": "human_anchor_reviewed",
         "candidate_use": "pilot_fixture",
         "source_collection": "The Adventures of Sherlock Holmes"
       }
@@ -52,7 +62,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,
@@ -67,6 +77,14 @@
         "narrative_anchor": "Helen Stoner's account of Julia's death and the locked room",
         "introduced_at": 1,
         "story_id": "story::speckled-band",
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "Helen Stoner's account of Julia's death and the locked room",
+          "reviewed_source_locator": "Wikisource, Speckled Band, Helen Stoner recounts Julia's death",
+          "reviewed_source_quote": "Helen Stoner describes Julia's terror, the locked room, her cry about a speckled band, and the absence of any apparent cause. The early account leaves natural causes, fright, or an inexplicable locked-room event as live surface explanations.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "false_locked_room_premise"
       }
     },
@@ -84,7 +102,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,
@@ -99,6 +117,14 @@
         "narrative_anchor": "Holmes examines the ventilator, bell-rope, and fixed bed",
         "introduced_at": 6,
         "story_id": "story::speckled-band",
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "Holmes examines the ventilator, bell-rope, and fixed bed",
+          "reviewed_source_locator": "Wikisource, Speckled Band, room inspection",
+          "reviewed_source_quote": "Holmes examines the bedroom and finds a dummy bell-rope, a ventilator that opens into Roylott's room, a fixed bed, a safe, saucer of milk, and a dog-lash tied into a loop. These details point toward an engineered mechanism rather than a natural locked-room death.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "corrective_account"
       }
     },
@@ -116,7 +142,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,
@@ -130,6 +156,14 @@
         "narrative_anchor": "inspection of the ventilator, bell-rope, and fixed bed",
         "access_scope": "reader_available",
         "story_id": "story::speckled-band",
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "inspection of the ventilator, bell-rope, and fixed bed",
+          "reviewed_source_locator": "Wikisource, Speckled Band, ventilator, bell-rope, and fixed bed",
+          "reviewed_source_quote": "Holmes observes that the bell-rope is a dummy and is fastened near the ventilator. He remarks on ventilators that do not ventilate and dummy bell-ropes, then examines Roylott's room, where the safe, milk, chair, and looped lash add mechanism evidence.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "contradiction"
       }
     }
@@ -151,7 +185,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,
@@ -181,7 +215,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,
@@ -211,7 +245,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,
@@ -243,7 +277,7 @@
           "origin_path": "",
           "source_url": "https://en.wikisource.org/wiki/The_Adventures_of_Sherlock_Holmes/The_Adventure_of_the_Speckled_Band",
           "support_kind": "detective_story_annotation",
-          "grounding_status": "candidate_human_review_needed",
+          "grounding_status": "human_anchor_reviewed",
           "metadata": {
             "author": "Arthur Conan Doyle",
             "publication_year": 1892,

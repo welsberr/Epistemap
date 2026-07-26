@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence, TextIO
 
 from .models import Edge, Node
+from .confidence import latest_assessment
 
 HIGH_TRUST_VALUES = {"high", "trusted", "peer_reviewed", "primary", "official", "expert_reviewed"}
 MIXED_TRUST_VALUES = {"medium", "mixed", "provisional", "secondary", "tertiary"}
@@ -395,11 +396,13 @@ def write_bayesian_reliability_markdown(reliability: Mapping[str, Any], destinat
 
 
 def _edge_evidence_weight(edge: Edge, nodes_by_id: Mapping[str, Node]) -> float:
-    confidence = (
-        edge.confidence
-        if edge.confidence is not None
-        else nodes_by_id.get(edge.source, Node(id="", type="")).confidence
-    )
+    confidence = _typed_evidence_weight(edge, nodes_by_id)
+    if confidence is None:
+        confidence = (
+            edge.confidence
+            if edge.confidence is not None
+            else nodes_by_id.get(edge.source, Node(id="", type="")).confidence
+        )
     confidence_weight = _clamp(float(confidence)) if confidence is not None else 0.75
     source = nodes_by_id.get(edge.source)
     quality_values = _metadata_values(edge.metadata, ("source_quality", "source_reliability", "trust_status"))
@@ -428,6 +431,21 @@ def _edge_evidence_weight(edge: Edge, nodes_by_id: Mapping[str, Node]) -> float:
         * _stance_multiplier(Counter(stance_values))
         * _grounding_multiplier(Counter(grounding_values))
     )
+
+
+def _typed_evidence_weight(edge: Edge, nodes_by_id: Mapping[str, Node]) -> float | None:
+    for dimension in ("evidential_support", "grounding_strength", "extraction_fidelity"):
+        assessment = latest_assessment(edge, dimension)
+        if assessment is not None and assessment.value is not None:
+            return assessment.value
+    source = nodes_by_id.get(edge.source)
+    if source is None:
+        return None
+    for dimension in ("grounding_strength", "extraction_fidelity"):
+        assessment = latest_assessment(source, dimension)
+        if assessment is not None and assessment.value is not None:
+            return assessment.value
+    return None
 
 
 def _metadata_values(metadata: Mapping[str, Any], keys: tuple[str, ...]) -> list[str]:

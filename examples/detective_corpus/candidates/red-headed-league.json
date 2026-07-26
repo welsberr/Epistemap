@@ -6,6 +6,14 @@
       "claim_id": "claim::red-headed-league::legitimate-job",
       "introduced_at": 1,
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "Wilson's account of the advertised copying work",
+          "reviewed_source_locator": "Wikisource, Red-Headed League, Wilson's account of the copying work",
+          "reviewed_source_quote": "Wilson is told the position pays four pounds a week and that the work is purely nominal: he must remain in the office from ten to two and copy out the Encyclopaedia Britannica. He initially believes the arrangement is extraordinary but legitimate and reports being paid weekly.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "false_surface_explanation"
       },
       "narrative_anchor": "Wilson's account of the advertised copying work",
@@ -18,6 +26,14 @@
       "claim_id": "claim::red-headed-league::bank-target",
       "introduced_at": 6,
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "Holmes inspects the neighborhood and assistant's situation",
+          "reviewed_source_locator": "Wikisource, Red-Headed League, Holmes surveys Saxe-Coburg Square",
+          "reviewed_source_quote": "Holmes inspects the neighborhood behind Saxe-Coburg Square and notes the order of businesses, including the Coburg branch of the City and Suburban Bank. Later he says a serious crime is in contemplation and brings Watson, Jones, and the bank director Merryweather to the cellar.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "corrective_account"
       },
       "narrative_anchor": "Holmes inspects the neighborhood and assistant's situation",
@@ -34,6 +50,14 @@
       "contradicts_claim_id": "claim::red-headed-league::legitimate-job",
       "evidence_id": "evidence::red-headed-league::dissolution-assistant-bank",
       "metadata": {
+        "anchor_review": {
+          "review_status": "reviewed",
+          "reviewed_at": "2026-07-04",
+          "reviewed_narrative_anchor": "the league's abrupt dissolution and the inspection of Spaulding and the bank neighborhood",
+          "reviewed_source_locator": "Wikisource, Red-Headed League, dissolution notice and bank cellar",
+          "reviewed_source_quote": "The League suddenly dissolves, ending Wilson's copying work. Holmes connects that artificial absence from the shop with Spaulding's behavior, the nearby bank, and the hollow-sounding cellar floor, where the party waits to intercept the attempted burglary.",
+          "reviewer": "Wesley R. Elsberry"
+        },
         "candidate_role": "contradiction"
       },
       "narrative_anchor": "the league's abrupt dissolution and the inspection of Spaulding and the bank neighborhood",
@@ -45,7 +69,17 @@
   "graph_file": "../sidecars/red-headed-league/epistemap_graph.json",
   "manifest_file": "../sidecars/red-headed-league/assessment_manifest.json",
   "metadata": {
-    "annotation_status": "candidate_human_review_needed",
+    "anchor_review": {
+      "missing_row_count": 0,
+      "review_row_count": 3,
+      "review_status": "reviewed",
+      "reviewed_at": "2026-07-04",
+      "reviewers": [
+        "Wesley R. Elsberry"
+      ],
+      "source_file": "examples/detective_corpus/treatments/detective_anchor_review_completed.csv"
+    },
+    "annotation_status": "human_anchor_reviewed",
     "candidate_use": "pilot_fixture",
     "source_collection": "The Adventures of Sherlock Holmes"
   },

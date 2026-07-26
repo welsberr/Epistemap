@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Epistemap Detective G Collection</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f6f3;
+      --panel: #ffffff;
+      --ink: #17211d;
+      --muted: #68736c;
+      --line: #cfd7ce;
+      --strong: #93a195;
+      --accent: #245f73;
+      --accent-soft: #dcecf1;
+      --ok: #206b42;
+      --warn: #9a5b12;
+      --bad: #9c3131;
+      --focus: #2e7dd1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    button {
+      height: 36px;
+      border: 1px solid var(--strong);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: var(--accent); }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .subline {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .file-button {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--strong);
+      border-radius: 6px;
+      background: var(--panel);
+      cursor: pointer;
+    }
+
+    .file-button input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 390px 1fr;
+    }
+
+    aside {
+      min-height: 0;
+      border-right: 1px solid var(--line);
+      background: #fbfcfa;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+    }
+
+    .filters {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .filters input, .filters select {
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 10px;
+      min-width: 0;
+    }
+
+    .filters input {
+      grid-column: 1 / -1;
+    }
+
+    .metrics {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .row-list {
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .row-item {
+      width: 100%;
+      height: auto;
+      display: grid;
+      gap: 5px;
+      padding: 11px 12px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      text-align: left;
+    }
+
+    .row-item[aria-selected="true"] {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+
+    .row-title {
+      font-size: 13px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .row-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .pill {
+      display: inline-flex;
+      min-height: 20px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 7px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .pill.complete { color: var(--ok); border-color: #8dc59d; background: #edf8ef; }
+    .pill.open { color: var(--warn); border-color: #d8ae70; background: #fff6e6; }
+    .pill.invalid { color: var(--bad); border-color: #d79a9a; background: #fff0f0; }
+
+    .workspace {
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: minmax(300px, 0.8fr) minmax(440px, 1.2fr);
+      gap: 18px;
+    }
+
+    .panel {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 14px;
+      align-self: start;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    dl {
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    dt {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      line-height: 1.35;
+    }
+
+    .quote {
+      white-space: pre-wrap;
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input, textarea, select {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 9px 10px;
+    }
+
+    textarea {
+      min-height: 104px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .segmented button[aria-pressed="true"] {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .confidence {
+      display: grid;
+      grid-template-columns: 1fr 86px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .confidence input[type="range"] {
+      padding: 0;
+    }
+
+    .help {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 500;
+    }
+
+    .validation {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fbfcfa;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .validation.error { color: var(--bad); border-color: #d79a9a; background: #fff5f5; }
+    .validation.pass { color: var(--ok); border-color: #8dc59d; background: #f0f8f1; }
+
+    .actions {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      header { grid-template-columns: 1fr; }
+      .toolbar { justify-content: flex-start; }
+      main { grid-template-columns: 1fr; }
+      aside { max-height: 44vh; border-right: 0; border-bottom: 1px solid var(--line); }
+      .workspace { grid-template-columns: 1fr; padding: 12px; }
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 12px; }
+      .filters { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+      .confidence { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Epistemap Detective G Collection</h1>
+        <div class="subline" id="datasetName">Pilot collection template</div>
+      </div>
+      <div class="toolbar">
+        <label class="file-button">
+          Import CSV
+          <input id="fileInput" type="file" accept=".csv,text/csv">
+        </label>
+        <button id="exportButton" type="button">Export CSV</button>
+        <button id="resetButton" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main>
+      <aside>
+        <div class="filters">
+          <input id="searchInput" type="search" placeholder="Search">
+          <select id="conditionFilter" aria-label="Condition filter">
+            <option value="">All conditions</option>
+            <option value="plain-reading">Plain reading</option>
+            <option value="graph-assisted">Graph assisted</option>
+          </select>
+          <select id="statusFilter" aria-label="Completion filter">
+            <option value="">All rows</option>
+            <option value="open">Open</option>
+            <option value="complete">Complete</option>
+            <option value="invalid">Invalid</option>
+          </select>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong id="totalCount">0</strong><span>Total</span></div>
+          <div class="metric"><strong id="completeCount">0</strong><span>Complete</span></div>
+          <div class="metric"><strong id="openCount">0</strong><span>Open</span></div>
+          <div class="metric"><strong id="invalidCount">0</strong><span>Invalid</span></div>
+        </div>
+        <div class="row-list" id="rowList"></div>
+      </aside>
+
+      <section class="workspace">
+        <div class="panel">
+          <h2>Item Context</h2>
+          <dl>
+            <div><dt>Story</dt><dd id="storyTitle"></dd></div>
+            <div><dt>Condition</dt><dd id="conditionText"></dd></div>
+            <div><dt>Phase</dt><dd id="phaseText"></dd></div>
+            <div><dt>Claim</dt><dd id="claimId"></dd></div>
+            <div><dt>Claim Text</dt><dd id="claimText"></dd></div>
+            <div><dt>Reviewed Source Anchor</dt><dd id="sourceAnchor"></dd></div>
+            <div><dt>Reviewed Locator</dt><dd id="reviewedLocator"></dd></div>
+            <div><dt>Reviewed Quote</dt><dd class="quote" id="reviewedQuote"></dd></div>
+            <div><dt>Contradiction Available At</dt><dd id="contradictionAvailableAt"></dd></div>
+            <div><dt>Fair-Play Rating</dt><dd id="fairPlayRating"></dd></div>
+            <div><dt>Sidecars</dt><dd id="sidecars"></dd></div>
+          </dl>
+        </div>
+
+        <div class="panel">
+          <h2>Collection Row</h2>
+          <form id="collectionForm">
+            <div class="form-grid">
+              <label><span>Run ID</span><input data-field="run_id" id="run_id"></label>
+              <label><span>Subject ID</span><input data-field="subject_id" id="subject_id"></label>
+            </div>
+            <label>
+              <span>Recognition Outcome</span>
+              <div class="segmented" id="outcomeButtons">
+                <button type="button" data-y="">Unset</button>
+                <button type="button" data-y="0">Not Recognized</button>
+                <button type="button" data-y="1">Recognized</button>
+              </div>
+              <span class="help">Sets canonical `y`: 1 means the subject recognized the contradiction.</span>
+            </label>
+            <label>
+              <span>Confidence p(y=1)</span>
+              <div class="confidence">
+                <input id="pRange" type="range" min="0" max="1" step="0.01">
+                <input data-field="p" id="p" inputmode="decimal">
+              </div>
+            </label>
+            <div class="form-grid">
+              <label><span>Recognized At</span><input data-field="recognized_at" id="recognized_at" inputmode="decimal"></label>
+              <label><span>Recognition Lag</span><input data-field="recognition_lag" id="recognition_lag" inputmode="decimal"></label>
+            </div>
+            <label><span>Response</span><textarea data-field="response" id="response"></textarea></label>
+            <label><span>Answer</span><input data-field="answer" id="answer"></label>
+            <div class="validation" id="rowValidation">Row validation pending.</div>
+            <div class="actions">
+              <div class="muted" id="saveState">Saved locally</div>
+              <div>
+                <button id="previousButton" type="button">Previous</button>
+                <button id="nextButton" type="button">Next</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const fields = [
+      "run_id", "subject_id", "condition", "phase", "item_id", "claim_id", "env",
+      "y", "p", "answer", "response", "source_anchor", "recognized_at",
+      "contradiction_available_at", "recognition_lag", "fair_play_rating",
+      "experiment_id", "evaluation_target", "story_title", "fair_play_status",
+      "graph_file", "fair_play_diagnostic_file", "template_role"
+    ];
+
+    const seedRows = [
+      ["plain-reading", "pre-reveal", "story::blue-carbuncle", "claim::blue-carbuncle::baker-stole-jewel", "opening inquiry after the recovered hat and goose", "7", "fair", "primary", "The Adventure of the Blue Carbuncle", "fair_play", "blue-carbuncle"],
+      ["plain-reading", "post-reveal", "story::blue-carbuncle", "claim::blue-carbuncle::baker-stole-jewel", "opening inquiry after the recovered hat and goose", "7", "fair", "primary", "The Adventure of the Blue Carbuncle", "fair_play", "blue-carbuncle"],
+      ["graph-assisted", "pre-reveal", "story::blue-carbuncle", "claim::blue-carbuncle::baker-stole-jewel", "opening inquiry after the recovered hat and goose", "7", "fair", "primary", "The Adventure of the Blue Carbuncle", "fair_play", "blue-carbuncle"],
+      ["graph-assisted", "post-reveal", "story::blue-carbuncle", "claim::blue-carbuncle::baker-stole-jewel", "opening inquiry after the recovered hat and goose", "7", "fair", "primary", "The Adventure of the Blue Carbuncle", "fair_play", "blue-carbuncle"],
+      ["plain-reading", "pre-reveal", "story::purloined-letter-control", "claim::purloined-letter::secret-compartment", "police description of exhaustive hidden-place searches", "9", "unfair", "control", "The Purloined Letter", "withheld_decisive_evidence", "purloined-letter-control"],
+      ["plain-reading", "post-reveal", "story::purloined-letter-control", "claim::purloined-letter::secret-compartment", "police description of exhaustive hidden-place searches", "9", "unfair", "control", "The Purloined Letter", "withheld_decisive_evidence", "purloined-letter-control"],
+      ["graph-assisted", "pre-reveal", "story::purloined-letter-control", "claim::purloined-letter::secret-compartment", "police description of exhaustive hidden-place searches", "9", "unfair", "control", "The Purloined Letter", "withheld_decisive_evidence", "purloined-letter-control"],
+      ["graph-assisted", "post-reveal", "story::purloined-letter-control", "claim::purloined-letter::secret-compartment", "police description of exhaustive hidden-place searches", "9", "unfair", "control", "The Purloined Letter", "withheld_decisive_evidence", "purloined-letter-control"],
+      ["plain-reading", "pre-reveal", "story::red-headed-league", "claim::red-headed-league::legitimate-job", "Wilson's account of the advertised copying work", "6", "fair", "primary", "The Red-Headed League", "fair_play", "red-headed-league"],
+      ["plain-reading", "post-reveal", "story::red-headed-league", "claim::red-headed-league::legitimate-job", "Wilson's account of the advertised copying work", "6", "fair", "primary", "The Red-Headed League", "fair_play", "red-headed-league"],
+      ["graph-assisted", "pre-reveal", "story::red-headed-league", "claim::red-headed-league::legitimate-job", "Wilson's account of the advertised copying work", "6", "fair", "primary", "The Red-Headed League", "fair_play", "red-headed-league"],
+      ["graph-assisted", "post-reveal", "story::red-headed-league", "claim::red-headed-league::legitimate-job", "Wilson's account of the advertised copying work", "6", "fair", "primary", "The Red-Headed League", "fair_play", "red-headed-league"],
+      ["plain-reading", "pre-reveal", "story::speckled-band", "claim::speckled-band::natural-or-fright", "Helen Stoner's account of Julia's death and the locked room", "6", "fair", "primary", "The Adventure of the Speckled Band", "fair_play", "speckled-band"],
+      ["plain-reading", "post-reveal", "story::speckled-band", "claim::speckled-band::natural-or-fright", "Helen Stoner's account of Julia's death and the locked room", "6", "fair", "primary", "The Adventure of the Speckled Band", "fair_play", "speckled-band"],
+      ["graph-assisted", "pre-reveal", "story::speckled-band", "claim::speckled-band::natural-or-fright", "Helen Stoner's account of Julia's death and the locked room", "6", "fair", "primary", "The Adventure of the Speckled Band", "fair_play", "speckled-band"],
+      ["graph-assisted", "post-reveal", "story::speckled-band", "claim::speckled-band::natural-or-fright", "Helen Stoner's account of Julia's death and the locked room", "6", "fair", "primary", "The Adventure of the Speckled Band", "fair_play", "speckled-band"]
+    ].map(([condition, phase, item_id, claim_id, source_anchor, available, rating, role, story_title, fair_status, slug]) => ({
+      run_id: "", subject_id: "", condition, phase, item_id, claim_id, env: "K",
+      y: "", p: "0.50", answer: "", response: "", source_anchor,
+      recognized_at: "", contradiction_available_at: available, recognition_lag: "",
+      fair_play_rating: rating, experiment_id: "detective-fair-play-pilot-001",
+      evaluation_target: "detective_contradiction_recognition", story_title,
+      fair_play_status: fair_status,
+      graph_file: `examples/detective_corpus/sidecars/${slug}/epistemap_graph.json`,
+      fair_play_diagnostic_file: `examples/detective_corpus/sidecars/${slug}/fair_play_diagnostic.json`,
+      template_role: role
+    }));
+
+    const claimContext = {
+      "claim::blue-carbuncle::baker-stole-jewel": {
+        text: "Henry Baker stole the blue carbuncle.",
+        locator: "Paragraph 8 under https://en.wikisource.org/wiki/Page%3AThe_Strand_Magazine_(Volume_3).djvu/78",
+        quote: "You see, Watson, our little deductions have suddenly assumed a much more important and less innocent aspect. Here is the stone; the stone came from the goose, and the goose came from Mr. Henry Baker, the gentleman with the bad hat and all the other characteristics with which I have bored you. So now we must set ourselves very seriously to finding this gentleman, and ascertaining what part he has played in this little mystery."
+      },
+      "claim::purloined-letter::secret-compartment": {
+        text: "The stolen letter must be hidden in a secret compartment or concealed recess.",
+        locator: "Wikisource, Purloined Letter, Prefect's search methods",
+        quote: "\"Suppose you detail,\" said I, \"the particulars of your search.\"\n\n\"Why the fact is, we took our time, and we searched every where. I have had long experience in these affairs. I took the entire building, room by room; devoting the nights of a whole week to each. We examined, first, the furniture of each apartment. We opened every possible drawer; and I presume you know that, to a properly trained police agent, such a thing as a secret drawer is impossible.\""
+      },
+      "claim::red-headed-league::legitimate-job": {
+        text: "The Red-Headed League is a legitimate copying job.",
+        locator: "Wikisource, Red-Headed League, Wilson's account of the copying work",
+        quote: "Wilson is told the position pays four pounds a week and that the work is purely nominal: he must remain in the office from ten to two and copy out the Encyclopaedia Britannica. He initially believes the arrangement is extraordinary but legitimate and reports being paid weekly."
+      },
+      "claim::speckled-band::natural-or-fright": {
+        text: "Julia Stoner died from fright or natural causes in a locked room.",
+        locator: "Wikisource, Speckled Band, Helen Stoner recounts Julia's death",
+        quote: "Helen Stoner describes Julia's terror, the locked room, her cry about a speckled band, and the absence of any apparent cause. The early account leaves natural causes, fright, or an inexplicable locked-room event as live surface explanations."
+      }
+    };
+
+    const storageKey = "epistemap.detectiveGCollection.v1";
+    let rows = loadRows();
+    let selected = 0;
+
+    const els = {
+      datasetName: document.getElementById("datasetName"),
+      fileInput: document.getElementById("fileInput"),
+      exportButton: document.getElementById("exportButton"),
+      resetButton: document.getElementById("resetButton"),
+      searchInput: document.getElementById("searchInput"),
+      conditionFilter: document.getElementById("conditionFilter"),
+      statusFilter: document.getElementById("statusFilter"),
+      totalCount: document.getElementById("totalCount"),
+      completeCount: document.getElementById("completeCount"),
+      openCount: document.getElementById("openCount"),
+      invalidCount: document.getElementById("invalidCount"),
+      rowList: document.getElementById("rowList"),
+      storyTitle: document.getElementById("storyTitle"),
+      conditionText: document.getElementById("conditionText"),
+      phaseText: document.getElementById("phaseText"),
+      claimId: document.getElementById("claimId"),
+      claimText: document.getElementById("claimText"),
+      sourceAnchor: document.getElementById("sourceAnchor"),
+      reviewedLocator: document.getElementById("reviewedLocator"),
+      reviewedQuote: document.getElementById("reviewedQuote"),
+      contradictionAvailableAt: document.getElementById("contradictionAvailableAt"),
+      fairPlayRating: document.getElementById("fairPlayRating"),
+      sidecars: document.getElementById("sidecars"),
+      outcomeButtons: document.getElementById("outcomeButtons"),
+      pRange: document.getElementById("pRange"),
+      rowValidation: document.getElementById("rowValidation"),
+      saveState: document.getElementById("saveState"),
+      previousButton: document.getElementById("previousButton"),
+      nextButton: document.getElementById("nextButton")
+    };
+
+    function loadRows() {
+      const saved = window.localStorage.getItem(storageKey);
+      if (!saved) return normalizeRows(seedRows);
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length) return normalizeRows(parsed);
+      } catch (_error) {}
+      return normalizeRows(seedRows);
+    }
+
+    function normalizeRows(inputRows) {
+      return inputRows.map(row => {
+        const normalized = {};
+        fields.forEach(field => normalized[field] = row[field] ?? "");
+        if (!normalized.env) normalized.env = "K";
+        return normalized;
+      });
+    }
+
+    function rowStatus(row) {
+      const errors = validateRow(row).filter(item => item.type === "error");
+      if (errors.length) return row.y || row.p || row.response ? "invalid" : "open";
+      return row.y === "" || row.p === "" ? "open" : "complete";
+    }
+
+    function validateRow(row) {
+      const findings = [];
+      ["condition", "phase", "item_id", "claim_id", "env", "source_anchor", "contradiction_available_at", "fair_play_rating"].forEach(field => {
+        if (!String(row[field] || "").trim()) findings.push({ type: "error", text: `Missing ${field}.` });
+      });
+      if (row.y === "") findings.push({ type: "warning", text: "Recognition outcome is not set." });
+      if (row.p === "") findings.push({ type: "warning", text: "Confidence p is not set." });
+      if (row.y !== "" && row.y !== "0" && row.y !== "1") findings.push({ type: "error", text: "Outcome y must be 0 or 1." });
+      if (row.p !== "") {
+        const probability = Number(row.p);
+        if (!Number.isFinite(probability) || probability < 0 || probability > 1) findings.push({ type: "error", text: "Confidence p must be between 0 and 1." });
+      }
+      if (row.y === "1" && !String(row.recognized_at || "").trim()) findings.push({ type: "warning", text: "Recognized rows should include recognized_at." });
+      const expectedLag = expectedRecognitionLag(row);
+      if (expectedLag !== "" && row.recognition_lag !== "" && Number(row.recognition_lag) !== expectedLag) findings.push({ type: "warning", text: `Recognition lag should be ${expectedLag}.` });
+      return findings;
+    }
+
+    function expectedRecognitionLag(row) {
+      if (!String(row.contradiction_available_at || "").trim() || !String(row.recognized_at || "").trim()) return "";
+      const start = Number(row.contradiction_available_at);
+      const end = Number(row.recognized_at);
+      if (!Number.isFinite(start) || !Number.isFinite(end)) return "";
+      return end - start;
+    }
+
+    function saveRows() {
+      window.localStorage.setItem(storageKey, JSON.stringify(rows));
+      els.saveState.textContent = "Saved locally";
+    }
+
+    function filteredIndexes() {
+      const query = els.searchInput.value.trim().toLowerCase();
+      const condition = els.conditionFilter.value;
+      const status = els.statusFilter.value;
+      return rows.map((row, index) => ({ row, index })).filter(({ row }) => {
+        const matchesCondition = !condition || row.condition === condition;
+        const matchesStatus = !status || rowStatus(row) === status;
+        const haystack = fields.map(field => row[field]).join(" ").toLowerCase();
+        return matchesCondition && matchesStatus && (!query || haystack.includes(query));
+      }).map(item => item.index);
+    }
+
+    function renderMetrics() {
+      const statuses = rows.map(rowStatus);
+      els.totalCount.textContent = rows.length;
+      els.completeCount.textContent = statuses.filter(status => status === "complete").length;
+      els.openCount.textContent = statuses.filter(status => status === "open").length;
+      els.invalidCount.textContent = statuses.filter(status => status === "invalid").length;
+    }
+
+    function renderList() {
+      const indexes = filteredIndexes();
+      els.rowList.replaceChildren();
+      indexes.forEach(index => {
+        const row = rows[index];
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "row-item";
+        button.setAttribute("aria-selected", index === selected ? "true" : "false");
+        button.addEventListener("click", () => { selected = index; render(); });
+        const title = document.createElement("div");
+        title.className = "row-title";
+        title.textContent = row.claim_id;
+        const meta = document.createElement("div");
+        meta.className = "row-meta";
+        const condition = document.createElement("span");
+        condition.textContent = `${row.condition} · ${row.phase}`;
+        const status = document.createElement("span");
+        const state = rowStatus(row);
+        status.className = `pill ${state}`;
+        status.textContent = state;
+        meta.append(condition, status);
+        button.append(title, meta);
+        els.rowList.appendChild(button);
+      });
+      if (!indexes.includes(selected) && indexes.length) selected = indexes[0];
+    }
+
+    function renderDetails() {
+      const row = rows[selected] || rows[0];
+      if (!row) return;
+      els.storyTitle.textContent = row.story_title;
+      els.conditionText.textContent = row.condition;
+      els.phaseText.textContent = row.phase;
+      els.claimId.textContent = row.claim_id;
+      const context = claimContext[row.claim_id] || {};
+      els.claimText.textContent = context.text || "";
+      els.sourceAnchor.textContent = row.source_anchor;
+      els.reviewedLocator.textContent = context.locator || "";
+      els.reviewedQuote.textContent = context.quote || "";
+      els.contradictionAvailableAt.textContent = row.contradiction_available_at;
+      els.fairPlayRating.textContent = `${row.fair_play_rating} (${row.template_role})`;
+      els.sidecars.textContent = `${row.graph_file} · ${row.fair_play_diagnostic_file}`;
+      document.querySelectorAll("[data-field]").forEach(input => { input.value = row[input.dataset.field] || ""; });
+      els.pRange.value = row.p || "0.50";
+      els.outcomeButtons.querySelectorAll("button").forEach(button => {
+        button.setAttribute("aria-pressed", button.dataset.y === row.y ? "true" : "false");
+      });
+      renderValidation(row);
+    }
+
+    function renderValidation(row) {
+      const findings = validateRow(row);
+      els.rowValidation.className = `validation ${findings.some(f => f.type === "error") ? "error" : findings.length ? "" : "pass"}`;
+      els.rowValidation.textContent = findings.length ? findings.map(f => f.text).join(" ") : "Row passes local validation.";
+    }
+
+    function render() {
+      renderMetrics();
+      renderList();
+      renderDetails();
+    }
+
+    function setField(field, value) {
+      if (!rows[selected]) return;
+      rows[selected][field] = value;
+      if (field === "recognized_at") {
+        const lag = expectedRecognitionLag(rows[selected]);
+        if (lag !== "") rows[selected].recognition_lag = String(lag);
+      }
+      if (field === "p") els.pRange.value = value || "0.50";
+      els.saveState.textContent = "Saving";
+      saveRows();
+      render();
+    }
+
+    function parseCsv(text) {
+      const records = [];
+      let row = [];
+      let value = "";
+      let quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (quoted) {
+          if (char === '"' && next === '"') { value += '"'; i += 1; }
+          else if (char === '"') quoted = false;
+          else value += char;
+        } else if (char === '"') quoted = true;
+        else if (char === ",") { row.push(value); value = ""; }
+        else if (char === "\n") { row.push(value); records.push(row); row = []; value = ""; }
+        else if (char !== "\r") value += char;
+      }
+      if (value || row.length) { row.push(value); records.push(row); }
+      const header = records.shift() || [];
+      return records.filter(record => record.some(cell => cell !== "")).map(record => {
+        const item = {};
+        header.forEach((field, index) => item[field] = record[index] || "");
+        return item;
+      });
+    }
+
+    function toCsv(inputRows) {
+      const escape = value => {
+        const text = String(value ?? "");
+        return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+      };
+      return [fields.join(","), ...inputRows.map(row => fields.map(field => escape(row[field])).join(","))].join("\n") + "\n";
+    }
+
+    document.querySelectorAll("[data-field]").forEach(input => {
+      input.addEventListener("input", event => setField(event.target.dataset.field, event.target.value));
+    });
+    els.pRange.addEventListener("input", event => setField("p", Number(event.target.value).toFixed(2)));
+    els.outcomeButtons.addEventListener("click", event => {
+      const button = event.target.closest("button[data-y]");
+      if (!button) return;
+      setField("y", button.dataset.y);
+    });
+    els.searchInput.addEventListener("input", render);
+    els.conditionFilter.addEventListener("change", render);
+    els.statusFilter.addEventListener("change", render);
+    els.previousButton.addEventListener("click", () => {
+      const indexes = filteredIndexes();
+      const current = indexes.indexOf(selected);
+      if (current > 0) selected = indexes[current - 1];
+      render();
+    });
+    els.nextButton.addEventListener("click", () => {
+      const indexes = filteredIndexes();
+      const current = indexes.indexOf(selected);
+      if (current >= 0 && current < indexes.length - 1) selected = indexes[current + 1];
+      render();
+    });
+    els.fileInput.addEventListener("change", async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      rows = normalizeRows(parseCsv(await file.text()));
+      selected = 0;
+      els.datasetName.textContent = file.name;
+      saveRows();
+      render();
+    });
+    els.exportButton.addEventListener("click", () => {
+      const blob = new Blob([toCsv(rows)], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "detective_fair_play_g_rows_completed.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
+    els.resetButton.addEventListener("click", () => {
+      rows = normalizeRows(seedRows);
+      selected = 0;
+      els.datasetName.textContent = "Pilot collection template";
+      saveRows();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

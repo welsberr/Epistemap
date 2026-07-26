@@ -55,9 +55,45 @@ collected. The default treatment manifest compares `plain-reading` and
 `graph-assisted` conditions while keeping fair-play diagnostics and answer keys
 hidden from subjects.
 
-The intended first pilot is 3-5 public-domain stories with human-reviewed
-annotations. Exclude or separately classify stories where the decisive evidence
-is introduced only at the reveal or is available only to the detective.
+Use `detective_g_collection_template()` or the
+`epistemap detective-g-template` CLI command to create a blank collection CSV
+from a treatment manifest and corpus sidecar manifest. The template expands
+story claims across planned conditions and phases, includes contradiction
+availability timing, reviewed source anchors, and sidecar references, and
+leaves `y`, `p`, response, and recognition fields blank for collection.
+Use `epistemap detective-validate-g-rows` before summarizing completed rows;
+`--allow-template` checks template structure without requiring completion
+fields, while `--require-pass` makes incomplete or invalid completed exports
+fail with exit status 2.
+Use `epistemap detective-g-manifest` to derive an `epistemap_g_experiment`
+manifest from completed rows before running `epistemap g-summary`.
+Use `epistemap detective-run-sheets` to turn a reviewed collection template
+into deterministic per-subject CSV sheets. This fills `run_id` and
+`subject_id`, optionally filters conditions or phases, randomizes row order by
+seed, and leaves outcome fields blank; it prepares experimental runs but does
+not create results.
+The static blinded run UI at `examples/detective_corpus/run_ui/index.html`
+can import one prepared sheet and export a completed subject sheet without
+showing reviewed quotes, fair-play labels, or diagnostic sidecar paths.
+For stricter blinding, use `epistemap detective-blind-run-sheets` to remove
+diagnostic columns from participant CSVs and keep a private rehydration key;
+after completion, use `epistemap detective-unblind-run-sheets` to restore
+canonical row metadata before summarization.
+After real outcomes have been entered into blinded sheets, use
+`epistemap detective-unblind-run-sheets` to restore canonical rows and validate
+them before manifest generation. If an operator collected directly on canonical
+sheets, `epistemap detective-merge-run-sheets` can consolidate those sheets.
+
+Use `detective_anchor_review_template()` or the
+`epistemap detective-anchor-template` CLI command to create a blank human-review
+CSV for exact source anchors. The template lists each annotated claim and
+decisive evidence item with its provisional narrative anchor, source URL, text,
+and blank fields for reviewed locator, quote, reviewed anchor, reviewer, date,
+and status.
+
+The initial pilot has four public-domain stories with completed source-anchor
+review metadata. Exclude or separately classify stories where the decisive
+evidence is introduced only at the reveal or is available only to the detective.
 
 Candidate fixtures live under `examples/detective_corpus/candidates/`. These
 fixtures are provisional annotations for pipeline validation and experiment
@@ -65,3 +101,26 @@ design; they are not gold labels. Each candidate includes source metadata,
 sidecar path placeholders, false or misleading claims, and decisive evidence
 entries. Treat warning-bearing controls, such as withheld-evidence stories, as
 negative or contrast cases rather than fair-play items.
+
+The example pilot treatment manifest lives at
+`examples/detective_corpus/treatments/detective_fair_play_pilot.json`. A blank
+row collection template and anchor-review template can be regenerated with:
+
+```bash
+epistemap detective-g-template --treatment examples/detective_corpus/treatments/detective_fair_play_pilot.json --out examples/detective_corpus/treatments/detective_fair_play_g_collection_template.csv
+epistemap detective-validate-g-rows examples/detective_corpus/treatments/detective_fair_play_g_collection_template.csv --allow-template
+epistemap detective-run-sheets examples/detective_corpus/treatments/detective_fair_play_g_collection_template.csv --out-dir examples/detective_corpus/treatments/detective_fair_play_run_sheets --run-id-prefix detective-fair-play-pilot-001 --subject-prefix pilot-reader --subjects-per-condition 1 --seed 20260705
+epistemap detective-blind-run-sheets examples/detective_corpus/treatments/detective_fair_play_run_sheets --out-dir examples/detective_corpus/treatments/detective_fair_play_blinded_run_sheets --key-file examples/detective_corpus/treatments/detective_fair_play_blinding_key.json
+epistemap detective-unblind-run-sheets examples/detective_corpus/treatments/detective_fair_play_blinded_run_sheets --key-file examples/detective_corpus/treatments/detective_fair_play_blinding_key.json --out examples/detective_corpus/treatments/detective_fair_play_g_rows_unblinded_prepared.csv --allow-template --require-pass
+epistemap detective-merge-run-sheets examples/detective_corpus/treatments/detective_fair_play_run_sheets --out examples/detective_corpus/treatments/detective_fair_play_g_rows_prepared.csv --allow-template --require-pass
+epistemap detective-g-manifest examples/detective_corpus/treatments/detective_fair_play_g_rows_sample.csv --experiment-id detective-fair-play-pilot-sample-001 --out examples/detective_corpus/treatments/detective_fair_play_g_manifest_sample.json
+epistemap detective-anchor-template examples/detective_corpus/candidates/*.json --out examples/detective_corpus/treatments/detective_anchor_review_template.csv
+```
+
+The completed anchor-review export is preserved at
+`examples/detective_corpus/treatments/detective_anchor_review_completed.csv`.
+Apply a completed review CSV back to annotation JSON with:
+
+```bash
+epistemap detective-apply-anchor-review examples/detective_corpus/candidates/*.json --review-csv examples/detective_corpus/treatments/detective_anchor_review_completed.csv --in-place
+```

@@ -10,3 +10,12 @@ build/
 dist/
 .venv/
 venv/
+
+# Detective pilot private/run-result artifacts.
+examples/detective_corpus/treatments/*blinding_key*.json
+examples/detective_corpus/treatments/completed_run_sheets/
+examples/detective_corpus/treatments/completed_blinded_run_sheets/
+examples/detective_corpus/treatments/*_g_rows_completed.csv
+examples/detective_corpus/treatments/*_g_manifest_completed.json
+examples/detective_corpus/treatments/*_g_summary_completed.json
+examples/detective_corpus/treatments/*_g_summary_completed.md

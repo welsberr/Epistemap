@@ -1,0 +1,29 @@
+{
+  "conditions": [
+    "graph-assisted",
+    "plain-reading"
+  ],
+  "corpus": "examples/detective_corpus",
+  "evaluation_target": "detective_contradiction_recognition",
+  "experiment_id": "detective-fair-play-pilot-sample-001",
+  "fair_play_policy": {},
+  "manifest_kind": "epistemap_g_experiment",
+  "metadata": {
+    "fair_play_ratings": [
+      "fair",
+      "unfair"
+    ],
+    "row_source": "detective_g_collection_rows"
+  },
+  "name": "Detective fair-play pilot sample rows",
+  "phases": [
+    "post-reveal",
+    "pre-reveal"
+  ],
+  "row_count": 16,
+  "row_file": "examples/detective_corpus/treatments/detective_fair_play_g_rows_sample.csv",
+  "schema_version": "0.1",
+  "temporal_assumptions": {
+    "name": "narrative_timestep_recognition_lag"
+  }
+}

@@ -56,3 +56,32 @@ epistemap g-summary g_rows.csv --manifest g_manifest.json --require-consistent
 epistemap g-compare run-a/g_summary.json run-b/g_summary.json --baseline-id run-a --out comparison.json --out-md comparison.md
 epistemap g-compare run-a/g_summary.json run-b/g_summary.json --require-compatible
 ```
+
+It can also run graph-level Bayesian assessment reports from an Epistemap graph
+bundle:
+
+```bash
+epistemap bayesian-assessment epistemap_graph.json --out bayesian_assessment.json --out-md bayesian_assessment.md
+epistemap bayesian-assessment epistemap_graph.json --node-type claim --node-type concept
+```
+
+For detective-corpus pilots, the CLI can generate blank contradiction
+recognition collection templates from a treatment manifest:
+
+```bash
+epistemap detective-g-template --treatment examples/detective_corpus/treatments/detective_fair_play_pilot.json --out g_collection_template.csv
+epistemap detective-run-sheets g_collection_template.csv --out-dir run_sheets --run-id-prefix detective-pilot --subjects-per-condition 1 --seed 20260705
+epistemap detective-blind-run-sheets run_sheets --out-dir blinded_run_sheets --key-file blinding_key.json
+epistemap detective-unblind-run-sheets completed_blinded_run_sheets --key-file blinding_key.json --out g_collection_rows.csv --require-pass
+epistemap detective-validate-g-rows g_collection_rows.csv --require-pass
+epistemap detective-g-manifest g_collection_rows.csv --experiment-id detective-pilot --out g_manifest.json
+epistemap detective-anchor-template examples/detective_corpus/candidates/*.json --out detective_anchor_review_template.csv
+epistemap detective-apply-anchor-review examples/detective_corpus/candidates/*.json --review-csv detective_anchor_review_completed.csv --in-place
+```
+
+The human anchor-review UI is a static page at
+`examples/detective_corpus/review_ui/index.html`.
+The detective G collection UI is a static page at
+`examples/detective_corpus/collection_ui/index.html`.
+The blinded detective run UI is a static page at
+`examples/detective_corpus/run_ui/index.html`.

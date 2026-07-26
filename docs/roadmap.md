@@ -1,7 +1,19 @@
 # Epistemap Roadmap
 
+The cross-repository confidence redesign is specified in
+[confidence-overhaul-roadmap.md](confidence-overhaul-roadmap.md). Implement it
+in dependency order from Epistemap to GroundRecall and Didactopus; do not infer
+one confidence meaning from another repository's scalar field.
+
+The evidence-backed phase audit is maintained in
+[confidence-overhaul-implementation-status.md](confidence-overhaul-implementation-status.md).
+The overhaul is in progress, not complete: portable assessment models exist in
+the working tree, while evidence-ledger, migration-command, installed-package,
+and release/deprecation work remains.
+
 This roadmap organizes Epistemap work around the current shared use case:
-GroundRecall supplies provenance-rich graph memory, Didactopus consumes graph
+GroundRecall supplies provenance-rich graph memory, CiteGeist supplies
+provenance-rich bibliography and citation assertions, Didactopus consumes graph
 and reliability context for learning workflows, and Epistemap supplies the
 portable graph, temporal, Bayesian, and `G` assessment operations between them.
 
@@ -28,6 +40,8 @@ assessment artifacts, not decide claim truth or promotion status.
 - Fair-play detective story annotations, validation, corpus summaries,
   annotation-to-temporal-graph conversion, temporal fair-play diagnostics, and
   contradiction-recognition `G` row generation.
+- Detective-corpus treatment manifests, anchor-review templates, and pilot `G`
+  collection templates.
 - Temporal graph slices, tenability windows, contradiction timing, stale-claim
   detection, recognition windows, and fair-play diagnostics.
 - Canonical `G` evaluation rows, manifests, summaries, comparisons,
@@ -70,8 +84,10 @@ assessment artifacts, not decide claim truth or promotion status.
    - Keep the existing `G` row format stable.
 
 6. **CLI support**
-   - Add graph-bundle input commands for Bayesian assessment reports once
-     downstream graph export paths are stable enough for ordinary use.
+   - Status: implemented.
+   - Add graph-bundle input commands for Bayesian assessment reports.
+   - `epistemap bayesian-assessment` loads a graph bundle, optionally filters
+     node types, and emits deterministic JSON and compact Markdown.
 
 7. **Interoperability concepts from adjacent packages**
    - RDFLib: optional RDF/JSON-LD/Turtle import/export with stable namespace
@@ -104,14 +120,16 @@ assessment artifacts, not decide claim truth or promotion status.
    - Compare temporal assessment with learner/model revision behavior.
 
 4. **Fair-play detective corpus**
-   - Status: candidate fixtures, temporal graph bridge, sidecar generation, and
-     treatment manifests implemented.
+   - Status: candidate fixtures, temporal graph bridge, sidecar generation,
+     treatment manifests, anchor-review templates, pilot `G` collection
+     templates, blinded run UI, run sheets, merge tooling, and pilot protocol
+     implemented; initial source-anchor review complete.
    - Use fair detective stories as controlled contradiction-recognition
      experiments.
    - Exclude or separately classify stories that withhold decisive evidence
      until the reveal.
-   - Next: human-review source anchors and create pilot G row collection
-     templates for plain-reading versus graph-assisted runs.
+   - Next: collect actual plain-reading versus graph-assisted participant or
+     model-subject outcomes.
 
 5. **Notebook and mentor interventions**
    - Compare plain source reading, graph-neighborhood reading, Bayesian
@@ -132,3 +150,10 @@ query bundles, review bundles, and public exports. Didactopus should treat the
 same artifacts as learner/mentor context and experiment covariates. In both
 cases, provenance, source reliability, temporal tenability, Bayesian posterior,
 and `G` remain separate surfaces.
+
+CiteGeist should use Epistemap for a rebuildable bibliography graph projection,
+structural diagnostics, temporal views, and typed assessments. CiteGeist remains
+the bibliography authority. Ordinary citation edges must not be interpreted as
+claim support, and citation topology must not be treated as truth or source
+quality. The implementation sequence is defined in CiteGeist's
+`docs/epistemap-knowledge-graph-roadmap.md`.

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from epistemap import (
+    AssessmentMethodRef,
     BAYESIAN_PRIOR_PROFILES,
+    ConfidenceAssessment,
     Edge,
     Node,
     bayesian_evidence_update,
@@ -12,6 +14,18 @@ from epistemap import (
     resolve_bayesian_prior_profile,
     write_bayesian_reliability_markdown,
 )
+
+
+def _assessment(subject_id: str, value: float) -> ConfidenceAssessment:
+    return ConfidenceAssessment(
+        assessment_id=f"{subject_id}::grounding",
+        subject_id=subject_id,
+        dimension="grounding_strength",
+        value=value,
+        band="very_low" if value == 0.0 else "high",
+        method=AssessmentMethodRef(name="fixture", version="1.0", policy_id="test"),
+        recorded_at="2026-07-25T12:00:00+00:00",
+    )
 
 
 def test_beta_binomial_posterior_moves_toward_weighted_success() -> None:
@@ -47,6 +61,24 @@ def test_bayesian_evidence_update_downweights_low_trust_adversarial_challenge() 
     assert posterior["evidence"]["support_weights"][0] > posterior["evidence"]["challenge_weights"][0]
     assert posterior["posterior"]["mean"] > 0.55
     assert posterior["stability"] in {"fragile", "moderate", "stable"}
+
+
+def test_bayesian_evidence_update_prefers_typed_assessment_over_legacy_confidence() -> None:
+    posterior = bayesian_evidence_update(
+        support_edges=[
+            Edge(
+                source="obs::paper",
+                target="claim::main",
+                type="supports_claim",
+                confidence=1.0,
+                assessments=[_assessment("edge::support", 0.0)],
+            )
+        ],
+        challenge_edges=[],
+    )
+
+    assert posterior["evidence"]["support_weights"] == [0.0]
+    assert posterior["evidence"]["success_weight"] == 0.0
 
 
 def test_bayesian_prior_sensitivity_reports_fragility_range() -> None:
