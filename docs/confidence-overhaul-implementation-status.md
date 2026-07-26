@@ -1,10 +1,11 @@
 # Unified Confidence Overhaul: Audited Implementation Status
 
-**Audit date:** 2026-07-25
+**Audit date:** 2026-07-26
 
-**Review state:** W0-W12 implementation PRs merged; Epistemap remains released
-as `v0.1.0a1`; consumer compatibility releases and deprecation-clock start
-remain pending explicit human approval
+**Review state:** W0-W12 implementation PRs merged; W13 release-candidate
+planning is prepared for review; Epistemap remains released as `v0.1.0a1`;
+consumer compatibility releases and deprecation-clock start remain pending
+explicit human approval
 
 **Scope:** Epistemap, CiteGeist, GroundRecall, and Didactopus
 
@@ -118,6 +119,9 @@ response-calibration reports.
 - Added truthful phase-status pointers to the affected repository roadmaps.
 - Completed W6 and W10-W12 after the original audit, then updated this status
   file to make W13 the remaining approval-gated release phase.
+- Prepared the W13 release-candidate plan with proposed compatibility versions,
+  current dependency state, corrected installed-matrix commands, and local
+  8-row matrix validation.
 
 ## Release Gate
 

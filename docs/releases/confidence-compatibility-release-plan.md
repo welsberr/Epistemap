@@ -15,6 +15,22 @@ artifacts until the release versions and timing are explicitly approved.
 5. Start the legacy scalar graph-confidence deprecation clock only after the
    above tags exist.
 
+## Proposed release-candidate versions
+
+These are proposed targets for review, not approved tags.
+
+| Repository | Current version | Proposed compatibility version | Reason |
+| --- | ---: | ---: | --- |
+| Epistemap | `0.1.0a1` | `0.1.0a2` | Alpha compatibility update to the shared assessment, ledger, calibration, and installed-matrix contract. |
+| GroundRecall | `0.1.0a0` | `0.1.0a1` | Alpha consumer compatibility update over the Epistemap `0.1.0a2` contract. |
+| CiteGeist | `0.1.0` | `0.1.1` | Patch/minor-compatible bibliography workbench update; keeps SQLite schema additive and public aliases intact. |
+| Didactopus | `0.1.0` | `0.1.1` | Patch/minor-compatible learner-workflow update; keeps API aliases and migration compatibility intact. |
+
+If the release policy should treat CiteGeist or Didactopus confidence changes as
+pre-1.0 minor rather than patch releases, use `0.2.0` instead of `0.1.1`. Do
+not update dependency pins until the Epistemap compatibility tag is approved and
+created.
+
 ## Release validation required before tags
 
 - Run every repository's full test suite from a clean checkout.
@@ -26,6 +42,50 @@ artifacts until the release versions and timing are explicitly approved.
   explicit zero confidence.
 - Confirm generated public artifacts exclude private stores, backups, run logs,
   human participant results, and local-only databases.
+
+### Candidate validation commands
+
+Run from clean checkouts with no sibling `PYTHONPATH` unless explicitly noted:
+
+```bash
+cd /home/netuser/bin/Epistemap
+python -m pytest -q
+python -m epistemap.cli installed-matrix --dry-run --out /tmp/epistemap-installed-matrix-dry-run.json
+python -m epistemap.cli installed-matrix --out /tmp/epistemap-installed-matrix-report.json
+
+cd /home/netuser/bin/CiteGeist
+.venv/bin/python -m pytest -q
+
+cd /home/netuser/bin/GroundRecall
+python -m pytest -q
+
+cd /home/netuser/bin/Didactopus
+pytest -q
+```
+
+After approval of a new Epistemap tag, rerun GroundRecall and Didactopus after
+updating their `epistemap @ git+...@TAG` dependency to the approved tag.
+
+Latest W13 preparation checks on 2026-07-26:
+
+- `python -m pytest -q tests/test_installed_matrix.py tests/test_confidence_compatibility.py`
+  passed with 23 tests.
+- `python -m epistemap.cli installed-matrix --dry-run --out /tmp/epistemap-installed-matrix-dry-run.json`
+  generated all 8 planned matrix rows. Dry-run rows are reported as
+  `status: dry_run`, so the report's aggregate `passed` value is not treated as
+  a release pass.
+- `python -m epistemap.cli installed-matrix --out /tmp/epistemap-installed-matrix-report.json`
+  passed all 8 installed cross-repository matrix rows.
+
+### Release-candidate dependency state
+
+- Epistemap currently has tag `v0.1.0a1`.
+- GroundRecall currently depends on
+  `epistemap @ git+https://github.com/welsberr/Epistemap.git@v0.1.0a1`.
+- Didactopus currently depends on
+  `epistemap @ git+https://github.com/welsberr/Epistemap.git@v0.1.0a1`.
+- CiteGeist currently has no runtime Epistemap dependency; its
+  Epistemap-compatible graph profile is a deterministic JSON projection.
 
 ## Compatibility aliases and replacements
 
