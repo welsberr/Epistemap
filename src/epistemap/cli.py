@@ -28,6 +28,7 @@ from .grounding_effect import (
     write_g_summary_comparison_markdown,
 )
 from .io import load_graph_bundle
+from .installed_matrix import run_installed_matrix
 from .treatment_manifest import detective_treatment_manifest, write_detective_treatment_manifest
 
 
@@ -91,6 +92,17 @@ def build_parser() -> argparse.ArgumentParser:
         dest="node_types",
         help="Node type to assess. May be repeated. Defaults to concept and claim.",
     )
+
+    installed_matrix = subparsers.add_parser(
+        "installed-matrix",
+        help="Run the installed cross-repository compatibility matrix.",
+    )
+    installed_matrix.add_argument("--manifest", default=None)
+    installed_matrix.add_argument("--repo-root", default=None)
+    installed_matrix.add_argument("--row-id", action="append", default=[])
+    installed_matrix.add_argument("--out", default=None)
+    installed_matrix.add_argument("--dry-run", action="store_true")
+    installed_matrix.add_argument("--keep-envs", action="store_true")
 
     genealogy_gedcom = subparsers.add_parser(
         "genealogy-gedcom",
@@ -278,6 +290,15 @@ def main() -> None:
                 handle.write("\n")
         if args.out_md is not None:
             write_bayesian_assessment_markdown(payload, args.out_md)
+    elif args.command == "installed-matrix":
+        payload = run_installed_matrix(
+            args.manifest or None,
+            repo_root=args.repo_root,
+            out_report=args.out,
+            row_ids=set(args.row_id) if args.row_id else None,
+            dry_run=args.dry_run,
+            keep_envs=args.keep_envs,
+        )
     elif args.command == "genealogy-gedcom":
         payload = write_genealogy_graph_bundle(
             args.gedcom,
@@ -386,6 +407,8 @@ def main() -> None:
         and args.require_pass
         and payload["validation"]["summary"]["status"] != "pass"
     ):
+        raise SystemExit(2)
+    if args.command == "installed-matrix" and not args.dry_run and not payload["passed"]:
         raise SystemExit(2)
 
 

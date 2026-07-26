@@ -29,3 +29,28 @@ contain private run data. Raw producer payloads live in
   fixture declares a mapping policy.
 - Namespaced dimensions are allowed; unnamespaced unknown dimensions remain
   invalid.
+
+## Installed Cross-Repository Matrix
+
+W9 adds an installed-environment matrix manifest:
+
+- `docs/installed-cross-repo-matrix.json`
+
+Run the matrix with:
+
+```bash
+epistemap installed-matrix --out installed-matrix-report.json
+```
+
+For a non-mutating manifest check:
+
+```bash
+epistemap installed-matrix --dry-run --out installed-matrix-dry-run.json
+```
+
+The runner creates temporary virtual environments, installs only the declared
+producer/consumer package paths with `--no-build-isolation --no-deps`, unsets
+`PYTHONPATH`, runs each row's expected fixture command, and reports producer,
+consumer, artifact, fixture, release, schema versions, command output, and
+deterministic artifact hashes. This prevents compatibility from passing only
+because sibling checkouts happened to be on `PYTHONPATH`.
