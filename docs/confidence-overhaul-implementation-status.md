@@ -48,7 +48,7 @@ Status meanings:
 | E2 evidence ledger and Bayesian assessment | partial | Bayesian weighting prefers typed edge/source assessments and preserves explicit zero | `EvidenceUnit`, weighting-policy model, visible ledger, deterministic deduplication, source-family handling, revision-edge separation, reconstructable assessment output |
 | E3 calibration utilities | partial | Brier, log loss, bins, ECE, JSON, Markdown, missing-value behavior | Dimension-specific eligibility rules, declared outcome interpretation, identity candidate-set policy, discrimination/coverage separation, broader fixtures |
 | CITE1 / CG3 CiteGeist migration | partial | Versioned assessment table; identity assessments in verification output; dry-run-first idempotent migration function; OKF page rendering | CLI command, backup/rollback, portable interval storage, `match_score` alias migration, reviewed match outcomes/calibration, Epistemap graph export |
-| G1 GroundRecall schema migration | partial | Optional bounded claim/observation scalars; typed assessment lists; explicit-zero-safe adapter selection | Store migration command, versioned migration events, ambiguity report, rollback, legacy-store fixtures, released Epistemap dependency |
+| G1 GroundRecall schema migration | partial | Optional bounded claim/observation scalars; typed assessment lists; explicit-zero-safe adapter selection; consumes Epistemap `v0.1.0a1` | Store migration command, versioned migration events, ambiguity report, rollback, and legacy-store fixtures |
 | G2 GroundRecall producer semantics | partial | Query adapter emits typed compatibility assessments with a declared policy | Per-producer rule/method provenance, basis hashes, adapter fixture coverage, readiness report, removal of blanket legacy reinterpretation |
 | G3 reviewer and temporal assessments | partial | Memory roadmap correctly separates expiry/supersession from historical confidence | Append-only identified reviewer records, disagreement/adjudication, query confidence profile, selection explanations |
 | G4 GroundRecall Bayesian integration | partial | Existing Epistemap Bayesian sidecar integration predates this audit | Claim evidence ledgers, deduplication, source-family dependence, compatibility aliases, paired current/`as_of` fixtures |
@@ -56,7 +56,7 @@ Status meanings:
 | D2 evidence coverage separation | partial | Canonical `evidence_coverage` name plus legacy property/function aliases; corrected docs | Threshold/report alias migration, deprecation warnings, duplicate-evidence acceptance fixture, compatibility release |
 | D3 graph and candidate migration | partial | Course graph emits typed extraction assessments; graph retrieval preserves profiles | Rule-specific extraction versus grounding semantics, candidate migration, mentor prompt changes, GroundRecall bridge fixtures |
 | D4 response calibration | partial | Benchmark confidence remains response-correctness probability | Use Epistemap reports, abstention/discrimination/calibration split, minimum-sample policy gates, versioned learner policy manifests |
-| X1 cross-repository release | partial | All implementation PRs are merged; Epistemap `v0.1.0a1` contains the typed schema and compatibility readers | Replace consumer implementation pins with `v0.1.0a1`, run a clean installed-package matrix, release consumers, then begin the deprecation clock |
+| X1 cross-repository release | partial | All implementation PRs are merged; Epistemap `v0.1.0a1` is published; GroundRecall and Didactopus consume the tag; both suites pass with the tag installed and no sibling `PYTHONPATH` | Complete the golden cross-repository matrix, release consumers, then begin the deprecation clock |
 
 ## Reconciliation Of Concurrent Changes
 
@@ -124,10 +124,8 @@ sequence is:
 2. finish E3 eligibility semantics;
 3. implement and test CiteGeist and GroundRecall CLI migrations with rollback;
 4. complete Didactopus D1-D4 compatibility work;
-5. replace temporary consumer commit pins with Epistemap `v0.1.0a1`;
-6. run the cross-repository matrix in clean environments without sibling
-   `PYTHONPATH`;
-7. tag consumer compatibility releases, then begin documented deprecation.
+5. complete the remaining cross-repository golden fixtures;
+6. tag consumer compatibility releases, then begin documented deprecation.
 
 Destructive/store-wide migration and publication beyond the reviewed release
 artifacts remain human-authorized actions.
