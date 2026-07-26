@@ -13,8 +13,8 @@
       "fixture_id": "epistemap_legacy_missing",
       "producer_schema_version": "epistemap_graph_bundle.v1",
       "consumer_schema_version": "epistemap_graph_bundle.v1",
-      "producer_release": "0.1.0a1",
-      "consumer_release": "0.1.0a1",
+      "producer_release": "0.1.0a2",
+      "consumer_release": "0.1.0a2",
       "install_paths": ["."],
       "expected_test_command": ["python", "-m", "epistemap.installed_matrix_fixture", "--row-id", "epistemap_legacy_to_current"],
       "deterministic_hash": true
@@ -28,7 +28,7 @@
       "producer_schema_version": "citegeist.confidence_assessments.v1",
       "consumer_schema_version": "epistemap.confidence_assessment.v1",
       "producer_release": "0.1.0",
-      "consumer_release": "0.1.0a1",
+      "consumer_release": "0.1.0a2",
       "install_paths": [".", "../CiteGeist"],
       "expected_test_command": ["python", "-m", "epistemap.installed_matrix_fixture", "--row-id", "citegeist_to_epistemap"],
       "deterministic_hash": true
@@ -70,7 +70,7 @@
       "producer_schema_version": "groundrecall.confidence_profile.v1",
       "consumer_schema_version": "epistemap.evidence_ledger.v1",
       "producer_release": "0.1.0a0",
-      "consumer_release": "0.1.0a1",
+      "consumer_release": "0.1.0a2",
       "install_paths": [".", "../GroundRecall"],
       "expected_test_command": ["python", "-m", "epistemap.installed_matrix_fixture", "--row-id", "groundrecall_to_epistemap"],
       "deterministic_hash": true
@@ -98,7 +98,7 @@
       "producer_schema_version": "didactopus.course_graph.v1",
       "consumer_schema_version": "epistemap.graph_bundle.v1",
       "producer_release": "0.1.0",
-      "consumer_release": "0.1.0a1",
+      "consumer_release": "0.1.0a2",
       "install_paths": [".", "../Didactopus"],
       "expected_test_command": ["python", "-m", "epistemap.installed_matrix_fixture", "--row-id", "didactopus_to_epistemap"],
       "deterministic_hash": true
