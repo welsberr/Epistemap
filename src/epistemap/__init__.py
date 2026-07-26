@@ -102,6 +102,18 @@ from .epistemic import (
     epistemic_summary,
     write_bayesian_assessment_markdown,
 )
+from .evidence import (
+    EvidenceLedger,
+    EvidenceLedgerDiagnostic,
+    EvidenceReference,
+    EvidenceStance,
+    EvidenceUnit,
+    EvidenceWeightingPolicy,
+    SourceFamilyDependence,
+    derive_evidence_identity,
+    deterministic_hash,
+    deterministic_json,
+)
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 from .grounding_effect import (
     G_ROW_FIELDS,
@@ -191,7 +203,16 @@ __all__ = [
     "Edge",
     "claim_status_at",
     "delta_g",
+    "derive_evidence_identity",
+    "deterministic_hash",
+    "deterministic_json",
     "evidence_available_at",
+    "EvidenceLedger",
+    "EvidenceLedgerDiagnostic",
+    "EvidenceReference",
+    "EvidenceStance",
+    "EvidenceUnit",
+    "EvidenceWeightingPolicy",
     "epistemic_report",
     "epistemic_summary",
     "expected_calibration_error",
@@ -257,6 +278,7 @@ __all__ = [
     "reliability_level_sensitivity",
     "resolve_bayesian_prior_profile",
     "shortest_path",
+    "SourceFamilyDependence",
     "STANDARD_CONFIDENCE_DIMENSIONS",
     "slugify",
     "stale_claims_after",

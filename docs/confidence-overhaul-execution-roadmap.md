@@ -1,6 +1,6 @@
 # Confidence Overhaul Execution Roadmap After v0.1.0a1
 
-**Status:** W0 implemented locally; remaining packages await dependency gates
+**Status:** W0 merged; W1 implemented locally; remaining packages await dependency gates
 
 **Baseline date:** 2026-07-25
 
@@ -191,6 +191,10 @@ W5, and W7 unblock only after W0 merges.
 **Repository:** Epistemap
 
 **Depends on:** W0
+
+**Local status:** implemented with versioned evidence ledger models,
+deterministic serialization/hash helpers, identity derivation, and validation;
+merge this work before treating W2 or W3 as unblocked.
 
 **Objective:** represent evidence inputs explicitly before aggregation.
 

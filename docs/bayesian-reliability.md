@@ -17,6 +17,27 @@ The first model is a weighted beta-binomial update:
 This is not a truth oracle. It is an auditable posterior support estimate under
 the evidence extraction and prior assumptions used for the graph.
 
+## Evidence Ledger Contract
+
+Epistemap now exposes W1 evidence-ledger models as the explicit input contract
+for future Bayesian aggregation:
+
+- `EvidenceReference` records source record, artifact, fragment, graph-edge,
+  URI, and source-family identifiers.
+- `EvidenceUnit` records a stable unit ID, subject claim, stance, typed input
+  assessments, raw/effective weights, deduplication key, and method/policy
+  version.
+- `EvidenceWeightingPolicy` records the weighting policy before defaults or
+  source-family adjustments are applied.
+- `EvidenceLedger` validates duplicate unit IDs, undeclared subjects, dangling
+  revision links, and unversioned methods.
+
+The ledger layer does not yet aggregate evidence. Missing raw or effective
+weights remain missing until a declared weighting policy applies them. Explicit
+zero-valued typed assessments remain valid evidence inputs and do not trigger
+fallback behavior. Revision evidence is represented with stance `revision` and
+links to the revised unit IDs; it is not ordinary challenge evidence.
+
 ## Epistemic Summaries
 
 `epistemic_summary()` now returns both:
@@ -73,11 +94,17 @@ Implemented:
   `bayesian_assessment_markdown()`, and
   `write_bayesian_assessment_markdown()`. Reports batch over claims and
   concepts, rank rows by review urgency, and summarize label and flag counts.
+- evidence-ledger data models via `EvidenceReference`, `EvidenceUnit`,
+  `EvidenceWeightingPolicy`, `EvidenceLedger`, and
+  `EvidenceLedgerDiagnostic`. These are a reconstructable input contract for
+  later aggregation, not a replacement aggregation path yet.
 
 Near-term:
 
-- add CLI support for graph-level epistemic reports once graph bundle loading is
-  standardized for downstream repos.
+- convert graph evidence into visible ledgers with deterministic deduplication
+  and revision separation before Bayesian aggregation;
+- add CLI support for graph-level epistemic reports once graph bundle loading
+  is standardized for downstream repos.
 
 Medium-term:
 
