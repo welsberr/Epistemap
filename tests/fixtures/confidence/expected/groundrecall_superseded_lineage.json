@@ -1,0 +1,79 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "groundrecall_superseded_lineage",
+  "title": "",
+  "description": "",
+  "nodes": [
+    {
+      "id": "claim::lineage",
+      "type": "claim",
+      "title": "Lineage claim",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "assessments": [
+        {
+          "schema_version": "1.0",
+          "assessment_id": "groundrecall::assessment::old",
+          "subject_id": "claim::lineage",
+          "dimension": "grounding_strength",
+          "value": 0.35,
+          "band": "low",
+          "assessor_id": "",
+          "method": {
+            "name": "groundrecall_adapter",
+            "version": "1.0",
+            "policy_id": "groundrecall_confidence_mapping_v1"
+          },
+          "basis_record_ids": [
+            "observation::old"
+          ],
+          "source_family_ids": [],
+          "basis_hash": "",
+          "rationale": "",
+          "valid_at": "",
+          "recorded_at": "2026-07-25T12:00:00+00:00",
+          "supersedes_assessment_id": "",
+          "metadata": {}
+        },
+        {
+          "schema_version": "1.0",
+          "assessment_id": "groundrecall::assessment::new",
+          "subject_id": "claim::lineage",
+          "dimension": "grounding_strength",
+          "value": 0.75,
+          "band": "high",
+          "assessor_id": "",
+          "method": {
+            "name": "groundrecall_adapter",
+            "version": "1.1",
+            "policy_id": "groundrecall_confidence_mapping_v1"
+          },
+          "basis_record_ids": [
+            "observation::new"
+          ],
+          "source_family_ids": [],
+          "basis_hash": "",
+          "rationale": "",
+          "valid_at": "",
+          "recorded_at": "2026-07-25T13:00:00+00:00",
+          "supersedes_assessment_id": "groundrecall::assessment::old",
+          "metadata": {}
+        }
+      ],
+      "provenance": [],
+      "metadata": {}
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "fixture_id": "groundrecall_superseded_lineage",
+    "producer": "GroundRecall",
+    "schema_version": "groundrecall_query_epistemap.v1",
+    "fixture_kind": "superseded_assessment_lineage"
+  },
+  "summary": {
+    "node_count": 1,
+    "edge_count": 0
+  }
+}

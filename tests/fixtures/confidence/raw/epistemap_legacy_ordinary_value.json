@@ -1,0 +1,19 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "epistemap_legacy_ordinary_value",
+  "metadata": {
+    "fixture_id": "epistemap_legacy_ordinary_value",
+    "producer": "Epistemap",
+    "schema_version": "epistemap_graph_bundle.v1",
+    "fixture_kind": "legacy_ordinary_value"
+  },
+  "nodes": [
+    {
+      "id": "claim::ordinary",
+      "type": "claim",
+      "title": "Legacy ordinary value",
+      "confidence": 0.65
+    }
+  ],
+  "edges": []
+}

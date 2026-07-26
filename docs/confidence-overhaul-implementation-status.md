@@ -9,9 +9,12 @@ compatibility releases remain pending
 
 ## Executive Status
 
-The overhaul is **in progress**. The local working trees contain a useful
-portable assessment foundation and several consumer prototypes, but the
-roadmap's definition of done has not been met.
+The overhaul is **in progress**. The merged repositories contain a released
+portable assessment foundation and several partial consumer implementations,
+but the roadmap's definition of done has not been met.
+
+The dependency-ordered coding-model queue for the remaining work is
+[`confidence-overhaul-execution-roadmap.md`](confidence-overhaul-execution-roadmap.md).
 
 At the start of the audit, all confidence-overhaul changes were uncommitted and
 each repository's `main` branch matched its remote-tracking tip. The reviewed
@@ -43,7 +46,7 @@ Status meanings:
 
 | Phase | Status | Evidence in the working trees | Work still required |
 | --- | --- | --- | --- |
-| C0 baseline and contract | partial | Roadmap, compatibility tests, explicit-zero and missing-value round trips | Cross-repository fixture directory, full semantic inventory, and recorded installed baseline |
+| C0 baseline and contract | substantial | Roadmap, compatibility tests, explicit-zero and missing-value round trips, W0 synthetic fixture directory, compatibility matrix, and scalar-field inventory | Merge W0, then use the matrix as the gate for W1/W4/W5/W7; installed-package matrix remains X1/W9 work |
 | E1 portable assessment models | substantial | `confidence.py`; node/edge assessment lists; lineage validation; JSON, JSON-LD, and Cytoscape preservation; released in `v0.1.0a1` | Fixture matrix, consumer-installed validation, and deprecation diagnostics at public API boundaries |
 | E2 evidence ledger and Bayesian assessment | partial | Bayesian weighting prefers typed edge/source assessments and preserves explicit zero | `EvidenceUnit`, weighting-policy model, visible ledger, deterministic deduplication, source-family handling, revision-edge separation, reconstructable assessment output |
 | E3 calibration utilities | partial | Brier, log loss, bins, ECE, JSON, Markdown, missing-value behavior | Dimension-specific eligibility rules, declared outcome interpretation, identity candidate-set policy, discrimination/coverage separation, broader fixtures |
@@ -120,7 +123,7 @@ gaps rather than treated as completed migration.
 Do not start the scalar-confidence deprecation clock yet. The next defensible
 sequence is:
 
-1. complete C0 fixtures and E2's evidence ledger;
+1. merge C0/W0 fixtures and complete E2's evidence ledger;
 2. finish E3 eligibility semantics;
 3. implement and test CiteGeist and GroundRecall CLI migrations with rollback;
 4. complete Didactopus D1-D4 compatibility work;

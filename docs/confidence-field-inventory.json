@@ -1,0 +1,254 @@
+{
+  "inventory_version": "w0.1",
+  "reviewed_at": "2026-07-25",
+  "scope": [
+    "Epistemap",
+    "CiteGeist",
+    "GroundRecall",
+    "Didactopus"
+  ],
+  "status": "initial executable inventory for W0; refine on every package that touches a listed field",
+  "fields": [
+    {
+      "id": "epistemap.node.confidence",
+      "repository": "Epistemap",
+      "paths": [
+        "src/epistemap/models.py"
+      ],
+      "field": "Node.confidence",
+      "meaning": "legacy compatibility scalar with no implied dimension",
+      "missing_behavior": "None means missing; explicit 0.0 is retained",
+      "owner": "Epistemap",
+      "disposition": "retain through alpha deprecation window; do not synthesize typed assessment without caller mapping"
+    },
+    {
+      "id": "epistemap.edge.confidence",
+      "repository": "Epistemap",
+      "paths": [
+        "src/epistemap/models.py",
+        "src/epistemap/bayesian.py"
+      ],
+      "field": "Edge.confidence",
+      "meaning": "legacy compatibility scalar used by old evidence weighting",
+      "missing_behavior": "None falls back according to legacy Bayesian policy; explicit 0.0 must not fall back",
+      "owner": "Epistemap",
+      "disposition": "replace aggregation input with W1/W2 evidence ledger; preserve old report aliases"
+    },
+    {
+      "id": "epistemap.confidence_assessment.value",
+      "repository": "Epistemap",
+      "paths": [
+        "src/epistemap/confidence.py"
+      ],
+      "field": "ConfidenceAssessment.value",
+      "meaning": "typed assessment value for declared dimension/method/subject",
+      "missing_behavior": "None means unknown and requires band unknown; explicit 0.0 is valid",
+      "owner": "Epistemap",
+      "disposition": "canonical portable value"
+    },
+    {
+      "id": "epistemap.calibration.predicted",
+      "repository": "Epistemap",
+      "paths": [
+        "src/epistemap/calibration.py"
+      ],
+      "field": "CalibrationSample.predicted",
+      "meaning": "probability forecast for a declared observed event",
+      "missing_behavior": "required; missing predictions are not zero",
+      "owner": "Epistemap",
+      "disposition": "tighten with W4 eligibility contract"
+    },
+    {
+      "id": "epistemap.calibration.observed",
+      "repository": "Epistemap",
+      "paths": [
+        "src/epistemap/calibration.py"
+      ],
+      "field": "CalibrationSample.observed",
+      "meaning": "resolved outcome for the predicted event",
+      "missing_behavior": "required",
+      "owner": "Epistemap",
+      "disposition": "tighten with W4 outcome interpretation"
+    },
+    {
+      "id": "citegeist.provenance.confidence",
+      "repository": "CiteGeist",
+      "paths": [
+        "src/citegeist/storage.py",
+        "src/citegeist/confidence.py"
+      ],
+      "field": "field_provenance.confidence and relation_provenance.confidence",
+      "meaning": "legacy extraction or relation-grounding score from source import/expansion",
+      "missing_behavior": "NULL means missing",
+      "owner": "CiteGeist",
+      "disposition": "W5 migrate to typed extraction_fidelity or grounding_strength with backup/rollback"
+    },
+    {
+      "id": "citegeist.entry_topics.confidence",
+      "repository": "CiteGeist",
+      "paths": [
+        "src/citegeist/storage.py",
+        "src/citegeist/confidence.py"
+      ],
+      "field": "entry_topics.confidence",
+      "meaning": "topic relevance, not portable source reliability or claim support",
+      "missing_behavior": "NULL means missing",
+      "owner": "CiteGeist",
+      "disposition": "W5 migrate to namespaced citegeist:topic_relevance"
+    },
+    {
+      "id": "citegeist.verify.confidence",
+      "repository": "CiteGeist",
+      "paths": [
+        "src/citegeist/verify.py"
+      ],
+      "field": "VerificationResult.confidence",
+      "meaning": "bibliographic identity match score",
+      "missing_behavior": "required in current result object",
+      "owner": "CiteGeist",
+      "disposition": "W6 rename canonical surface to match_score and keep confidence as deprecated read-only alias"
+    },
+    {
+      "id": "citegeist.claim_support.needs_support_score",
+      "repository": "CiteGeist",
+      "paths": [
+        "src/citegeist/claim_support.py"
+      ],
+      "field": "needs_support_score",
+      "meaning": "support-gap/work-order priority",
+      "missing_behavior": "required in current result object",
+      "owner": "CiteGeist",
+      "disposition": "do not migrate as confidence"
+    },
+    {
+      "id": "citegeist.expansion.relevance_score",
+      "repository": "CiteGeist",
+      "paths": [
+        "src/citegeist/expand.py"
+      ],
+      "field": "relevance_score",
+      "meaning": "query-scoped retrieval or topic relevance score",
+      "missing_behavior": "optional in some expansion paths",
+      "owner": "CiteGeist",
+      "disposition": "keep as retrieval/topic telemetry, not durable confidence"
+    },
+    {
+      "id": "groundrecall.observation.confidence_hint",
+      "repository": "GroundRecall",
+      "paths": [
+        "src/groundrecall/models.py",
+        "src/groundrecall/epistemap_adapter.py",
+        "src/groundrecall/groundrecall_source_adapters/"
+      ],
+      "field": "Observation.confidence_hint",
+      "meaning": "adapter extraction hint",
+      "missing_behavior": "None means missing in canonical model; hardcoded adapter defaults remain a W7 gap",
+      "owner": "GroundRecall",
+      "disposition": "W7 replace blanket mapping with producer-specific method/version/basis hash"
+    },
+    {
+      "id": "groundrecall.claim.review_confidence",
+      "repository": "GroundRecall",
+      "paths": [
+        "src/groundrecall/models.py",
+        "src/groundrecall/epistemap_adapter.py"
+      ],
+      "field": "Claim.review_confidence",
+      "meaning": "reviewer endorsement compatibility scalar",
+      "missing_behavior": "None means missing; explicit 0.0 is valid",
+      "owner": "GroundRecall",
+      "disposition": "W8 replace with append-only reviewer assessments and adjudications"
+    },
+    {
+      "id": "groundrecall.query.match_score",
+      "repository": "GroundRecall",
+      "paths": [
+        "src/groundrecall/query.py"
+      ],
+      "field": "match_score",
+      "meaning": "retrieval match score",
+      "missing_behavior": "query scoped; not durable",
+      "owner": "GroundRecall",
+      "disposition": "keep separate from confidence and posterior support"
+    },
+    {
+      "id": "groundrecall.query.bayesian_posterior_mean",
+      "repository": "GroundRecall",
+      "paths": [
+        "src/groundrecall/query.py",
+        "src/groundrecall/export.py"
+      ],
+      "field": "bayesian_posterior_mean",
+      "meaning": "Epistemap posterior evidence summary in query/export profile",
+      "missing_behavior": "absent when no Bayesian sidecar is generated",
+      "owner": "GroundRecall",
+      "disposition": "W8 reconstruct from W3 ledgers; never promotion authority"
+    },
+    {
+      "id": "didactopus.learner_state.confidence",
+      "repository": "Didactopus",
+      "paths": [
+        "src/didactopus/learner_state.py",
+        "src/didactopus/progression_engine.py",
+        "src/didactopus/orm.py"
+      ],
+      "field": "LearningRecord.confidence / ORM confidence",
+      "meaning": "learner mastery confidence or stability estimate",
+      "missing_behavior": "currently default-zero in several paths",
+      "owner": "Didactopus",
+      "disposition": "W10 make absence meaningful and preserve JSON/database compatibility"
+    },
+    {
+      "id": "didactopus.event.confidence_hint",
+      "repository": "Didactopus",
+      "paths": [
+        "src/didactopus/models.py",
+        "src/didactopus/learner_state.py",
+        "src/didactopus/progression_engine.py"
+      ],
+      "field": "EvidenceEvent.confidence_hint and related API fields",
+      "meaning": "event reliability or extraction hint used in learner-state update",
+      "missing_behavior": "currently defaulted in multiple paths",
+      "owner": "Didactopus",
+      "disposition": "W10 classify and migrate candidate/extraction hints to typed assessments where appropriate"
+    },
+    {
+      "id": "didactopus.evidence_coverage",
+      "repository": "Didactopus",
+      "paths": [
+        "src/didactopus/evidence_engine.py"
+      ],
+      "field": "EvidenceSummary.evidence_coverage",
+      "meaning": "quantity/sufficiency of evidence for a learner estimate, not correctness probability",
+      "missing_behavior": "0.0 is a computed coverage value",
+      "owner": "Didactopus",
+      "disposition": "W11 finish canonical API and deprecation warnings for confidence aliases"
+    },
+    {
+      "id": "didactopus.response.confidence",
+      "repository": "Didactopus",
+      "paths": [
+        "src/didactopus/ai_learner_benchmark.py",
+        "src/didactopus/source_spine_transfer_experiment.py"
+      ],
+      "field": "response confidence",
+      "meaning": "probability the selected answer is correct",
+      "missing_behavior": "fallback currently coerces missing/parse failures to a policy default",
+      "owner": "Didactopus",
+      "disposition": "W12 connect to Epistemap calibration contract and keep separate from mastery/evidence coverage"
+    },
+    {
+      "id": "didactopus.graph.confidence",
+      "repository": "Didactopus",
+      "paths": [
+        "src/didactopus/knowledge_graph.py",
+        "src/didactopus/graph_retrieval.py"
+      ],
+      "field": "course graph confidence",
+      "meaning": "graph extraction or structural confidence compatibility copy",
+      "missing_behavior": "currently supplied by construction rules",
+      "owner": "Didactopus",
+      "disposition": "W10/D3 preserve typed extraction assessments and avoid flattening GroundRecall profiles"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "groundrecall_typed_and_legacy",
+  "metadata": {
+    "fixture_id": "groundrecall_typed_and_legacy",
+    "producer": "GroundRecall",
+    "schema_version": "groundrecall_query_epistemap.v1",
+    "fixture_kind": "typed_and_legacy_with_mapping",
+    "legacy_confidence_mapping_policy": "groundrecall_confidence_mapping_v1"
+  },
+  "nodes": [
+    {
+      "id": "claim::reviewed",
+      "type": "claim",
+      "title": "Reviewed claim",
+      "confidence": 0.0,
+      "assessments": [
+        {
+          "schema_version": "1.0",
+          "assessment_id": "groundrecall::review::zero",
+          "subject_id": "claim::reviewed",
+          "dimension": "reviewer_endorsement",
+          "value": 0.0,
+          "band": "very_low",
+          "method": {
+            "name": "groundrecall_reviewer_import",
+            "version": "1.0",
+            "policy_id": "groundrecall_confidence_mapping_v1"
+          },
+          "basis_record_ids": [
+            "claim::reviewed"
+          ],
+          "recorded_at": "2026-07-25T12:00:00+00:00",
+          "rationale": "Explicit zero reviewer endorsement; not a missing value."
+        }
+      ]
+    }
+  ],
+  "edges": []
+}
