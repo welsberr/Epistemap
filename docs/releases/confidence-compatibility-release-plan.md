@@ -1,37 +1,31 @@
 # Confidence Compatibility Release Plan
 
-Status: prepared for W13 review. Do not tag, publish, or merge release
-artifacts until the release versions and timing are explicitly approved.
+Status: completed on 2026-07-26 after explicit approval. Compatibility release
+tags exist for all four repositories; no package-index publication was
+performed.
 
-## Proposed release order
+## Completed release order
 
-1. Epistemap: tag a compatibility release after rerunning the installed matrix.
-2. CiteGeist: update dependency notes against the approved Epistemap release
-   and tag a consumer compatibility release.
-3. GroundRecall: update dependency notes against the approved Epistemap release
-   and tag a consumer compatibility release.
-4. Didactopus: update dependency notes after CiteGeist/GroundRecall are
-   available and tag a consumer compatibility release.
-5. Start the legacy scalar graph-confidence deprecation clock only after the
-   above tags exist.
+1. Epistemap `v0.1.0a2`: tagged after rerunning the installed matrix.
+2. CiteGeist `v0.1.1`: tagged as a consumer compatibility release.
+3. GroundRecall `v0.1.0a1`: dependency pin updated to Epistemap `v0.1.0a2`
+   and tagged as a consumer compatibility release.
+4. Didactopus `v0.1.1`: dependency pin updated to Epistemap `v0.1.0a2` and
+   tagged as a consumer compatibility release.
+5. Legacy scalar graph-confidence deprecation clock started on 2026-07-26.
 
-## Proposed release-candidate versions
+## Released compatibility versions
 
-These are proposed targets for review, not approved tags.
+These tags were pushed on 2026-07-26.
 
-| Repository | Current version | Proposed compatibility version | Reason |
+| Repository | Previous version | Compatibility version | Reason |
 | --- | ---: | ---: | --- |
 | Epistemap | `0.1.0a1` | `0.1.0a2` | Alpha compatibility update to the shared assessment, ledger, calibration, and installed-matrix contract. |
 | GroundRecall | `0.1.0a0` | `0.1.0a1` | Alpha consumer compatibility update over the Epistemap `0.1.0a2` contract. |
 | CiteGeist | `0.1.0` | `0.1.1` | Patch/minor-compatible bibliography workbench update; keeps SQLite schema additive and public aliases intact. |
 | Didactopus | `0.1.0` | `0.1.1` | Patch/minor-compatible learner-workflow update; keeps API aliases and migration compatibility intact. |
 
-If the release policy should treat CiteGeist or Didactopus confidence changes as
-pre-1.0 minor rather than patch releases, use `0.2.0` instead of `0.1.1`. Do
-not update dependency pins until the Epistemap compatibility tag is approved and
-created.
-
-## Release validation required before tags
+## Release validation performed before tags
 
 - Run every repository's full test suite from a clean checkout.
 - Run Epistemap's installed cross-repository matrix against the selected tagged
@@ -43,7 +37,7 @@ created.
 - Confirm generated public artifacts exclude private stores, backups, run logs,
   human participant results, and local-only databases.
 
-### Candidate validation commands
+### Validation commands
 
 Run from clean checkouts with no sibling `PYTHONPATH` unless explicitly noted:
 
@@ -63,27 +57,27 @@ cd /home/netuser/bin/Didactopus
 pytest -q
 ```
 
-After approval of a new Epistemap tag, rerun GroundRecall and Didactopus after
-updating their `epistemap @ git+...@TAG` dependency to the approved tag.
+W13 release checks on 2026-07-26:
 
-Latest W13 preparation checks on 2026-07-26:
-
-- `python -m pytest -q tests/test_installed_matrix.py tests/test_confidence_compatibility.py`
-  passed with 23 tests.
+- Epistemap `python -m pytest -q`: 156 passed.
 - `python -m epistemap.cli installed-matrix --dry-run --out /tmp/epistemap-installed-matrix-dry-run.json`
   generated all 8 planned matrix rows. Dry-run rows are reported as
   `status: dry_run`, so the report's aggregate `passed` value is not treated as
   a release pass.
 - `python -m epistemap.cli installed-matrix --out /tmp/epistemap-installed-matrix-report.json`
   passed all 8 installed cross-repository matrix rows.
+- CiteGeist `.venv/bin/python -m pytest -q`: 295 passed, 5 skipped, 13
+  expected deprecation warnings.
+- GroundRecall `python -m pytest -q`: 126 passed.
+- Didactopus `pytest -q`: 288 passed.
 
-### Release-candidate dependency state
+### Released dependency state
 
-- Epistemap currently has tag `v0.1.0a1`.
+- Epistemap has compatibility tag `v0.1.0a2`.
 - GroundRecall currently depends on
-  `epistemap @ git+https://github.com/welsberr/Epistemap.git@v0.1.0a1`.
+  `epistemap @ git+https://github.com/welsberr/Epistemap.git@v0.1.0a2`.
 - Didactopus currently depends on
-  `epistemap @ git+https://github.com/welsberr/Epistemap.git@v0.1.0a1`.
+  `epistemap @ git+https://github.com/welsberr/Epistemap.git@v0.1.0a2`.
 - CiteGeist currently has no runtime Epistemap dependency; its
   Epistemap-compatible graph profile is a deterministic JSON projection.
 
@@ -124,10 +118,10 @@ Latest W13 preparation checks on 2026-07-26:
   explicit zero or missing/defaulted confidence; the migration reports
   `legacy_zero_ambiguous` and does not auto-convert those rows.
 
-## Deprecation clock proposal
+## Deprecation clock
 
-Start date: not started.
+Start date: 2026-07-26.
 
-Proposed rule after approval: retain every listed alias for one compatibility
-release, emit warnings naming replacements, and remove no legacy fields until a
-subsequent release plan explicitly confirms downstream consumers have migrated.
+Rule: retain every listed alias for one compatibility release, emit warnings
+naming replacements, and remove no legacy fields until a subsequent release plan
+explicitly confirms downstream consumers have migrated.

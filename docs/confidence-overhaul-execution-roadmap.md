@@ -1,7 +1,7 @@
 # Confidence Overhaul Execution Roadmap After v0.1.0a1
 
-**Status:** W0-W12 merged; W13 compatibility releases and deprecation-clock
-start remain gated on explicit human approval
+**Status:** W0-W13 complete; compatibility releases tagged and deprecation
+clock started on 2026-07-26
 
 **Baseline date:** 2026-07-25
 
@@ -45,9 +45,9 @@ default branch without discarding user changes.
 ## Current Implementation State
 
 As of the W13 release-candidate review, the implementation heads are recorded in
-`docs/confidence-overhaul-implementation-status.md`. W13 must not tag releases,
-publish packages, merge release artifacts, or start the deprecation clock until
-release versions and timing are explicitly approved.
+`docs/confidence-overhaul-implementation-status.md`. W13 release actions were
+approved and completed on 2026-07-26; no package-index publication was
+performed.
 
 ## Non-Negotiable Invariants
 
@@ -657,10 +657,11 @@ probabilities.
 **Objective:** release the completed compatibility layer without removing
 legacy data.
 
-### Human approval required
+### Human approval
 
-The coding model prepares release pull requests and notes but must not tag,
-publish, or merge releases without explicit authorization.
+Release tagging, publishing, merging release artifacts, and starting the
+deprecation clock required explicit authorization. That authorization was
+provided before the 2026-07-26 W13 release sequence.
 
 ### Tasks
 
