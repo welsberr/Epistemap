@@ -1,0 +1,46 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "epistemap_legacy_explicit_zero",
+  "title": "",
+  "description": "",
+  "nodes": [
+    {
+      "id": "claim::zero",
+      "type": "claim",
+      "title": "Legacy explicit zero",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "confidence": 0.0,
+      "assessments": [],
+      "provenance": [],
+      "metadata": {}
+    }
+  ],
+  "edges": [
+    {
+      "source": "source::zero",
+      "target": "claim::zero",
+      "type": "supports_claim",
+      "id": "edge::zero",
+      "title": "",
+      "justification": "",
+      "confidence": 0.0,
+      "assessments": [],
+      "status": "",
+      "evidence_ids": [],
+      "provenance": [],
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "fixture_id": "epistemap_legacy_explicit_zero",
+    "producer": "Epistemap",
+    "schema_version": "epistemap_graph_bundle.v1",
+    "fixture_kind": "legacy_explicit_zero"
+  },
+  "summary": {
+    "node_count": 1,
+    "edge_count": 1
+  }
+}

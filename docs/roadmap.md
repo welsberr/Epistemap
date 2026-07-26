@@ -15,6 +15,11 @@ The portable assessment contract is available in alpha release
 [`v0.1.0a1`](releases/v0.1.0a1.md). This release preserves legacy readers and
 does not begin scalar-field removal.
 
+Coding models should execute the remaining work from
+[confidence-overhaul-execution-roadmap.md](confidence-overhaul-execution-roadmap.md).
+It converts the post-release gaps into dependency-ordered work packages with
+explicit tests, migration rules, authority limits, and handoff requirements.
+
 This roadmap organizes Epistemap work around the current shared use case:
 GroundRecall supplies provenance-rich graph memory, CiteGeist supplies
 provenance-rich bibliography and citation assertions, Didactopus consumes graph

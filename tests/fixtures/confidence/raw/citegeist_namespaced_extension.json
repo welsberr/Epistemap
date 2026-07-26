@@ -1,0 +1,37 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "citegeist_namespaced_extension",
+  "metadata": {
+    "fixture_id": "citegeist_namespaced_extension",
+    "producer": "CiteGeist",
+    "schema_version": "citegeist.confidence_assessments.v1",
+    "fixture_kind": "namespaced_extension_dimension"
+  },
+  "nodes": [
+    {
+      "id": "work::topic",
+      "type": "work",
+      "title": "Topic relevance fixture",
+      "assessments": [
+        {
+          "schema_version": "1.0",
+          "assessment_id": "citegeist::topic::example",
+          "subject_id": "work::topic",
+          "dimension": "citegeist:topic_relevance",
+          "value": 0.7,
+          "band": "high",
+          "method": {
+            "name": "citegeist_topic_membership_migration",
+            "version": "1.0",
+            "policy_id": "citegeist_confidence_migration_v1"
+          },
+          "basis_record_ids": [
+            "topic::example"
+          ],
+          "recorded_at": "2026-07-25T12:00:00+00:00"
+        }
+      ]
+    }
+  ],
+  "edges": []
+}

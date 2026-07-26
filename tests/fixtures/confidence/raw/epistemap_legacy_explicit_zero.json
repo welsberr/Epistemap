@@ -1,0 +1,27 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "epistemap_legacy_explicit_zero",
+  "metadata": {
+    "fixture_id": "epistemap_legacy_explicit_zero",
+    "producer": "Epistemap",
+    "schema_version": "epistemap_graph_bundle.v1",
+    "fixture_kind": "legacy_explicit_zero"
+  },
+  "nodes": [
+    {
+      "id": "claim::zero",
+      "type": "claim",
+      "title": "Legacy explicit zero",
+      "confidence": 0.0
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge::zero",
+      "source": "source::zero",
+      "target": "claim::zero",
+      "type": "supports_claim",
+      "confidence": 0.0
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "epistemap_legacy_missing",
+  "metadata": {
+    "fixture_id": "epistemap_legacy_missing",
+    "producer": "Epistemap",
+    "schema_version": "epistemap_graph_bundle.v1",
+    "fixture_kind": "legacy_missing_confidence"
+  },
+  "nodes": [
+    {
+      "id": "claim::missing",
+      "type": "claim",
+      "title": "Legacy missing confidence"
+    }
+  ],
+  "edges": []
+}

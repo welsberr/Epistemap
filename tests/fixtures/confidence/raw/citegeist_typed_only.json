@@ -1,0 +1,38 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "citegeist_typed_only",
+  "metadata": {
+    "fixture_id": "citegeist_typed_only",
+    "producer": "CiteGeist",
+    "schema_version": "citegeist.confidence_assessments.v1",
+    "fixture_kind": "typed_assessments_only"
+  },
+  "nodes": [
+    {
+      "id": "work::example",
+      "type": "work",
+      "title": "Typed identity fixture",
+      "assessments": [
+        {
+          "schema_version": "1.0",
+          "assessment_id": "citegeist::identity::example",
+          "subject_id": "work::example",
+          "dimension": "identity_resolution",
+          "value": 0.82,
+          "band": "high",
+          "method": {
+            "name": "citegeist_bibliography_verifier",
+            "version": "1.0",
+            "policy_id": "citegeist_identity_resolution_v1"
+          },
+          "basis_record_ids": [
+            "verification::example"
+          ],
+          "recorded_at": "2026-07-25T12:00:00+00:00",
+          "rationale": "Bibliographic match score; not source reliability."
+        }
+      ]
+    }
+  ],
+  "edges": []
+}

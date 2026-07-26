@@ -1,0 +1,38 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "didactopus_ambiguous_legacy_mapping",
+  "metadata": {
+    "fixture_id": "didactopus_ambiguous_legacy_mapping",
+    "producer": "Didactopus",
+    "schema_version": "didactopus.course_graph.v1",
+    "fixture_kind": "ambiguous_legacy_mapping"
+  },
+  "nodes": [
+    {
+      "id": "concept::ambiguous",
+      "type": "concept",
+      "title": "Ambiguous concept confidence",
+      "confidence": 0.6,
+      "assessments": [
+        {
+          "schema_version": "1.0",
+          "assessment_id": "didactopus::extraction::ambiguous",
+          "subject_id": "concept::ambiguous",
+          "dimension": "extraction_fidelity",
+          "value": 0.6,
+          "band": "moderate",
+          "method": {
+            "name": "didactopus_graph_extraction",
+            "version": "1.0",
+            "policy_id": "didactopus_graph_extraction_v1"
+          },
+          "basis_record_ids": [
+            "course::unit::1"
+          ],
+          "recorded_at": "2026-07-25T12:00:00+00:00"
+        }
+      ]
+    }
+  ],
+  "edges": []
+}

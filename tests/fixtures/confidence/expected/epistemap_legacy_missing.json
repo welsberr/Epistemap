@@ -1,0 +1,30 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "epistemap_legacy_missing",
+  "title": "",
+  "description": "",
+  "nodes": [
+    {
+      "id": "claim::missing",
+      "type": "claim",
+      "title": "Legacy missing confidence",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "assessments": [],
+      "provenance": [],
+      "metadata": {}
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "fixture_id": "epistemap_legacy_missing",
+    "producer": "Epistemap",
+    "schema_version": "epistemap_graph_bundle.v1",
+    "fixture_kind": "legacy_missing_confidence"
+  },
+  "summary": {
+    "node_count": 1,
+    "edge_count": 0
+  }
+}

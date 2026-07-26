@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -13,6 +14,7 @@ from epistemap import (
     GraphBundle,
     Node,
     active_assessments,
+    assessments_for,
     latest_assessment,
     load_graph_bundle,
     to_cytoscape_json,
@@ -20,6 +22,12 @@ from epistemap import (
     validate_assessment_readiness,
     write_graph_bundle,
 )
+
+FIXTURE_ROOT = Path(__file__).parent / "fixtures" / "confidence"
+RAW_FIXTURE_ROOT = FIXTURE_ROOT / "raw"
+EXPECTED_FIXTURE_ROOT = FIXTURE_ROOT / "expected"
+MATRIX_PATH = Path(__file__).parents[1] / "docs" / "confidence-compatibility-matrix.md"
+FIELD_INVENTORY_PATH = Path(__file__).parents[1] / "docs" / "confidence-field-inventory.json"
 
 
 def _method() -> AssessmentMethodRef:
@@ -40,6 +48,90 @@ def _assessment(assessment_id: str, subject_id: str, value: float | None = 0.8) 
         basis_record_ids=["basis::1"],
         recorded_at="2026-07-25T12:00:00+00:00",
     )
+
+
+def _raw_fixture_paths() -> list[Path]:
+    return sorted(RAW_FIXTURE_ROOT.glob("*.json"))
+
+
+def _fixture_id(path: Path) -> str:
+    return json.loads(path.read_text(encoding="utf-8"))["metadata"]["fixture_id"]
+
+
+@pytest.mark.parametrize("fixture_path", _raw_fixture_paths(), ids=_fixture_id)
+def test_confidence_contract_fixtures_round_trip_to_expected_payloads(fixture_path):
+    fixture_id = _fixture_id(fixture_path)
+    expected_path = EXPECTED_FIXTURE_ROOT / fixture_path.name
+
+    assert expected_path.exists(), f"{fixture_id} lacks expected normalized fixture"
+
+    bundle = GraphBundle.model_validate_json(fixture_path.read_text(encoding="utf-8"))
+    assert bundle.metadata["fixture_id"] == fixture_id
+    assert bundle.model_dump_legacy() == json.loads(expected_path.read_text(encoding="utf-8"))
+
+
+def test_confidence_contract_fixture_matrix_is_complete():
+    matrix = MATRIX_PATH.read_text(encoding="utf-8")
+    raw_ids = {_fixture_id(path) for path in _raw_fixture_paths()}
+    expected_ids = {_fixture_id(path) for path in sorted(EXPECTED_FIXTURE_ROOT.glob("*.json"))}
+
+    assert raw_ids
+    assert raw_ids == expected_ids
+    for fixture_id in raw_ids:
+        assert f"`{fixture_id}`" in matrix
+
+
+def test_confidence_field_inventory_declares_owner_and_disposition():
+    inventory = json.loads(FIELD_INVENTORY_PATH.read_text(encoding="utf-8"))
+    field_ids = {item["id"] for item in inventory["fields"]}
+
+    assert {"Epistemap", "CiteGeist", "GroundRecall", "Didactopus"} <= set(inventory["scope"])
+    assert len(field_ids) == len(inventory["fields"])
+    for item in inventory["fields"]:
+        assert item["repository"] in inventory["scope"]
+        assert item["owner"]
+        assert item["meaning"]
+        assert item["missing_behavior"]
+        assert item["disposition"]
+
+
+def test_fixture_missing_and_explicit_zero_remain_distinct():
+    missing = GraphBundle.model_validate_json(
+        (RAW_FIXTURE_ROOT / "epistemap_legacy_missing.json").read_text(encoding="utf-8")
+    )
+    zero = GraphBundle.model_validate_json(
+        (RAW_FIXTURE_ROOT / "epistemap_legacy_explicit_zero.json").read_text(encoding="utf-8")
+    )
+
+    assert missing.nodes[0].confidence is None
+    assert "confidence" not in missing.model_dump_legacy()["nodes"][0]
+    assert zero.nodes[0].confidence == 0.0
+    assert zero.edges[0].confidence == 0.0
+    assert zero.model_dump_legacy()["nodes"][0]["confidence"] == 0.0
+    assert zero.model_dump_legacy()["edges"][0]["confidence"] == 0.0
+
+
+def test_fixture_ambiguous_legacy_mapping_reports_warning():
+    bundle = GraphBundle.model_validate_json(
+        (RAW_FIXTURE_ROOT / "didactopus_ambiguous_legacy_mapping.json").read_text(encoding="utf-8")
+    )
+    report = validate_assessment_readiness(bundle)
+
+    assert "legacy_confidence_without_mapping_policy" in {item["code"] for item in report["findings"]}
+
+
+def test_fixture_superseded_lineage_preserves_history_and_active_value():
+    bundle = GraphBundle.model_validate_json(
+        (RAW_FIXTURE_ROOT / "groundrecall_superseded_lineage.json").read_text(encoding="utf-8")
+    )
+    node = bundle.nodes[0]
+
+    assert [item.assessment_id for item in assessments_for(node)] == [
+        "groundrecall::assessment::old",
+        "groundrecall::assessment::new",
+    ]
+    assert [item.assessment_id for item in active_assessments(node)] == ["groundrecall::assessment::new"]
+    assert latest_assessment(node).value == 0.75
 
 
 def test_legacy_missing_and_explicit_zero_survive_round_trip(tmp_path):

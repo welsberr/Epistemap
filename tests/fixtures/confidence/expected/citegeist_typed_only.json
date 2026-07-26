@@ -1,0 +1,55 @@
+{
+  "bundle_kind": "epistemap_graph_bundle",
+  "graph_id": "citegeist_typed_only",
+  "title": "",
+  "description": "",
+  "nodes": [
+    {
+      "id": "work::example",
+      "type": "work",
+      "title": "Typed identity fixture",
+      "description": "",
+      "aliases": [],
+      "status": "",
+      "assessments": [
+        {
+          "schema_version": "1.0",
+          "assessment_id": "citegeist::identity::example",
+          "subject_id": "work::example",
+          "dimension": "identity_resolution",
+          "value": 0.82,
+          "band": "high",
+          "assessor_id": "",
+          "method": {
+            "name": "citegeist_bibliography_verifier",
+            "version": "1.0",
+            "policy_id": "citegeist_identity_resolution_v1"
+          },
+          "basis_record_ids": [
+            "verification::example"
+          ],
+          "source_family_ids": [],
+          "basis_hash": "",
+          "rationale": "Bibliographic match score; not source reliability.",
+          "valid_at": "",
+          "recorded_at": "2026-07-25T12:00:00+00:00",
+          "supersedes_assessment_id": "",
+          "metadata": {}
+        }
+      ],
+      "provenance": [],
+      "metadata": {}
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "fixture_id": "citegeist_typed_only",
+    "producer": "CiteGeist",
+    "schema_version": "citegeist.confidence_assessments.v1",
+    "fixture_kind": "typed_assessments_only"
+  },
+  "summary": {
+    "node_count": 1,
+    "edge_count": 0
+  }
+}
