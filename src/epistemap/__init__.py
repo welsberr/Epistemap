@@ -32,6 +32,7 @@ from .bayesian import (
     write_bayesian_reliability_markdown,
 )
 from .calibration import (
+    CalibrationEligibilityError,
     CalibrationSample,
     brier_score,
     calibration_bins,
@@ -191,6 +192,7 @@ __all__ = [
     "BAYESIAN_PRIOR_PROFILES",
     "BAYESIAN_WEIGHTING_POLICY_ID",
     "CalibrationSample",
+    "CalibrationEligibilityError",
     "bayesian_evidence_update",
     "bayesian_assessment_markdown",
     "bayesian_assessment_report",

@@ -1,6 +1,6 @@
 # Confidence Overhaul Execution Roadmap After v0.1.0a1
 
-**Status:** W0-W2 merged; W3 implemented locally; remaining packages await dependency gates
+**Status:** W0-W3 merged; W4 implemented locally; remaining packages await dependency gates
 
 **Baseline date:** 2026-07-25
 
@@ -331,6 +331,11 @@ evidence keys, and an `evidential_support` assessment payload.
 **Repository:** Epistemap
 
 **Depends on:** W0
+
+**Local status:** implemented with declared prediction/outcome/sample-selection
+contract, identity-resolution eligibility rules, restricted-dimension guards,
+separated calibration/discrimination/abstention/evidence-coverage report blocks,
+and underpowered-bin metadata.
 
 **Objective:** prevent mathematically valid but semantically invalid
 calibration reports.
