@@ -17,6 +17,7 @@ contain private run data. Raw producer payloads live in
 | `citegeist_namespaced_extension` | CiteGeist | `citegeist.confidence_assessments.v1` | Namespaced extension dimension | Accept `citegeist:topic_relevance` without treating it as portable truth. |
 | `groundrecall_superseded_lineage` | GroundRecall | `groundrecall_query_epistemap.v1` | Superseded lineage | Preserve old and new assessments; active helper should select the new one. |
 | `didactopus_ambiguous_legacy_mapping` | Didactopus | `didactopus.course_graph.v1` | Ambiguous legacy mapping | Validate payload but emit readiness warning until a mapping policy is declared. |
+| `epistemap_deduplicated_graph_edges` | Epistemap | `epistemap_graph_bundle.v1` | Duplicate graph evidence | Preserve raw graph edges; W2 ledger conversion deduplicates repeated artifact fragments separately. |
 
 ## Coverage Rules
 

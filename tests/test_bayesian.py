@@ -81,6 +81,39 @@ def test_bayesian_evidence_update_prefers_typed_assessment_over_legacy_confidenc
     assert posterior["evidence"]["success_weight"] == 0.0
 
 
+def test_bayesian_evidence_update_reports_ledger_without_changing_legacy_weights() -> None:
+    posterior = bayesian_evidence_update(
+        support_edges=[
+            Edge(
+                id="edge::support-a",
+                source="obs::paper",
+                target="claim::main",
+                type="supports_claim",
+                confidence=0.8,
+                metadata={"artifact_id": "artifact::paper", "fragment_id": "fragment::same"},
+            ),
+            Edge(
+                id="edge::support-b",
+                source="obs::paper",
+                target="claim::main",
+                type="supports_claim",
+                confidence=0.7,
+                metadata={"artifact_id": "artifact::paper", "fragment_id": "fragment::same"},
+            ),
+        ],
+        challenge_edges=[],
+    )
+
+    ledger = posterior["evidence"]["ledger"]
+    assert posterior["evidence"]["support_edge_count"] == 2
+    assert posterior["evidence"]["success_weight"] == sum(posterior["evidence"]["support_weights"])
+    assert posterior["evidence"]["support_weights"] == [0.442, 0.38675]
+    assert ledger["raw_counts"]["support"] == 2
+    assert ledger["deduplicated_counts"]["support"] == 1
+    assert ledger["raw_weights"]["support"] == 1.5
+    assert ledger["deduplicated_weights"]["support"] == 0.8
+
+
 def test_bayesian_prior_sensitivity_reports_fragility_range() -> None:
     sensitivity = bayesian_prior_sensitivity(
         support_edges=[Edge(source="obs::paper", target="claim::main", type="supports_claim", confidence=0.8)],

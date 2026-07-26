@@ -32,11 +32,18 @@ for future Bayesian aggregation:
 - `EvidenceLedger` validates duplicate unit IDs, undeclared subjects, dangling
   revision links, and unversioned methods.
 
-The ledger layer does not yet aggregate evidence. Missing raw or effective
-weights remain missing until a declared weighting policy applies them. Explicit
-zero-valued typed assessments remain valid evidence inputs and do not trigger
-fallback behavior. Revision evidence is represented with stance `revision` and
-links to the revised unit IDs; it is not ordinary challenge evidence.
+Graph evidence can now be converted into visible ledgers with
+`graph_to_evidence_ledger()` or `evidence_ledger_from_edges()`. Conversion
+deduplicates repeated artifact-fragment evidence, preserves all referring edge
+IDs, records source-family IDs, reports raw and deduplicated counts/weights,
+and emits diagnostics when a versioned missing-weight default is applied.
+
+The ledger layer is visible in Bayesian reports, but W2 deliberately preserves
+legacy Bayesian aggregation behavior. W3 will make aggregation reconstruct from
+the exported ledger. Explicit zero-valued typed assessments remain valid
+evidence inputs and do not trigger fallback behavior. Revision evidence is
+represented with stance `revision` and links to the revised unit IDs; it is not
+ordinary challenge evidence.
 
 ## Epistemic Summaries
 
@@ -98,11 +105,14 @@ Implemented:
   `EvidenceWeightingPolicy`, `EvidenceLedger`, and
   `EvidenceLedgerDiagnostic`. These are a reconstructable input contract for
   later aggregation, not a replacement aggregation path yet.
+- graph-to-ledger conversion via `graph_to_evidence_ledger()` and
+  `evidence_ledger_from_edges()`, including deduplication, source-family
+  recording, missing-weight diagnostics, and revision evidence separation.
 
 Near-term:
 
-- convert graph evidence into visible ledgers with deterministic deduplication
-  and revision separation before Bayesian aggregation;
+- make Bayesian aggregation reconstruct from exported ledgers while preserving
+  documented compatibility aliases;
 - add CLI support for graph-level epistemic reports once graph bundle loading
   is standardized for downstream repos.
 
