@@ -111,6 +111,32 @@ assessment artifacts, not decide claim truth or promotion status.
    - pgmpy/PyMC/ArviZ: optional probabilistic dependency models and richer
      Bayesian diagnostics.
 
+8. **Model Context Protocol adapter**
+   - Status: planned.
+   - Add an optional MCP server that exposes Epistemap graph and assessment
+     operations to assistants without making Epistemap a policy or promotion
+     authority.
+   - Initial read-only tools should load or validate `GraphBundle` artifacts,
+     run traversals and diagnostics, produce Bayesian/reliability reports,
+     emit `G` summaries, and return machine-readable assessment manifests.
+   - Mutation-capable MCP tools, if added later, should be limited to derived
+     artifact generation; they must not decide GroundRecall promotion,
+     CiteGeist bibliographic identity, or Didactopus learner mastery.
+   - Every MCP response should preserve provenance references, assessment
+     dimension, method, prior profile, effective sample size, warnings, and
+     temporal scope rather than flattening results into a single confidence
+     score.
+
+   Acceptance criteria:
+
+   - MCP schemas are versioned and covered by fixture tests;
+   - read-only tools produce the same deterministic outputs as the CLI/library
+     paths for representative graph bundles;
+   - unknown producer-specific confidence dimensions are preserved or ignored
+     according to the compatibility contract, not reinterpreted;
+   - documentation states that MCP outputs are review affordances, not truth or
+     promotion decisions.
+
 ## Medium-Term Experiments
 
 1. **Source-quality ablation**
@@ -166,3 +192,9 @@ the bibliography authority. Ordinary citation edges must not be interpreted as
 claim support, and citation topology must not be treated as truth or source
 quality. The implementation sequence is defined in CiteGeist's
 `docs/epistemap-knowledge-graph-roadmap.md`.
+
+MCP integrations should follow the same boundary. Epistemap may provide
+assistant-callable graph diagnostics and assessment reports, but repository
+owners decide how those reports affect review state. GroundRecall, CiteGeist,
+and Didactopus MCP adapters should call Epistemap operations as derived,
+auditable analyses rather than delegating authority to Epistemap.
