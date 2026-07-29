@@ -1,0 +1,73 @@
+{
+  "environment": {
+    "pid": 5,
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+    "processor": "x86_64",
+    "python_version": "3.10.10"
+  },
+  "parameters": {
+    "paths": [
+      "benchmarks/fixtures/groundrecall-sanitized-10x.json"
+    ],
+    "repeats": 5
+  },
+  "results": [
+    {
+      "graph_id": "concept::fixture-0",
+      "path": "benchmarks/fixtures/groundrecall-sanitized-10x.json",
+      "shape": {
+        "assessed_node_count": 40,
+        "connected_component_count": 10,
+        "edge_count": 50,
+        "edge_type_counts": {
+          "related_to": 33,
+          "supports": 17
+        },
+        "largest_component_size": 51,
+        "max_in_degree": 1,
+        "max_out_degree": 1,
+        "node_count": 60,
+        "node_type_counts": {
+          "claim": 20,
+          "concept": 20,
+          "observation": 20
+        }
+      },
+      "timings": {
+        "assessment_readiness": {
+          "median_seconds": 0.00026896828785538673,
+          "minimum_seconds": 0.00026181526482105255
+        },
+        "bayesian_assessment_report": {
+          "median_seconds": 0.038339713122695684,
+          "minimum_seconds": 0.037939251866191626
+        },
+        "bridge_nodes": {
+          "median_seconds": 0.0003723190166056156,
+          "minimum_seconds": 0.0003639133647084236
+        },
+        "connected_components": {
+          "median_seconds": 0.00013485876843333244,
+          "minimum_seconds": 0.00012783566489815712
+        },
+        "diagnostics": {
+          "median_seconds": 0.00045980140566825867,
+          "minimum_seconds": 0.0004217098467051983
+        },
+        "epistemic_report": {
+          "median_seconds": 0.04215131886303425,
+          "minimum_seconds": 0.040163829922676086
+        },
+        "json_load": {
+          "median_seconds": 0.00040147313848137856,
+          "minimum_seconds": 0.0003824979066848755
+        },
+        "shortest_path": {
+          "median_seconds": 0.0001217457465827465,
+          "minimum_seconds": 0.00011778809130191803
+        }
+      },
+      "title": "GroundRecall graph export"
+    }
+  ]
+}

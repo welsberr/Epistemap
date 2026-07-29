@@ -81,6 +81,11 @@ batch epistemic reporting:
 - The GroundRecall-shaped fixture is intentionally small and contains no source
   text. It validates the projection path and establishes a reproducible shape
   baseline; it is not evidence about full-store performance.
+- The deterministic 10x projected fixture contains 60 nodes and 50 edges. Its
+  median diagnostics time was `0.000460 s`, epistemic reporting `0.042151 s`,
+  and Bayesian assessment `0.038340 s` on the recorded local environment.
+  This is a scaling probe for graph operations only; it does not model store
+  I/O, search ranking, authorization, or network transport.
 
 ## Reproduction
 

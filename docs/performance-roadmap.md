@@ -14,8 +14,9 @@ compatibility release/tag remains a separate release-management step;
 performance results must not be presented as part of `v0.1.0a2`.
 
 Phase 6 is now partially implemented: the profiler can normalize sanitized
-GroundRecall graph exports, while a representative full-store GroundRecall
-artifact and end-to-end retrieval measurement remain future work.
+GroundRecall graph exports and a deterministic 10x projected fixture is
+checked in. A representative full-store GroundRecall artifact and end-to-end
+retrieval measurement remain future work.
 
 This roadmap is written for a coding model. Implement it as a sequence of small,
 reviewable changes. Do not introduce Rust during these phases. The decision
