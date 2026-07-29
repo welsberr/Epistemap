@@ -1,0 +1,74 @@
+{
+  "environment": {
+    "pid": 4,
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+    "processor": "x86_64",
+    "python_version": "3.10.10"
+  },
+  "parameters": {
+    "paths": [
+      "benchmarks/fixtures/groundrecall-sanitized.json"
+    ],
+    "repeats": 5
+  },
+  "results": [
+    {
+      "graph_id": "concept::governed-memory",
+      "path": "benchmarks/fixtures/groundrecall-sanitized.json",
+      "shape": {
+        "assessed_node_count": 5,
+        "connected_component_count": 1,
+        "edge_count": 5,
+        "edge_type_counts": {
+          "about": 2,
+          "related_to": 2,
+          "supports": 1
+        },
+        "largest_component_size": 6,
+        "max_in_degree": 2,
+        "max_out_degree": 2,
+        "node_count": 6,
+        "node_type_counts": {
+          "claim": 2,
+          "concept": 3,
+          "observation": 1
+        }
+      },
+      "timings": {
+        "assessment_readiness": {
+          "median_seconds": 4.9052294343709946e-05,
+          "minimum_seconds": 4.14983369410038e-05
+        },
+        "bayesian_assessment_report": {
+          "median_seconds": 0.004142820835113525,
+          "minimum_seconds": 0.0040226648561656475
+        },
+        "bridge_nodes": {
+          "median_seconds": 3.7771183997392654e-05,
+          "minimum_seconds": 3.6187004297971725e-05
+        },
+        "connected_components": {
+          "median_seconds": 2.433639019727707e-05,
+          "minimum_seconds": 2.246210351586342e-05
+        },
+        "diagnostics": {
+          "median_seconds": 4.636682569980621e-05,
+          "minimum_seconds": 4.515424370765686e-05
+        },
+        "epistemic_report": {
+          "median_seconds": 0.004334569908678532,
+          "minimum_seconds": 0.004132380709052086
+        },
+        "json_load": {
+          "median_seconds": 5.268910899758339e-05,
+          "minimum_seconds": 5.019502714276314e-05
+        },
+        "shortest_path": {
+          "median_seconds": 1.5429221093654633e-05,
+          "minimum_seconds": 1.4788005501031876e-05
+        }
+      },
+      "title": "GroundRecall graph export"
+    }
+  ]
+}

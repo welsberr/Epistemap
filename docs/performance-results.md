@@ -25,6 +25,8 @@ These measurements use graph artifacts already present in nearby projects:
   `examples/detective_corpus/sidecars/*/epistemap_graph.json`
 - Didactopus MIT OCW knowledge graph:
   `<DIDACTOPUS_ROOT>/domain-packs/mit-ocw-information-entropy/knowledge_graph.json`
+- Sanitized GroundRecall-shaped export:
+  `benchmarks/fixtures/groundrecall-sanitized.json`
 
 The profiling artifact is saved at
 `benchmarks/representative-local.json`.
@@ -43,6 +45,7 @@ retrieval-quality or end-to-end latency benchmark.
 | red-headed-league | 4 | 4 | 2 | 1 | 4 |
 | speckled-band | 4 | 4 | 2 | 1 | 4 |
 | didactopus-mit-ocw-information-entropy | 98 | 178 | 34 | 1 | 98 |
+| groundrecall-sanitized | 6 | 5 | 5 | 1 | 6 |
 
 ## Measured Timings
 
@@ -55,6 +58,7 @@ Representative medians from the optimized working tree:
 | red-headed-league | 0.000055 s | 0.000479 s | 0.000489 s |
 | speckled-band | 0.000057 s | 0.000484 s | 0.000461 s |
 | didactopus-mit-ocw-information-entropy | 0.001549 s | 0.011184 s | 0.011270 s |
+| groundrecall-sanitized | 0.000046 s | 0.004335 s | 0.004143 s |
 
 Synthetic independent source/claim pairs remain the clearest stress test for
 batch epistemic reporting:
@@ -74,8 +78,9 @@ batch epistemic reporting:
 - The Didactopus knowledge-graph profile required a light loader normalization
   step because its edge provenance is stored as path strings rather than full
   provenance objects.
-- The next useful baseline should come from larger GroundRecall or Didactopus
-  interchange bundles once they exist in checked-in, sanitizable form.
+- The GroundRecall-shaped fixture is intentionally small and contains no source
+  text. It validates the projection path and establishes a reproducible shape
+  baseline; it is not evidence about full-store performance.
 
 ## Reproduction
 

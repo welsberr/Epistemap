@@ -1,0 +1,21 @@
+{
+  "bundle_kind": "groundrecall_graph_bundle",
+  "query_type": "graph",
+  "root_concept": {"concept_id": "concept::governed-memory"},
+  "nodes": [
+    {"node_id": "concept::governed-memory", "node_kind": "concept", "status": "promoted", "record": {"title": "Governed memory"}},
+    {"node_id": "concept::provenance", "node_kind": "concept", "status": "promoted", "record": {"title": "Provenance"}},
+    {"node_id": "concept::review", "node_kind": "concept", "status": "reviewed", "record": {"title": "Review"}},
+    {"node_id": "claim::provenance", "node_kind": "claim", "status": "promoted", "record": {"title": "Memory preserves provenance"}},
+    {"node_id": "claim::review", "node_kind": "claim", "status": "reviewed", "record": {"title": "Memory supports review"}},
+    {"node_id": "observation::one", "node_kind": "observation", "status": "reviewed", "record": {"title": "Observed provenance link"}}
+  ],
+  "edges": [
+    {"edge_id": "relation::1", "source_id": "concept::governed-memory", "target_id": "concept::provenance", "relation_type": "related_to", "status": "reviewed", "provenance": {}},
+    {"edge_id": "relation::2", "source_id": "concept::governed-memory", "target_id": "concept::review", "relation_type": "related_to", "status": "reviewed", "provenance": {}},
+    {"edge_id": "relation::3", "source_id": "claim::provenance", "target_id": "concept::provenance", "relation_type": "about", "status": "promoted", "provenance": {}},
+    {"edge_id": "relation::4", "source_id": "claim::review", "target_id": "concept::review", "relation_type": "about", "status": "reviewed", "provenance": {}},
+    {"edge_id": "relation::5", "source_id": "observation::one", "target_id": "claim::provenance", "relation_type": "supports", "status": "reviewed", "provenance": {}}
+  ],
+  "projection_summary": {"fixture": "sanitized", "purpose": "Epistemap graph-operation profiling"}
+}
