@@ -44,6 +44,8 @@ pairs. Epistemap has 162 passing tests.
 
 Benchmark artifacts are sanitized and use portable path placeholders. GroundRecall
 and Didactopus can update their immutable pins to `v0.1.0a4`.
+The current Rust decision gate is explicitly deferred pending larger full-store
+and end-to-end evidence.
 
 ## Current Capability
 

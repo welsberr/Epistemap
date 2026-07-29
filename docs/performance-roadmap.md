@@ -458,6 +458,11 @@ Create `docs/performance-results.md` containing:
 
 ## Phase 7: Rust Decision Gate
 
+Current decision: **defer Rust**. See
+[`performance-decision.md`](performance-decision.md). The gate is not met by
+the current sanitized fixtures; larger full-store and end-to-end evidence is
+required before reconsideration.
+
 Do not begin Rust implementation merely because a kernel could be faster.
 Recommend a Rust prototype only if at least one of these is true after Phase 6:
 
