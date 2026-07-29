@@ -90,6 +90,7 @@ from .detective_corpus import (
 )
 from .ids import node_id, slugify, typed_id
 from .io import load_graph_bundle, write_graph_bundle
+from .mcp import SERVER_INFO as MCP_SERVER_INFO, call_tool as mcp_call_tool, list_tools as mcp_list_tools
 from .exporters import (
     to_cytoscape_json,
     to_graphviz_dot,
@@ -277,6 +278,9 @@ __all__ = [
     "incoming_edges",
     "k_hop_subgraph",
     "load_graph_bundle",
+    "MCP_SERVER_INFO",
+    "mcp_call_tool",
+    "mcp_list_tools",
     "log_loss",
     "latest_assessment",
     "neighborhood",

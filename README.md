@@ -91,3 +91,8 @@ Performance benchmarks can be run with:
 ```bash
 PYTHONPATH=src python3 benchmarks/benchmark_graph_operations.py --sizes 100 1000 3000 --repeats 5 > benchmarks/latest-local.json
 ```
+
+An optional, transport-neutral read-only MCP adapter is available through
+`epistemap.mcp`. Hosts can expose `list_tools()` and `call_tool()` over their
+preferred MCP transport; Epistemap returns derived graph/assessment artifacts
+and does not make policy, truth, or promotion decisions.

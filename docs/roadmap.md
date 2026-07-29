@@ -32,6 +32,19 @@ portable graph, temporal, Bayesian, and `G` assessment operations between them.
 Epistemap remains below domain policy. It should expose auditable operations and
 assessment artifacts, not decide claim truth or promotion status.
 
+## Current implementation state (2026-07-29)
+
+The first Python performance pass is implemented on `main` after `v0.1.0a2`.
+Epistemap now has indexed graph views, shared-index diagnostics, linear-time
+bridge analysis, and batch epistemic/Bayesian reporting that reuses indexes.
+Checked-in representative measurements show `epistemic_report()` improving from
+about 25.6 seconds to about 0.91 seconds for 3,000 independent source/claim
+pairs. Epistemap has 162 passing tests.
+
+These are main-branch results, not a new compatibility release. GroundRecall
+continues to pin the released `v0.1.0a2` contract until a later Epistemap tag is
+approved. Benchmark artifacts are sanitized and use portable path placeholders.
+
 ## Current Capability
 
 - Provenance-aware `GraphBundle`, `Node`, `Edge`, and `ProvenanceRef` models.
@@ -115,10 +128,11 @@ assessment artifacts, not decide claim truth or promotion status.
      Bayesian diagnostics.
 
 8. **Model Context Protocol adapter**
-   - Status: planned.
-   - Add an optional MCP server that exposes Epistemap graph and assessment
-     operations to assistants without making Epistemap a policy or promotion
-     authority.
+   - Status: initial read-only adapter implemented.
+   - `src/epistemap/mcp.py` exposes transport-neutral tool schemas and
+     deterministic calls for validation, diagnostics, neighborhoods, epistemic
+     reports, and Bayesian assessments without making Epistemap a policy or
+     promotion authority.
    - Initial read-only tools should load or validate `GraphBundle` artifacts,
      run traversals and diagnostics, produce Bayesian/reliability reports,
      emit `G` summaries, and return machine-readable assessment manifests.
@@ -139,6 +153,11 @@ assessment artifacts, not decide claim truth or promotion status.
      according to the compatibility contract, not reinterpreted;
    - documentation states that MCP outputs are review affordances, not truth or
      promotion decisions.
+
+   Remaining MCP work is transport integration, host authentication, and
+   optional policy-context plumbing by consuming repositories. The adapter
+   already calls the indexed library operations and returns deterministic,
+   benchmark-compatible outputs.
 
 ## Medium-Term Experiments
 
