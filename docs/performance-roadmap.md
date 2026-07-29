@@ -7,9 +7,11 @@ thousands of nodes while preserving its Python API, deterministic output, and
 domain-policy neutrality.
 
 The first optimization pass is implemented on `main` after `v0.1.0a2` and is
-covered by the checked-in benchmarks. A compatibility release/tag remains a
-separate release-management step; performance results must not be presented as
-part of `v0.1.0a2`.
+covered by the checked-in benchmarks. Phases 0-4 and the shared-index portion
+of Phase 5 are complete in the current tree. Remaining work is representative
+integration profiling, regression monitoring, and the Rust decision gate. A
+compatibility release/tag remains a separate release-management step;
+performance results must not be presented as part of `v0.1.0a2`.
 
 This roadmap is written for a coding model. Implement it as a sequence of small,
 reviewable changes. Do not introduce Rust during these phases. The decision

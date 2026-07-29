@@ -104,7 +104,8 @@ response-calibration reports.
 
 ## Corrections Made During This Audit
 
-- Changed the roadmap status from `proposed` to `in progress`.
+- Reconciled the repository roadmap with the completed W0-W13 status and the
+  separately tracked post-release performance work.
 - Removed a duplicate `confidence_band()` definition.
 - Made calibration JSON output deterministic by sorting keys and ending with a
   newline.
