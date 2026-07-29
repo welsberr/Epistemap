@@ -1,0 +1,255 @@
+{
+  "environment": {
+    "pid": 4,
+    "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.43",
+    "processor": "",
+    "python_version": "3.14.4"
+  },
+  "parameters": {
+    "random_seed": 17,
+    "repeats": 3,
+    "sizes": [
+      100,
+      1000,
+      3000
+    ],
+    "workloads": [
+      "path",
+      "pairs"
+    ]
+  },
+  "results": {
+    "pairs": {
+      "100": {
+        "edge_count": 100,
+        "node_count": 200,
+        "timings": {
+          "assessment_readiness": {
+            "median_seconds": 0.0011617609998211265,
+            "minimum_seconds": 0.0011465560000942787
+          },
+          "bayesian_assessment_report": {
+            "median_seconds": 0.024324494999746094,
+            "minimum_seconds": 0.0219693199996982
+          },
+          "bridge_nodes": {
+            "median_seconds": 0.0008250639994002995,
+            "minimum_seconds": 0.0007011890002104337
+          },
+          "connected_components": {
+            "median_seconds": 0.0007468180001524161,
+            "minimum_seconds": 0.0007244799999170937
+          },
+          "diagnostics": {
+            "median_seconds": 0.0010740560001067934,
+            "minimum_seconds": 0.0010596450001685298
+          },
+          "epistemic_report": {
+            "median_seconds": 0.03069804499955353,
+            "minimum_seconds": 0.02821521199985
+          },
+          "model_construction": {
+            "median_seconds": 0.0006483919996753684,
+            "minimum_seconds": 0.000626379000095767
+          },
+          "shortest_path": {
+            "median_seconds": 0.0005417049997049617,
+            "minimum_seconds": 0.0004983419994459837
+          }
+        }
+      },
+      "1000": {
+        "edge_count": 1000,
+        "node_count": 2000,
+        "timings": {
+          "assessment_readiness": {
+            "median_seconds": 0.021814136000102735,
+            "minimum_seconds": 0.020487149000473437
+          },
+          "bayesian_assessment_report": {
+            "median_seconds": 0.24583466400054022,
+            "minimum_seconds": 0.2451884969996172
+          },
+          "bridge_nodes": {
+            "median_seconds": 0.010833418999936839,
+            "minimum_seconds": 0.00961828300023626
+          },
+          "connected_components": {
+            "median_seconds": 0.011364412999682827,
+            "minimum_seconds": 0.00966833099937503
+          },
+          "diagnostics": {
+            "median_seconds": 0.018209341999863682,
+            "minimum_seconds": 0.01768744999935734
+          },
+          "epistemic_report": {
+            "median_seconds": 0.2778997800005527,
+            "minimum_seconds": 0.2755050800005847
+          },
+          "model_construction": {
+            "median_seconds": 0.011402485999497003,
+            "minimum_seconds": 0.009743387000526127
+          },
+          "shortest_path": {
+            "median_seconds": 0.007177978000072471,
+            "minimum_seconds": 0.006904095999743731
+          }
+        }
+      },
+      "3000": {
+        "edge_count": 3000,
+        "node_count": 6000,
+        "timings": {
+          "assessment_readiness": {
+            "median_seconds": 0.0714451129997542,
+            "minimum_seconds": 0.06542166800045379
+          },
+          "bayesian_assessment_report": {
+            "median_seconds": 0.8210342530001071,
+            "minimum_seconds": 0.7766426279995358
+          },
+          "bridge_nodes": {
+            "median_seconds": 0.05160479099959048,
+            "minimum_seconds": 0.05062560599981225
+          },
+          "connected_components": {
+            "median_seconds": 0.04654150400074286,
+            "minimum_seconds": 0.04629724900041765
+          },
+          "diagnostics": {
+            "median_seconds": 0.09179545900042285,
+            "minimum_seconds": 0.08371238299969264
+          },
+          "epistemic_report": {
+            "median_seconds": 0.9127290090000315,
+            "minimum_seconds": 0.8587034379997931
+          },
+          "model_construction": {
+            "median_seconds": 0.03816321900012554,
+            "minimum_seconds": 0.03572032099964417
+          },
+          "shortest_path": {
+            "median_seconds": 0.036668972999905236,
+            "minimum_seconds": 0.03493422900010046
+          }
+        }
+      }
+    },
+    "path": {
+      "100": {
+        "edge_count": 99,
+        "node_count": 100,
+        "timings": {
+          "assessment_readiness": {
+            "median_seconds": 0.002567925000221294,
+            "minimum_seconds": 0.0015758240006107371
+          },
+          "bayesian_assessment_report": {
+            "median_seconds": 0.031739136000396684,
+            "minimum_seconds": 0.030836929000543023
+          },
+          "bridge_nodes": {
+            "median_seconds": 0.0017936029998963932,
+            "minimum_seconds": 0.0016382730000259471
+          },
+          "connected_components": {
+            "median_seconds": 0.0005078209997009253,
+            "minimum_seconds": 0.0004825730002266937
+          },
+          "diagnostics": {
+            "median_seconds": 0.0018363650005994714,
+            "minimum_seconds": 0.001825415999519464
+          },
+          "epistemic_report": {
+            "median_seconds": 0.037078313999700185,
+            "minimum_seconds": 0.03357735999998113
+          },
+          "model_construction": {
+            "median_seconds": 0.0004916880006931024,
+            "minimum_seconds": 0.00043725599971367046
+          },
+          "shortest_path": {
+            "median_seconds": 0.0005358810003599501,
+            "minimum_seconds": 0.000487594000333047
+          }
+        }
+      },
+      "1000": {
+        "edge_count": 999,
+        "node_count": 1000,
+        "timings": {
+          "assessment_readiness": {
+            "median_seconds": 0.017302203999861376,
+            "minimum_seconds": 0.017149496000456566
+          },
+          "bayesian_assessment_report": {
+            "median_seconds": 0.30470082800002274,
+            "minimum_seconds": 0.29841491499973927
+          },
+          "bridge_nodes": {
+            "median_seconds": 0.24895466399993893,
+            "minimum_seconds": 0.2283378049996827
+          },
+          "connected_components": {
+            "median_seconds": 0.007341272999838111,
+            "minimum_seconds": 0.007029147999674024
+          },
+          "diagnostics": {
+            "median_seconds": 0.23212765800053603,
+            "minimum_seconds": 0.22795138499986933
+          },
+          "epistemic_report": {
+            "median_seconds": 0.33761886399952346,
+            "minimum_seconds": 0.32881122599974333
+          },
+          "model_construction": {
+            "median_seconds": 0.005600687999503862,
+            "minimum_seconds": 0.005529013000341365
+          },
+          "shortest_path": {
+            "median_seconds": 0.0090480339995338,
+            "minimum_seconds": 0.008945018999838794
+          }
+        }
+      },
+      "3000": {
+        "edge_count": 2999,
+        "node_count": 3000,
+        "timings": {
+          "assessment_readiness": {
+            "median_seconds": 0.0557451550002952,
+            "minimum_seconds": 0.0504381620003187
+          },
+          "bayesian_assessment_report": {
+            "median_seconds": 0.8994425300006696,
+            "minimum_seconds": 0.8888191959995311
+          },
+          "bridge_nodes": {
+            "median_seconds": 2.482594557000084,
+            "minimum_seconds": 2.4428670110000894
+          },
+          "connected_components": {
+            "median_seconds": 0.029367240999818023,
+            "minimum_seconds": 0.02091456699963601
+          },
+          "diagnostics": {
+            "median_seconds": 2.494935660999545,
+            "minimum_seconds": 2.4296559029999116
+          },
+          "epistemic_report": {
+            "median_seconds": 1.1108659209994585,
+            "minimum_seconds": 0.9433671650003816
+          },
+          "model_construction": {
+            "median_seconds": 0.02662001299995609,
+            "minimum_seconds": 0.020434230999853753
+          },
+          "shortest_path": {
+            "median_seconds": 0.05920025000068563,
+            "minimum_seconds": 0.05650032599987753
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,317 @@
+{
+  "environment": {
+    "pid": 3,
+    "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.43",
+    "processor": "",
+    "python_version": "3.14.4"
+  },
+  "parameters": {
+    "paths": [
+      "examples/detective_corpus/sidecars/blue-carbuncle/epistemap_graph.json",
+      "examples/detective_corpus/sidecars/purloined-letter-control/epistemap_graph.json",
+      "examples/detective_corpus/sidecars/red-headed-league/epistemap_graph.json",
+      "examples/detective_corpus/sidecars/speckled-band/epistemap_graph.json",
+      "/home/netuser/bin/Didactopus/domain-packs/mit-ocw-information-entropy/knowledge_graph.json"
+    ],
+    "repeats": 5
+  },
+  "results": [
+    {
+      "graph_id": "story::blue-carbuncle::detective-annotation-graph",
+      "path": "examples/detective_corpus/sidecars/blue-carbuncle/epistemap_graph.json",
+      "shape": {
+        "assessed_node_count": 2,
+        "connected_component_count": 1,
+        "edge_count": 4,
+        "edge_type_counts": {
+          "contains_claim": 2,
+          "contains_evidence": 1,
+          "contradicts": 1
+        },
+        "largest_component_size": 4,
+        "max_in_degree": 2,
+        "max_out_degree": 3,
+        "node_count": 4,
+        "node_type_counts": {
+          "claim": 2,
+          "evidence": 1,
+          "story": 1
+        }
+      },
+      "timings": {
+        "assessment_readiness": {
+          "median_seconds": 5.7160000324074645e-05,
+          "minimum_seconds": 5.4957000429567415e-05
+        },
+        "bayesian_assessment_report": {
+          "median_seconds": 0.000500358999488526,
+          "minimum_seconds": 0.00046015499992790865
+        },
+        "bridge_nodes": {
+          "median_seconds": 4.589499985740986e-05,
+          "minimum_seconds": 4.3746000301325694e-05
+        },
+        "connected_components": {
+          "median_seconds": 2.8421000024536625e-05,
+          "minimum_seconds": 2.6949000130116474e-05
+        },
+        "diagnostics": {
+          "median_seconds": 6.0538000070664566e-05,
+          "minimum_seconds": 5.8802000239666086e-05
+        },
+        "epistemic_report": {
+          "median_seconds": 0.0004809740003111074,
+          "minimum_seconds": 0.00046998800007713726
+        },
+        "json_load": {
+          "median_seconds": 0.000116715000331169,
+          "minimum_seconds": 0.00011302600069029722
+        },
+        "shortest_path": {
+          "median_seconds": 2.6478999643586576e-05,
+          "minimum_seconds": 2.4852999558788724e-05
+        }
+      },
+      "title": "The Adventure of the Blue Carbuncle"
+    },
+    {
+      "graph_id": "story::purloined-letter-control::detective-annotation-graph",
+      "path": "examples/detective_corpus/sidecars/purloined-letter-control/epistemap_graph.json",
+      "shape": {
+        "assessed_node_count": 2,
+        "connected_component_count": 1,
+        "edge_count": 4,
+        "edge_type_counts": {
+          "contains_claim": 2,
+          "contains_evidence": 1,
+          "contradicts": 1
+        },
+        "largest_component_size": 4,
+        "max_in_degree": 2,
+        "max_out_degree": 3,
+        "node_count": 4,
+        "node_type_counts": {
+          "claim": 2,
+          "evidence": 1,
+          "story": 1
+        }
+      },
+      "timings": {
+        "assessment_readiness": {
+          "median_seconds": 5.793699983769329e-05,
+          "minimum_seconds": 5.3265000133251306e-05
+        },
+        "bayesian_assessment_report": {
+          "median_seconds": 0.0005156849992999923,
+          "minimum_seconds": 0.0004924530003336258
+        },
+        "bridge_nodes": {
+          "median_seconds": 4.409000030136667e-05,
+          "minimum_seconds": 4.232199989928631e-05
+        },
+        "connected_components": {
+          "median_seconds": 2.8976999601582065e-05,
+          "minimum_seconds": 2.8638000003411435e-05
+        },
+        "diagnostics": {
+          "median_seconds": 6.317899988061981e-05,
+          "minimum_seconds": 5.74549994780682e-05
+        },
+        "epistemic_report": {
+          "median_seconds": 0.0008057979994191555,
+          "minimum_seconds": 0.0006122989998402772
+        },
+        "json_load": {
+          "median_seconds": 0.00011437800003477605,
+          "minimum_seconds": 0.00011242700020375196
+        },
+        "shortest_path": {
+          "median_seconds": 3.643499985628296e-05,
+          "minimum_seconds": 2.416299957985757e-05
+        }
+      },
+      "title": "The Purloined Letter"
+    },
+    {
+      "graph_id": "story::red-headed-league::detective-annotation-graph",
+      "path": "examples/detective_corpus/sidecars/red-headed-league/epistemap_graph.json",
+      "shape": {
+        "assessed_node_count": 2,
+        "connected_component_count": 1,
+        "edge_count": 4,
+        "edge_type_counts": {
+          "contains_claim": 2,
+          "contains_evidence": 1,
+          "contradicts": 1
+        },
+        "largest_component_size": 4,
+        "max_in_degree": 2,
+        "max_out_degree": 3,
+        "node_count": 4,
+        "node_type_counts": {
+          "claim": 2,
+          "evidence": 1,
+          "story": 1
+        }
+      },
+      "timings": {
+        "assessment_readiness": {
+          "median_seconds": 5.844000042998232e-05,
+          "minimum_seconds": 5.340100051398622e-05
+        },
+        "bayesian_assessment_report": {
+          "median_seconds": 0.0004893850000371458,
+          "minimum_seconds": 0.00048224000056507066
+        },
+        "bridge_nodes": {
+          "median_seconds": 4.155000078753801e-05,
+          "minimum_seconds": 4.120599987800233e-05
+        },
+        "connected_components": {
+          "median_seconds": 2.7554000553209335e-05,
+          "minimum_seconds": 2.5242999981855974e-05
+        },
+        "diagnostics": {
+          "median_seconds": 5.4657999498886056e-05,
+          "minimum_seconds": 5.3928999477648176e-05
+        },
+        "epistemic_report": {
+          "median_seconds": 0.0004790319999301573,
+          "minimum_seconds": 0.00046273200041468954
+        },
+        "json_load": {
+          "median_seconds": 0.00013186799969844287,
+          "minimum_seconds": 0.00011644700043689227
+        },
+        "shortest_path": {
+          "median_seconds": 2.7338000109011773e-05,
+          "minimum_seconds": 2.3718999727861956e-05
+        }
+      },
+      "title": "The Red-Headed League"
+    },
+    {
+      "graph_id": "story::speckled-band::detective-annotation-graph",
+      "path": "examples/detective_corpus/sidecars/speckled-band/epistemap_graph.json",
+      "shape": {
+        "assessed_node_count": 2,
+        "connected_component_count": 1,
+        "edge_count": 4,
+        "edge_type_counts": {
+          "contains_claim": 2,
+          "contains_evidence": 1,
+          "contradicts": 1
+        },
+        "largest_component_size": 4,
+        "max_in_degree": 2,
+        "max_out_degree": 3,
+        "node_count": 4,
+        "node_type_counts": {
+          "claim": 2,
+          "evidence": 1,
+          "story": 1
+        }
+      },
+      "timings": {
+        "assessment_readiness": {
+          "median_seconds": 5.4150999858393334e-05,
+          "minimum_seconds": 5.169599990040297e-05
+        },
+        "bayesian_assessment_report": {
+          "median_seconds": 0.00046102600026642904,
+          "minimum_seconds": 0.0004593419998855097
+        },
+        "bridge_nodes": {
+          "median_seconds": 4.297300074540544e-05,
+          "minimum_seconds": 4.1698000131873414e-05
+        },
+        "connected_components": {
+          "median_seconds": 2.6390999664727133e-05,
+          "minimum_seconds": 2.5641999854997266e-05
+        },
+        "diagnostics": {
+          "median_seconds": 5.671199960488593e-05,
+          "minimum_seconds": 5.5932999202923384e-05
+        },
+        "epistemic_report": {
+          "median_seconds": 0.00048404500012111384,
+          "minimum_seconds": 0.00046652899982291274
+        },
+        "json_load": {
+          "median_seconds": 0.00011861700022564037,
+          "minimum_seconds": 0.00011399900085962145
+        },
+        "shortest_path": {
+          "median_seconds": 2.483000025677029e-05,
+          "minimum_seconds": 2.382100046816049e-05
+        }
+      },
+      "title": "The Adventure of the Speckled Band"
+    },
+    {
+      "graph_id": "",
+      "path": "/home/netuser/bin/Didactopus/domain-packs/mit-ocw-information-entropy/knowledge_graph.json",
+      "shape": {
+        "assessed_node_count": 34,
+        "connected_component_count": 1,
+        "edge_count": 178,
+        "edge_type_counts": {
+          "contains_lesson": 22,
+          "derived_lesson": 22,
+          "has_exercise": 19,
+          "has_objective": 19,
+          "mentions_concept": 19,
+          "prerequisite": 21,
+          "supports_concept": 34,
+          "teaches_concept": 22
+        },
+        "largest_component_size": 98,
+        "max_in_degree": 6,
+        "max_out_degree": 22,
+        "node_count": 98,
+        "node_type_counts": {
+          "assessment_signal": 38,
+          "concept": 34,
+          "lesson": 22,
+          "module": 1,
+          "source": 3
+        }
+      },
+      "timings": {
+        "assessment_readiness": {
+          "median_seconds": 0.0012970389998372411,
+          "minimum_seconds": 0.001155228000243369
+        },
+        "bayesian_assessment_report": {
+          "median_seconds": 0.011269618000369519,
+          "minimum_seconds": 0.01042110800062801
+        },
+        "bridge_nodes": {
+          "median_seconds": 0.0018649140001798514,
+          "minimum_seconds": 0.0013685259991689236
+        },
+        "connected_components": {
+          "median_seconds": 0.0006350230005409685,
+          "minimum_seconds": 0.0006012379999447148
+        },
+        "diagnostics": {
+          "median_seconds": 0.0015494400004172348,
+          "minimum_seconds": 0.0014235720000215224
+        },
+        "epistemic_report": {
+          "median_seconds": 0.01118409300033818,
+          "minimum_seconds": 0.010758915000224079
+        },
+        "json_load": {
+          "median_seconds": 0.001600939000127255,
+          "minimum_seconds": 0.0015810740005690604
+        },
+        "shortest_path": {
+          "median_seconds": 0.0006114219995652093,
+          "minimum_seconds": 0.0005875450005987659
+        }
+      },
+      "title": ""
+    }
+  ]
+}

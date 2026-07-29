@@ -85,3 +85,9 @@ The detective G collection UI is a static page at
 `examples/detective_corpus/collection_ui/index.html`.
 The blinded detective run UI is a static page at
 `examples/detective_corpus/run_ui/index.html`.
+
+Performance benchmarks can be run with:
+
+```bash
+PYTHONPATH=src python3 benchmarks/benchmark_graph_operations.py --sizes 100 1000 3000 --repeats 5 > benchmarks/latest-local.json
+```

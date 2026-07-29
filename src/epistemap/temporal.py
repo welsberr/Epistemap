@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime, timezone
 from typing import Any, Iterable, Mapping
 
+from .index import build_graph_index
 from .models import Edge, GraphBundle, Node, ProvenanceRef
 
 SUPPORT_EDGE_TYPES = {"supports", "supports_claim", "about_concept", "supports_concept", "teaches_concept"}
@@ -100,8 +101,8 @@ def evidence_available_at(bundle: GraphBundle, node_id: str, when: Any) -> dict[
 def claim_status_at(bundle: GraphBundle, claim_id: str, when: Any) -> dict[str, Any]:
     """Classify a claim's temporal status from evidence available by `when`."""
 
-    nodes = bundle.node_index()
-    node = nodes.get(claim_id)
+    index = build_graph_index(bundle)
+    node = index.nodes_by_id.get(claim_id)
     if node is None:
         return {"claim_id": claim_id, "at": str(when), "status": "missing"}
     cutoff = _time_key(when)
@@ -145,7 +146,8 @@ def first_contradiction_time(bundle: GraphBundle, claim_id: str) -> dict[str, An
 def tenability_window(bundle: GraphBundle, claim_id: str) -> dict[str, Any]:
     """Describe when a claim becomes available and when it stops being tenable."""
 
-    node = bundle.node_index().get(claim_id)
+    index = build_graph_index(bundle)
+    node = index.nodes_by_id.get(claim_id)
     introduced = _item_time_with_display(node, DEFAULT_AVAILABILITY_KEYS) if node is not None else None
     contradiction = first_contradiction_time(bundle, claim_id)
     revision = _first_edge_time(bundle, claim_id, REVISION_EDGE_TYPES)

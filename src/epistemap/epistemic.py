@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .bayesian import bayesian_evidence_update, bayesian_prior_sensitivity, classify_bayesian_reliability
+from .index import GraphIndex, build_graph_index
 from .models import Edge, GraphBundle, Node
 
 SUPPORT_EDGE_TYPES = {"supports", "supports_claim", "about_concept", "supports_concept", "teaches_concept"}
@@ -17,100 +18,15 @@ ADVERSARIAL_STANCE_VALUES = {"adversarial", "denialist", "misinformation", "manu
 
 
 def epistemic_summary(bundle: GraphBundle, node_id: str, *, low_confidence_threshold: float = 0.5) -> dict[str, Any]:
-    nodes = bundle.node_index()
-    target = nodes.get(node_id)
-    incident = [edge for edge in bundle.edges if edge.source == node_id or edge.target == node_id]
-    incoming = [edge for edge in incident if edge.target == node_id]
-    outgoing = [edge for edge in incident if edge.source == node_id]
-    claim_ids = _claim_ids_for_target(bundle, node_id)
-    claim_evidence_edges = [edge for edge in bundle.edges if edge.target in claim_ids or edge.source in claim_ids]
-    relevant_node_ids = (
-        {node_id}
-        | claim_ids
-        | {edge.source for edge in incident}
-        | {edge.target for edge in incident}
-        | {edge.source for edge in claim_evidence_edges}
-        | {edge.target for edge in claim_evidence_edges}
-    )
-    relevant_edges = [
-        edge
-        for edge in bundle.edges
-        if edge.source in relevant_node_ids and edge.target in relevant_node_ids
-    ]
-    relevant_nodes = [node for node in bundle.nodes if node.id in relevant_node_ids]
-    support_edges = [edge for edge in relevant_edges if edge.type in SUPPORT_EDGE_TYPES and (edge.target == node_id or edge.target in claim_ids)]
-    challenge_edges = [edge for edge in relevant_edges if edge.type in CHALLENGE_EDGE_TYPES]
-    revision_edges = [edge for edge in relevant_edges if edge.type in REVISION_EDGE_TYPES]
-    low_confidence_nodes = [
-        node
-        for node in relevant_nodes
-        if node.confidence is not None and node.confidence < low_confidence_threshold
-    ]
-    grounding = Counter(_grounding_values(relevant_nodes, relevant_edges))
-    source_roles = Counter(_source_roles(relevant_nodes))
-    source_quality = Counter(_source_quality_values(relevant_nodes, relevant_edges))
-    source_stances = Counter(_source_stance_values(relevant_nodes, relevant_edges))
-    flags = _epistemic_flags(
-        support_edges=support_edges,
-        challenge_edges=challenge_edges,
-        revision_edges=revision_edges,
-        low_confidence_nodes=low_confidence_nodes,
-        grounding=grounding,
-        source_roles=source_roles,
-        source_quality=source_quality,
-        source_stances=source_stances,
-    )
-    reliability = reliability_assessment(
-        support_edges=support_edges,
-        challenge_edges=challenge_edges,
-        revision_edges=revision_edges,
-        relevant_nodes=relevant_nodes,
-        grounding=grounding,
-        source_roles=source_roles,
-        source_quality=source_quality,
-        source_stances=source_stances,
-    )
-    bayesian = bayesian_evidence_update(
-        support_edges=support_edges,
-        challenge_edges=challenge_edges,
-        nodes_by_id=nodes,
-    )
-    bayesian["prior_sensitivity"] = bayesian_prior_sensitivity(
-        support_edges=support_edges,
-        challenge_edges=challenge_edges,
-        nodes_by_id=nodes,
-    )
-    bayesian["classification"] = classify_bayesian_reliability(bayesian)
-    return {
-        "node_id": node_id,
-        "node_type": target.type if target is not None else "",
-        "title": target.title if target is not None else "",
-        "summary": {
-            "direct_support_count": len(support_edges),
-            "challenge_count": len(challenge_edges),
-            "revision_count": len(revision_edges),
-            "low_confidence_node_count": len(low_confidence_nodes),
-            "incoming_count": len(incoming),
-            "outgoing_count": len(outgoing),
-        },
-        "grounding_status_summary": dict(sorted(grounding.items())),
-        "source_role_summary": dict(sorted(source_roles.items())),
-        "source_quality_summary": dict(sorted(source_quality.items())),
-        "source_stance_summary": dict(sorted(source_stances.items())),
-        "flags": flags,
-        "reliability": reliability,
-        "bayesian_reliability": bayesian,
-        "support_edges": [_edge_ref(edge) for edge in support_edges[:12]],
-        "challenge_edges": [_edge_ref(edge) for edge in challenge_edges[:12]],
-        "revision_edges": [_edge_ref(edge) for edge in revision_edges[:12]],
-        "low_confidence_nodes": [_node_ref(node) for node in low_confidence_nodes[:12]],
-    }
+    index = build_graph_index(bundle)
+    return _epistemic_summary(bundle, index, node_id, low_confidence_threshold=low_confidence_threshold)
 
 
 def epistemic_report(bundle: GraphBundle, *, node_types: set[str] | None = None) -> dict[str, Any]:
     node_types = node_types or {"concept", "claim"}
+    index = build_graph_index(bundle)
     summaries = [
-        epistemic_summary(bundle, node.id)
+        _epistemic_summary(bundle, index, node.id)
         for node in bundle.nodes
         if node.type in node_types
     ]
@@ -133,8 +49,9 @@ def epistemic_report(bundle: GraphBundle, *, node_types: set[str] | None = None)
 def bayesian_assessment_report(bundle: GraphBundle, *, node_types: set[str] | None = None) -> dict[str, Any]:
     """Batch Bayesian assessment summaries over graph claims or concepts."""
     node_types = node_types or {"concept", "claim"}
+    index = build_graph_index(bundle)
     rows = [
-        _bayesian_assessment_row(epistemic_summary(bundle, node.id))
+        _bayesian_assessment_row(_epistemic_summary(bundle, index, node.id))
         for node in bundle.nodes
         if node.type in node_types
     ]
@@ -313,16 +230,141 @@ def reliability_assessment(
     }
 
 
-def _claim_ids_for_target(bundle: GraphBundle, node_id: str) -> set[str]:
-    nodes = bundle.node_index()
+def _epistemic_summary(
+    bundle: GraphBundle,
+    index: GraphIndex,
+    node_id: str,
+    *,
+    low_confidence_threshold: float = 0.5,
+) -> dict[str, Any]:
+    nodes = index.nodes_by_id
+    target = nodes.get(node_id)
+    incoming = list(index.incoming_by_node.get(node_id, ()))
+    outgoing = list(index.outgoing_by_node.get(node_id, ()))
+    incident = list(index.incident_by_node.get(node_id, ()))
+    claim_ids = _claim_ids_for_target(index, node_id)
+    claim_evidence_edges = _claim_evidence_edges(index, claim_ids)
+    relevant_node_ids = (
+        {node_id}
+        | claim_ids
+        | {edge.source for edge in incident}
+        | {edge.target for edge in incident}
+        | {edge.source for edge in claim_evidence_edges}
+        | {edge.target for edge in claim_evidence_edges}
+    )
+    relevant_edges = _relevant_edges(index, relevant_node_ids)
+    relevant_nodes = _relevant_nodes(bundle, index, relevant_node_ids)
+    support_edges = [edge for edge in relevant_edges if edge.type in SUPPORT_EDGE_TYPES and (edge.target == node_id or edge.target in claim_ids)]
+    challenge_edges = [edge for edge in relevant_edges if edge.type in CHALLENGE_EDGE_TYPES]
+    revision_edges = [edge for edge in relevant_edges if edge.type in REVISION_EDGE_TYPES]
+    low_confidence_nodes = [
+        node
+        for node in relevant_nodes
+        if node.confidence is not None and node.confidence < low_confidence_threshold
+    ]
+    grounding = Counter(_grounding_values(relevant_nodes, relevant_edges))
+    source_roles = Counter(_source_roles(relevant_nodes))
+    source_quality = Counter(_source_quality_values(relevant_nodes, relevant_edges))
+    source_stances = Counter(_source_stance_values(relevant_nodes, relevant_edges))
+    flags = _epistemic_flags(
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        revision_edges=revision_edges,
+        low_confidence_nodes=low_confidence_nodes,
+        grounding=grounding,
+        source_roles=source_roles,
+        source_quality=source_quality,
+        source_stances=source_stances,
+    )
+    reliability = reliability_assessment(
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        revision_edges=revision_edges,
+        relevant_nodes=relevant_nodes,
+        grounding=grounding,
+        source_roles=source_roles,
+        source_quality=source_quality,
+        source_stances=source_stances,
+    )
+    bayesian = bayesian_evidence_update(
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        nodes_by_id=nodes,
+    )
+    bayesian["prior_sensitivity"] = bayesian_prior_sensitivity(
+        support_edges=support_edges,
+        challenge_edges=challenge_edges,
+        nodes_by_id=nodes,
+    )
+    bayesian["classification"] = classify_bayesian_reliability(bayesian)
+    return {
+        "node_id": node_id,
+        "node_type": target.type if target is not None else "",
+        "title": target.title if target is not None else "",
+        "summary": {
+            "direct_support_count": len(support_edges),
+            "challenge_count": len(challenge_edges),
+            "revision_count": len(revision_edges),
+            "low_confidence_node_count": len(low_confidence_nodes),
+            "incoming_count": len(incoming),
+            "outgoing_count": len(outgoing),
+        },
+        "grounding_status_summary": dict(sorted(grounding.items())),
+        "source_role_summary": dict(sorted(source_roles.items())),
+        "source_quality_summary": dict(sorted(source_quality.items())),
+        "source_stance_summary": dict(sorted(source_stances.items())),
+        "flags": flags,
+        "reliability": reliability,
+        "bayesian_reliability": bayesian,
+        "support_edges": [_edge_ref(edge) for edge in support_edges[:12]],
+        "challenge_edges": [_edge_ref(edge) for edge in challenge_edges[:12]],
+        "revision_edges": [_edge_ref(edge) for edge in revision_edges[:12]],
+        "low_confidence_nodes": [_node_ref(node) for node in low_confidence_nodes[:12]],
+    }
+
+
+def _claim_ids_for_target(index: GraphIndex, node_id: str) -> set[str]:
+    nodes = index.nodes_by_id
     target = nodes.get(node_id)
     if target is not None and target.type == "claim":
         return {node_id}
     return {
         edge.source
-        for edge in bundle.edges
+        for edge in index.incoming_by_node.get(node_id, ())
         if edge.target == node_id and edge.type == "about_concept" and nodes.get(edge.source, Node(id="", type="")).type == "claim"
     }
+
+
+def _claim_evidence_edges(index: GraphIndex, claim_ids: set[str]) -> list[Edge]:
+    incident_edges: list[Edge] = []
+    for claim_id in claim_ids:
+        incident_edges.extend(index.incident_by_node.get(claim_id, ()))
+    return _unique_edges(index, incident_edges)
+
+
+def _relevant_edges(index: GraphIndex, relevant_node_ids: set[str]) -> list[Edge]:
+    candidates: list[Edge] = []
+    for node_id in relevant_node_ids:
+        candidates.extend(index.incident_by_node.get(node_id, ()))
+    return [
+        edge
+        for edge in _unique_edges(index, candidates)
+        if edge.source in relevant_node_ids and edge.target in relevant_node_ids
+    ]
+
+
+def _relevant_nodes(bundle: GraphBundle, index: GraphIndex, relevant_node_ids: set[str]) -> list[Node]:
+    positions: list[int] = []
+    for node_id in relevant_node_ids:
+        positions.extend(index.node_positions_by_id.get(node_id, ()))
+    return [bundle.nodes[position] for position in sorted(positions)]
+
+
+def _unique_edges(index: GraphIndex, edges: tuple[Edge, ...] | list[Edge]) -> list[Edge]:
+    unique_by_identity: dict[int, Edge] = {}
+    for edge in edges:
+        unique_by_identity.setdefault(id(edge), edge)
+    return sorted(unique_by_identity.values(), key=lambda edge: index.edge_positions[id(edge)])
 
 
 def _grounding_values(nodes: list[Node], edges: list[Edge]) -> list[str]:

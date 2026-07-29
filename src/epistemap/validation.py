@@ -7,6 +7,7 @@ from typing import Any
 from .algorithms import cycle_nodes, graph_qa_report
 from .confidence import validate_assessment_lineage
 from .epistemic import CHALLENGE_EDGE_TYPES, REVISION_EDGE_TYPES, SUPPORT_EDGE_TYPES
+from .index import build_graph_index
 from .models import GraphBundle
 
 
@@ -59,7 +60,8 @@ class AssessmentValidationPolicy:
 
 def validate_shape(bundle: GraphBundle, shape: GraphShape) -> dict:
     findings: list[dict] = []
-    node_ids = {node.id for node in bundle.nodes}
+    index = build_graph_index(bundle)
+    node_ids = index.node_ids
     for node in bundle.nodes:
         for field_name in shape.required_node_fields.get(node.type, set()):
             if not _node_field_present(node, field_name):
@@ -83,8 +85,8 @@ def validate_shape(bundle: GraphBundle, shape: GraphShape) -> dict:
                 }
             )
             continue
-        source_type = bundle.node_index()[edge.source].type
-        target_type = bundle.node_index()[edge.target].type
+        source_type = index.nodes_by_id[edge.source].type
+        target_type = index.nodes_by_id[edge.target].type
         allowed_targets = shape.allowed_edge_types.get(source_type)
         if allowed_targets is not None and target_type not in allowed_targets:
             findings.append(

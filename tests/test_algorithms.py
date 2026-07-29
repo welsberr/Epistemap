@@ -61,6 +61,41 @@ def test_bridge_nodes_find_articulation_points() -> None:
     assert [item["node_id"] for item in payload] == ["concept::b", "concept::c"]
 
 
+def test_bridge_nodes_report_deterministic_reachable_component_size() -> None:
+    bundle = GraphBundle(
+        nodes=[Node(id=f"concept::{index}", type="concept") for index in range(5)],
+        edges=[
+            Edge(source="concept::0", target="concept::1", type="supports"),
+            Edge(source="concept::1", target="concept::2", type="supports"),
+            Edge(source="concept::2", target="concept::3", type="supports"),
+            Edge(source="concept::3", target="concept::4", type="supports"),
+        ],
+    )
+
+    assert bridge_nodes(bundle, node_types={"concept"}) == [
+        {"node_id": "concept::1", "component_size": 5, "reachable_after_removal": 1},
+        {"node_id": "concept::2", "component_size": 5, "reachable_after_removal": 2},
+        {"node_id": "concept::3", "component_size": 5, "reachable_after_removal": 3},
+    ]
+
+
+def test_bridge_nodes_skip_cycles_and_isolated_components() -> None:
+    bundle = GraphBundle(
+        nodes=[Node(id=f"concept::{index}", type="concept") for index in range(7)],
+        edges=[
+            Edge(source="concept::0", target="concept::1", type="supports"),
+            Edge(source="concept::1", target="concept::2", type="supports"),
+            Edge(source="concept::2", target="concept::0", type="supports"),
+            Edge(source="concept::3", target="concept::4", type="supports"),
+            Edge(source="concept::4", target="concept::5", type="supports"),
+        ],
+    )
+
+    assert bridge_nodes(bundle, node_types={"concept"}) == [
+        {"node_id": "concept::4", "component_size": 3, "reachable_after_removal": 1}
+    ]
+
+
 def test_topological_order_and_cycle_detection() -> None:
     assert topological_order(_bundle(), edge_types={"prerequisite"}, node_types={"concept"}) == [
         "concept::a",
