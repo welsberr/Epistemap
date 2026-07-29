@@ -73,9 +73,56 @@ def _load_bundle(payload: str) -> GraphBundle:
 
 def _normalize_bundle_payload(data: dict[str, object]) -> dict[str, object]:
     normalized = dict(data)
-    normalized["nodes"] = [_normalize_component(item) for item in list(data.get("nodes", []))]
-    normalized["edges"] = [_normalize_component(item) for item in list(data.get("edges", []))]
+    if data.get("bundle_kind") == "groundrecall_graph_bundle":
+        normalized = _groundrecall_bundle_to_epistemap(data)
+    normalized["nodes"] = [_normalize_component(item) for item in list(normalized.get("nodes", []))]
+    normalized["edges"] = [_normalize_component(item) for item in list(normalized.get("edges", []))]
     return normalized
+
+
+def _groundrecall_bundle_to_epistemap(data: dict[str, object]) -> dict[str, object]:
+    """Project a GroundRecall graph export into the Epistemap interchange shape."""
+    nodes = []
+    for item in data.get("nodes", []) if isinstance(data.get("nodes"), list) else []:
+        if not isinstance(item, dict):
+            continue
+        record = item.get("record") if isinstance(item.get("record"), dict) else {}
+        nodes.append(
+            {
+                "id": str(item.get("node_id", "")),
+                "type": str(item.get("node_kind", "")),
+                "title": str(record.get("title", item.get("node_id", ""))),
+                "status": str(item.get("status", record.get("current_status", ""))),
+                "metadata": {"groundrecall_record": record},
+            }
+        )
+    edges = []
+    source_edges = []
+    for key in ("edges", "provenance_edges"):
+        if isinstance(data.get(key), list):
+            source_edges.extend(item for item in data[key] if isinstance(item, dict))
+    for item in source_edges:
+        edges.append(
+            {
+                "id": str(item.get("edge_id", "")),
+                "source": str(item.get("source_id", "")),
+                "target": str(item.get("target_id", "")),
+                "type": str(item.get("relation_type", "")),
+                "status": str(item.get("status", "")),
+                "evidence_ids": list(item.get("evidence_ids", []) or []),
+                "provenance": item.get("provenance", []),
+                "metadata": {"groundrecall_record": item.get("record", {})},
+            }
+        )
+    return {
+        "bundle_kind": "epistemap_graph_bundle",
+        "graph_id": str(data.get("root_concept", {}).get("concept_id", "groundrecall")) if isinstance(data.get("root_concept"), dict) else "groundrecall",
+        "title": "GroundRecall graph export",
+        "description": "Sanitized GroundRecall graph projection for Epistemap analysis.",
+        "nodes": nodes,
+        "edges": edges,
+        "metadata": {"source_bundle_kind": "groundrecall_graph_bundle", "source_query_type": data.get("query_type", "")},
+    }
 
 
 def _normalize_component(item: object) -> dict[str, object]:
@@ -83,6 +130,8 @@ def _normalize_component(item: object) -> dict[str, object]:
         return {}
     normalized = dict(item)
     provenance = normalized.get("provenance")
+    if isinstance(provenance, dict):
+        provenance = [provenance]
     if isinstance(provenance, list):
         normalized["provenance"] = [
             value

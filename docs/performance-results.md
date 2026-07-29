@@ -29,6 +29,11 @@ These measurements use graph artifacts already present in nearby projects:
 The profiling artifact is saved at
 `benchmarks/representative-local.json`.
 
+The profiler also accepts sanitized `groundrecall_graph_bundle` exports and
+projects their `nodes`/`edges` records into the Epistemap interchange shape.
+This measures graph parsing and analysis cost only; it is not a GroundRecall
+retrieval-quality or end-to-end latency benchmark.
+
 ## Shape Summary
 
 | Graph | Nodes | Edges | Assessed nodes | Components | Largest component |
