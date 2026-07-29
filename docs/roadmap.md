@@ -154,10 +154,10 @@ approved. Benchmark artifacts are sanitized and use portable path placeholders.
    - documentation states that MCP outputs are review affordances, not truth or
      promotion decisions.
 
-   Remaining MCP work is transport integration, host authentication, and
-   optional policy-context plumbing by consuming repositories. The adapter
-   already calls the indexed library operations and returns deterministic,
-   benchmark-compatible outputs.
+   The adapter now includes a minimal stdio JSON-RPC host supporting
+   `initialize`, `tools/list`, and `tools/call`. Remaining MCP work is host
+   authentication, deployment integration, and optional policy-context
+   plumbing by consuming repositories.
 
 ## Medium-Term Experiments
 

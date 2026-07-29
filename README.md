@@ -96,3 +96,6 @@ An optional, transport-neutral read-only MCP adapter is available through
 `epistemap.mcp`. Hosts can expose `list_tools()` and `call_tool()` over their
 preferred MCP transport; Epistemap returns derived graph/assessment artifacts
 and does not make policy, truth, or promotion decisions.
+
+For a simple stdio JSON-RPC host, run `epistemap-mcp`. It supports MCP
+`initialize`, `tools/list`, and `tools/call` requests, one JSON object per line.

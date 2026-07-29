@@ -22,6 +22,7 @@ dev = ["pytest>=8"]
 
 [project.scripts]
 epistemap = "epistemap.cli:main"
+epistemap-mcp = "epistemap.mcp:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }

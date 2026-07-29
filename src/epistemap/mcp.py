@@ -9,6 +9,7 @@ it does not authorize promotion or decide truth.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -84,3 +85,61 @@ def call_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     else:
         raise ValueError(f"unknown Epistemap MCP tool: {name}")
     return _json_content({"schema_version": "epistemap.mcp.result.v1", "tool": name, "graph_id": bundle.graph_id, "payload": payload})
+
+
+def _json_rpc_response(request_id: Any, result: Any = None, error: dict[str, Any] | None = None) -> dict[str, Any]:
+    response: dict[str, Any] = {"jsonrpc": "2.0", "id": request_id}
+    if error is not None:
+        response["error"] = error
+    else:
+        response["result"] = result
+    return response
+
+
+def handle_json_rpc(request: dict[str, Any]) -> dict[str, Any] | None:
+    """Handle one newline-delimited JSON-RPC request for the stdio host."""
+    method = request.get("method")
+    request_id = request.get("id")
+    if method == "notifications/initialized":
+        return None
+    if method == "initialize":
+        return _json_rpc_response(
+            request_id,
+            {
+                "protocolVersion": "2025-03-26",
+                "capabilities": {"tools": {"listChanged": False}},
+                "serverInfo": SERVER_INFO,
+            },
+        )
+    if method == "tools/list":
+        return _json_rpc_response(request_id, list_tools())
+    if method == "tools/call":
+        params = request.get("params") or {}
+        try:
+            return _json_rpc_response(request_id, call_tool(str(params["name"]), dict(params.get("arguments") or {})))
+        except (KeyError, TypeError, ValueError, OSError) as exc:
+            return _json_rpc_response(request_id, error={"code": -32602, "message": str(exc)})
+    if request_id is None:
+        return None
+    return _json_rpc_response(request_id, error={"code": -32601, "message": f"method not found: {method}"})
+
+
+def main() -> None:
+    """Serve newline-delimited JSON-RPC requests on stdin/stdout."""
+    for line in sys.stdin:
+        if not line.strip():
+            continue
+        try:
+            request = json.loads(line)
+            if not isinstance(request, dict):
+                raise ValueError("JSON-RPC request must be an object")
+            response = handle_json_rpc(request)
+        except (json.JSONDecodeError, ValueError) as exc:
+            response = _json_rpc_response(None, error={"code": -32700, "message": str(exc)})
+        if response is not None:
+            sys.stdout.write(json.dumps(response, sort_keys=True) + "\n")
+            sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    main()
