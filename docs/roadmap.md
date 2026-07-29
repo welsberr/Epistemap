@@ -34,16 +34,15 @@ assessment artifacts, not decide claim truth or promotion status.
 
 ## Current implementation state (2026-07-29)
 
-The first Python performance pass is implemented on `main` after `v0.1.0a2`.
+The first Python performance pass is implemented in `v0.1.0a3`.
 Epistemap now has indexed graph views, shared-index diagnostics, linear-time
 bridge analysis, and batch epistemic/Bayesian reporting that reuses indexes.
 Checked-in representative measurements show `epistemic_report()` improving from
 about 25.6 seconds to about 0.91 seconds for 3,000 independent source/claim
 pairs. Epistemap has 162 passing tests.
 
-These are main-branch results, not a new compatibility release. GroundRecall
-continues to pin the released `v0.1.0a2` contract until a later Epistemap tag is
-approved. Benchmark artifacts are sanitized and use portable path placeholders.
+Benchmark artifacts are sanitized and use portable path placeholders. GroundRecall
+and Didactopus can update their immutable pins to `v0.1.0a3`.
 
 ## Current Capability
 
