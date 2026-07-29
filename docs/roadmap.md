@@ -7,13 +7,16 @@ one confidence meaning from another repository's scalar field.
 
 The evidence-backed phase audit is maintained in
 [confidence-overhaul-implementation-status.md](confidence-overhaul-implementation-status.md).
-The overhaul is in progress, not complete: portable assessment models are
-merged, while evidence-ledger, migration-command, installed-package,
-consumer-release, and deprecation work remains.
+The unified confidence overhaul is complete through W0-W13, including the
+portable assessment models, evidence ledger, migration commands, installed
+matrix, consumer compatibility releases, and deprecation-clock documentation.
+Future work below is additive experimentation or separately scoped integration,
+not unfinished overhaul acceptance work.
 
 The portable assessment contract is available in alpha release
-[`v0.1.0a1`](releases/v0.1.0a1.md). This release preserves legacy readers and
-does not begin scalar-field removal.
+[`v0.1.0a2`](releases/v0.1.0a2.md). This release preserves legacy readers and
+begins the documented compatibility/deprecation window; scalar-field removal
+still requires a later release plan and downstream confirmation.
 
 Coding models should execute the remaining work from
 [confidence-overhaul-execution-roadmap.md](confidence-overhaul-execution-roadmap.md).
