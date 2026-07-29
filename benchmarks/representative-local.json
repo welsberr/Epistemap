@@ -11,7 +11,7 @@
       "examples/detective_corpus/sidecars/purloined-letter-control/epistemap_graph.json",
       "examples/detective_corpus/sidecars/red-headed-league/epistemap_graph.json",
       "examples/detective_corpus/sidecars/speckled-band/epistemap_graph.json",
-      "/home/netuser/bin/Didactopus/domain-packs/mit-ocw-information-entropy/knowledge_graph.json"
+      "<DIDACTOPUS_ROOT>/domain-packs/mit-ocw-information-entropy/knowledge_graph.json"
     ],
     "repeats": 5
   },
@@ -250,7 +250,7 @@
     },
     {
       "graph_id": "",
-      "path": "/home/netuser/bin/Didactopus/domain-packs/mit-ocw-information-entropy/knowledge_graph.json",
+      "path": "<DIDACTOPUS_ROOT>/domain-packs/mit-ocw-information-entropy/knowledge_graph.json",
       "shape": {
         "assessed_node_count": 34,
         "connected_component_count": 1,

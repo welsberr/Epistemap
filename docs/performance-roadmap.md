@@ -6,6 +6,11 @@ Improve Epistemap's performance on graphs containing thousands to tens of
 thousands of nodes while preserving its Python API, deterministic output, and
 domain-policy neutrality.
 
+The first optimization pass is implemented on `main` after `v0.1.0a2` and is
+covered by the checked-in benchmarks. A compatibility release/tag remains a
+separate release-management step; performance results must not be presented as
+part of `v0.1.0a2`.
+
 This roadmap is written for a coding model. Implement it as a sequence of small,
 reviewable changes. Do not introduce Rust during these phases. The decision
 about a Rust core comes only after the optimized Python implementation has been
@@ -525,4 +530,3 @@ The Python optimization project is complete when:
 - representative integration workloads have before/after evidence;
 - the repository contains a written Rust decision based on profiles and
   end-to-end measurements rather than microbenchmark speculation.
-

@@ -717,19 +717,19 @@ pytest -q
 ### GroundRecall against a local Epistemap checkout
 
 ```bash
-PYTHONPATH=src:/home/netuser/bin/Epistemap/src pytest -q
+PYTHONPATH=src pytest -q
 ```
 
 ### CiteGeist against a local Epistemap checkout
 
 ```bash
-PYTHONPATH=src:/home/netuser/bin/Epistemap/src pytest -q
+PYTHONPATH=src pytest -q
 ```
 
 ### Didactopus against a local Epistemap checkout
 
 ```bash
-PYTHONPATH=src:/home/netuser/bin/Epistemap/src pytest -q
+PYTHONPATH=src pytest -q
 ```
 
 Before a release, repeat CiteGeist, GroundRecall, and Didactopus tests in clean

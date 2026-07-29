@@ -6,13 +6,16 @@ Record representative local measurements after the first optimization pass so
 future work can compare against a checked-in baseline instead of synthetic
 intuition.
 
+These measurements describe the post-`v0.1.0a2` `main` branch. They are not a
+new compatibility release; consumers pinned to `v0.1.0a2` do not receive these
+optimizations until a later tagged release is published.
+
 ## Environment
 
 - Host date: 2026-07-29
-- Host: `netuser-quieter-hd3`
+- Host: local Linux workstation (hardware details intentionally omitted)
 - Python: `3.14.4`
-- Command pattern:
-  `PYTHONPATH=src:/home/netuser/bin/.venv/lib/python3.14/site-packages /home/netuser/bin/.venv/bin/python`
+- Command pattern: `PYTHONPATH=src python`
 
 ## Representative Graphs
 
@@ -21,7 +24,7 @@ These measurements use graph artifacts already present in nearby projects:
 - Epistemap detective sidecars:
   `examples/detective_corpus/sidecars/*/epistemap_graph.json`
 - Didactopus MIT OCW knowledge graph:
-  `/home/netuser/bin/Didactopus/domain-packs/mit-ocw-information-entropy/knowledge_graph.json`
+  `<DIDACTOPUS_ROOT>/domain-packs/mit-ocw-information-entropy/knowledge_graph.json`
 
 The profiling artifact is saved at
 `benchmarks/representative-local.json`.
@@ -74,12 +77,12 @@ batch epistemic reporting:
 Run:
 
 ```bash
-PYTHONPATH=src:/home/netuser/bin/.venv/lib/python3.14/site-packages \
-  /home/netuser/bin/.venv/bin/python benchmarks/profile_graph_bundles.py \
+export DIDACTOPUS_ROOT=/path/to/Didactopus
+PYTHONPATH=src python benchmarks/profile_graph_bundles.py \
   examples/detective_corpus/sidecars/blue-carbuncle/epistemap_graph.json \
   examples/detective_corpus/sidecars/purloined-letter-control/epistemap_graph.json \
   examples/detective_corpus/sidecars/red-headed-league/epistemap_graph.json \
   examples/detective_corpus/sidecars/speckled-band/epistemap_graph.json \
-  /home/netuser/bin/Didactopus/domain-packs/mit-ocw-information-entropy/knowledge_graph.json \
+  "$DIDACTOPUS_ROOT/domain-packs/mit-ocw-information-entropy/knowledge_graph.json" \
   --repeats 5 > benchmarks/representative-local.json
 ```
