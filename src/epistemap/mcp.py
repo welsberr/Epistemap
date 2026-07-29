@@ -18,7 +18,7 @@ from .epistemic import bayesian_assessment_report, epistemic_report
 from .io import load_graph_bundle
 from .validation import validate_assessment_readiness
 
-SERVER_INFO = {"name": "epistemap-mcp", "version": "0.1.0a2"}
+SERVER_INFO = {"name": "epistemap-mcp", "version": "0.1.0a4"}
 
 TOOL_SCHEMAS: tuple[dict[str, Any], ...] = (
     {

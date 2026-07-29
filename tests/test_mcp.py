@@ -22,6 +22,7 @@ def _graph(path):
 def test_mcp_tool_listing_is_versioned_and_read_only() -> None:
     listing = list_tools()
     assert listing["server"]["name"] == "epistemap-mcp"
+    assert listing["server"]["version"] == "0.1.0a4"
     assert {tool["name"] for tool in listing["tools"]} == {
         "validate_graph", "graph_diagnostics", "graph_neighborhood", "epistemic_report", "bayesian_assessment"
     }
